@@ -20,6 +20,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'build'
+    outDir: 'build',
+    target:"ES2022"
   }
 });
