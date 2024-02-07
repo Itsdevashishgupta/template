@@ -1,10 +1,19 @@
 import { forwardRef, useState } from 'react'
-import { FormContainer } from '@/components/ui/Form'
+import { FormContainer, FormItem } from '@/components/ui/Form'
 import Button from '@/components/ui/Button'
 import hooks from '@/components/ui/hooks'
 import StickyFooter from '@/components/shared/StickyFooter'
 import ConfirmDialog from '@/components/shared/ConfirmDialog'
-import { Form, Formik, FormikProps } from 'formik'
+import {
+    Field,
+    FieldProps,
+    Form,
+    Formik,
+    FormikProps,
+    FormikProvider,
+    useFormik,
+    FormikHelpers,
+} from 'formik'
 import BasicInformationFields from './BasicInformationFields'
 import PricingFields from './PricingFields'
 import OrganizationFields from './OrganizationFields'
@@ -13,33 +22,36 @@ import cloneDeep from 'lodash/cloneDeep'
 import { HiOutlineTrash } from 'react-icons/hi'
 import { AiOutlineSave } from 'react-icons/ai'
 import * as Yup from 'yup'
+import axios from 'axios'
+import { AdaptableCard, RichTextEditor } from '@/components/shared'
+import { Input, Select } from '@/components/ui'
+import { useNavigate } from 'react-router-dom'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 type FormikRef = FormikProps<any>
 
 type InitialData = {
-    id?: string
-    name?: string
-    productCode?: string
-    img?: string
-    imgList?: {
-        id: string
-        name: string
-        img: string
-    }[]
-    category?: string
-    price?: number
-    stock?: number
-    status?: number
-    costPerItem?: number
-    bulkDiscountPrice?: number
-    taxRate?: number
-    tags?: string[]
-    brand?: string
-    vendor?: string
+    role: 'ADMIN'
+    project_name?: string
+    client_name?: string
+    client_contact?: string
+    client_email?: string
+    project_type?: string
     description?: string
+    leadmanager?: string
+    junior_designer?: string
+    senior_designer?: string
+    supervisor?: string
+    visualizer?: string
+    project_status?: string
+    project_start_date?: string
+    timeline_date?: string
+    project_end_date?: string
+    project_budget?: string
+    project_location?: string
+    id: '65c32e19e0f36d8e1f30955c'
+    files: File[] | null
 }
-
 export type FormModel = Omit<InitialData, 'tags'> & {
     tags: { label: string; value: string }[] | string[]
 }
@@ -59,13 +71,6 @@ type ProductForm = {
 }
 
 const { useUniqueId } = hooks
-
-const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Product Name Required'),
-    price: Yup.number().required('Price Required'),
-    stock: Yup.number().required('SKU Required'),
-    category: Yup.string().required('Category Required'),
-})
 
 const DeleteProductButton = ({ onDelete }: { onDelete: OnDelete }) => {
     const [dialogOpen, setDialogOpen] = useState(false)
@@ -115,122 +120,371 @@ const DeleteProductButton = ({ onDelete }: { onDelete: OnDelete }) => {
 }
 
 const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
-    const {
-        type,
-        initialData = {
-            id: '',
-            name: '',
-            productCode: '',
-            img: '',
-            imgList: [],
-            category: '',
-            price: 0,
-            stock: 0,
-            status: 0,
-            costPerItem: 0,
-            bulkDiscountPrice: 0,
-            taxRate: 6,
-            tags: [],
-            brand: '',
-            vendor: '',
+    const navigate = useNavigate()
+    const formik = useFormik({
+        initialValues: {
+            role: 'ADMIN',
+            project_name: '',
+            client_name: '',
+            client_contact: '',
+            client_email: '',
+            project_type: '',
             description: '',
+            leadmanager: '',
+            junior_designer: '',
+            senior_designer: '',
+            supervisor: '',
+            visualizer: '',
+            project_status: '',
+            project_start_date: '',
+            timeline_date: '',
+            project_end_date: '',
+            project_budget: '',
+            project_location: '',
+            id: '65c32e19e0f36d8e1f30955c',
+            files: null,
         },
-        onFormSubmit,
-        onDiscard,
-        onDelete,
-    } = props
+        onSubmit: async (values, formikHelpers) => {
+            try {
+                const formData = new FormData()
+                Object.entries(values).forEach(([key, value]) => {
+                    formData.append(key, value)
+                })
 
-    const newId = useUniqueId('product-')
+                setShowSuccessMessage(true)
+                formikHelpers.setSubmitting(false)
+
+                setTimeout(() => {
+                    setShowSuccessMessage(false)
+                    // navigate('/app/leads')
+                }, 2000)
+
+                console.log(values)
+                const response = await axios.post(
+                    'https://col-u3yp.onrender.com/v1/api/admin/create/project/',
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    },
+                )
+                console.log(response)
+            } catch (error) {
+                console.error('Error submitting form:', error)
+            }
+        },
+    })
+
+    const projectStatus = [
+        { value: 'followUp', label: 'Follow Up' },
+        { value: 'interested', label: 'Interested' },
+        { value: 'notInterested', label: 'Not Interested' },
+        { value: 'noResponse', label: 'No Response' },
+    ]
+    const submit = () => {}
+
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const filesArray = Array.from(event.target.files); // Convert FileList to array
+      formik.setFieldValue('files', filesArray);
+    }
+  };
+
 
     return (
         <>
-            <Formik
-                innerRef={ref}
-                initialValues={{
-                    ...initialData,
-                    tags: initialData?.tags
-                        ? initialData.tags.map((value) => ({
-                              label: value,
-                              value,
-                          }))
-                        : [],
-                }}
-                validationSchema={validationSchema}
-                onSubmit={(values: FormModel, { setSubmitting }) => {
-                    const formData = cloneDeep(values)
-                    formData.tags = formData.tags.map((tag) => {
-                        if (typeof tag !== 'string') {
-                            return tag.value
-                        }
-                        return tag
-                    })
-                    if (type === 'new') {
-                        formData.id = newId
-                        if (formData.imgList && formData.imgList.length > 0) {
-                            formData.img = formData.imgList[0].img
-                        }
-                    }
-                    onFormSubmit?.(formData, setSubmitting)
-                }}
-            >
-                {({ values, touched, errors, isSubmitting }) => (
-                    <Form>
-                        <FormContainer>
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                                <div className="lg:col-span-2">
-                                    <BasicInformationFields
-                                        touched={touched}
-                                        errors={errors}
-                                    />
-                                    {/* <PricingFields
-                                        touched={touched}
-                                        errors={errors}
-                                    />
-                                    <OrganizationFields
-                                        touched={touched}
-                                        errors={errors}
-                                        values={values}
-                                    /> */}
-                                </div>
-                                <div className="lg:col-span-1">
-                                    <ProductImages values={values} />
-                                </div>
-                            </div>
-                            <StickyFooter
-                                className="-mx-8 px-8 flex items-center justify-between py-4"
-                                stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-                            >
-                                <div>
-                                    {type === 'edit' && (
-                                        <DeleteProductButton
-                                            onDelete={onDelete as OnDelete}
+            <form onSubmit={formik.handleSubmit}>
+                <FormikProvider value={formik}>
+                    <FormContainer>
+                        <div className="grid grid-cols-1 lg:grid-cols gap-4">
+                            <AdaptableCard divider className="mb-4">
+                                <h5>Basic Information</h5>
+                                <p className="mb-6">
+                                    Section to config basic lead information
+                                </p>
+                                <div className="grid xl:grid-cols-3 xl:grid grid-cols-1 sm:grid-cols-2 :grid gap-5 ">
+                                    <FormItem label="Project Name">
+                                        <Input
+                                            placeholder="Project Name"
+                                            name="project_name"
+                                            id="project_name"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.project_name}
                                         />
+                                    </FormItem>
+                                    <FormItem label="Upload Files">
+                                        <input
+                                            type="file"
+                                            name="files"
+                                            id="files"
+                                            onChange={(event) => {
+                                                if (event.target.files) {
+                                                    const filesArray =
+                                                        Array.from(
+                                                            event.target.files,
+                                                        )
+                                                    formik.setFieldValue(
+                                                        'files',
+                                                        filesArray,
+                                                    )
+                                                }
+                                            }}
+                                            multiple
+                                        />
+                                    </FormItem>
+                                    {formik.values.files && (
+                                        <div>
+                                            Selected files:
+                                            {formik.values.files.map(
+                                                (file, index) => (
+                                                    <FileItem
+                                                        key={index}
+                                                        file={file}
+                                                    />
+                                                ),
+                                            )}
+                                        </div>
                                     )}
+
+                                    <FormItem label="Client Name">
+                                        <Input
+                                            placeholder="Client Name"
+                                            name="client_name"
+                                            id="client_name"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.client_name}
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Client Contact">
+                                        <Input
+                                            placeholder="Client Contact"
+                                            name="client_contact"
+                                            id="client_contact"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.client_contact}
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Client Email">
+                                        <Input
+                                            placeholder="Client Email"
+                                            name="client_email"
+                                            id="client_email"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.client_email}
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Project Type">
+                                        <Input
+                                            placeholder="Project Type"
+                                            name="project_type"
+                                            id="project_type"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.project_type}
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Description">
+                                        <Input
+                                            placeholder="Description"
+                                            name="description"
+                                            id="description"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.description}
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Lead Manager">
+                                        <Input
+                                            placeholder="Lead Manager"
+                                            name="leadmanager"
+                                            id="leadmanager"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.leadmanager}
+                                        />
+                                    </FormItem>
+                                    <FormItem label="Timeline">
+                                        <Input
+                                            placeholder="Timeline Date"
+                                            name="timeline_date"
+                                            id="timeline_dater"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.timeline_date}
+                                        />
+                                    </FormItem>
+                                    <FormItem label="Junior Designer">
+                                        <Input
+                                            placeholder="Junior Designer"
+                                            name="junior_designer"
+                                            id="junior_designer"
+                                            onChange={formik.handleChange}
+                                            value={
+                                                formik.values.junior_designer
+                                            }
+                                        />
+                                    </FormItem>
+                                    <FormItem label="Senior Designer">
+                                        <Input
+                                            placeholder="Senior Designer"
+                                            name="senior_designer"
+                                            id="senior_designer"
+                                            onChange={formik.handleChange}
+                                            value={
+                                                formik.values.senior_designer
+                                            }
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Supervisor">
+                                        <Input
+                                            placeholder="Supervisor"
+                                            name="supervisor"
+                                            id="supervisor"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.supervisor}
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Visualizer">
+                                        <Input
+                                            placeholder="Visualizer"
+                                            name="visualizer"
+                                            id="visualizer"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.visualizer}
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Project Status">
+                                        <Input
+                                            placeholder="Project Status"
+                                            name="project_status"
+                                            id="project_status"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.project_status}
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Project Start Date">
+                                        <Input
+                                            placeholder="Project Start Date"
+                                            name="project_start_date"
+                                            id="project_start_date"
+                                            onChange={formik.handleChange}
+                                            value={
+                                                formik.values.project_start_date
+                                            }
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Project End Date">
+                                        <Input
+                                            placeholder="Project End Date"
+                                            name="project_end_date"
+                                            id="project_end_date"
+                                            onChange={formik.handleChange}
+                                            value={
+                                                formik.values.project_end_date
+                                            }
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Project Budget">
+                                        <Input
+                                            placeholder="Project Budget"
+                                            name="project_budget"
+                                            id="project_budget"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.project_budget}
+                                        />
+                                    </FormItem>
+
+                                    <FormItem label="Project Location">
+                                        <Input
+                                            placeholder="Project Location"
+                                            name="project_location"
+                                            id="project_location"
+                                            onChange={formik.handleChange}
+                                            value={
+                                                formik.values.project_location
+                                            }
+                                        />
+                                    </FormItem>
                                 </div>
-                                <div className="md:flex items-center">
-                                    <Button
-                                        size="sm"
-                                        className="ltr:mr-3 rtl:ml-3"
-                                        type="button"
-                                        onClick={() => onDiscard?.()}
-                                    >
-                                        Discard
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="solid"
-                                        loading={isSubmitting}
-                                        icon={<AiOutlineSave />}
-                                        type="submit"
-                                    >
-                                        Save
-                                    </Button>
-                                </div>
-                            </StickyFooter>
-                        </FormContainer>
-                    </Form>
-                )}
-            </Formik>
+                                {/* 
+            <FormItem
+                        label="Project Id"
+                        invalid={(errors.number && touched.number) as boolean}
+                        errorMessage={errors.number}
+                    >
+                        <Field name="id">
+                            {({ field, form }: FieldProps) => {
+                                return (
+                                    <NumericFormatInput
+                                        form={form}
+                                        field={field}
+                                        placeholder="Stock"
+                                        customInput={
+                                            NumberInput as ComponentType
+                                        }
+                                        onValueChange={(e) => {
+                                            form.setFieldValue(
+                                                field.name,
+                                                e.value
+                                            )
+                                        }}
+                                    />
+                                )
+                            }}
+                        </Field>
+                    </FormItem> */}
+                            </AdaptableCard>
+                        </div>
+                        <StickyFooter
+                            className="-mx-8 px-8 flex items-center justify-between py-4"
+                            stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                        >
+                            <div className="md:flex items-center">
+                                <Button
+                                    size="sm"
+                                    className="ltr:mr-3 rtl:ml-3"
+                                    type="button"
+                                    onClick={props.onDiscard}
+                                >
+                                    Discard
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="solid"
+                                    icon={<AiOutlineSave />}
+                                    type="submit"
+                                >
+                                    Save
+                                </Button>
+                                {props.type === 'edit' && (
+                                    <DeleteProductButton
+                                        onDelete={props.onDelete}
+                                    />
+                                )}
+                            </div>
+                        </StickyFooter>
+                    </FormContainer>
+                </FormikProvider>
+            </form>
+            {showSuccessMessage && (
+                <ConfirmDialog
+                    isOpen={showSuccessMessage}
+                    type="success"
+                    title="Success"
+                    onClose={() => setShowSuccessMessage(false)}
+                >
+                    <p>Data added successfully!</p>
+                </ConfirmDialog>
+            )}
         </>
     )
 })
