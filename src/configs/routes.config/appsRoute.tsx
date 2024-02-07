@@ -63,6 +63,16 @@ const appsRoute: Routes = [
         },
     },
     {
+        key: 'appsCrm.customerDetails',
+        path: `${APP_PREFIX_PATH}/crm/lead`,
+        component: lazy(() => import('@/views/crm/LeadsDetails')),
+        authority: [ADMIN, USER],
+        meta: {
+            header: 'Lead Details',
+            headerContainer: true,
+        },
+    },
+    {
         key: 'appsCrm.mail',
         path: `${APP_PREFIX_PATH}/crm/mail`,
         component: lazy(() => import('@/views/crm/Mail')),

@@ -32,9 +32,9 @@ const OrdersTableTools = () => {
         <div className="flex flex-col lg:flex-row lg:items-center gap-4">
             {selectedRows.length > 0 && <BatchDeleteButton />}
             <Link download to="/data/order-list.csv" target="_blank">
-                <Button block size="sm" icon={<HiDownload />}>
+                {/* <Button block size="sm" icon={<HiDownload />}>
                     Export
-                </Button>
+                </Button> */}
             </Link>
             <OrderTableSearch />
         </div>

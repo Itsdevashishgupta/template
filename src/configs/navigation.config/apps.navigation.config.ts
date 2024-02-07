@@ -87,6 +87,16 @@ const appsNavigationConfig: NavigationTree[] = [
                         authority: [ADMIN, USER],
                         subMenu: [],
                     },
+                    {
+                        key: 'appsCrm.fileManager',
+                       
+                        title: 'File Manager',
+                        translateKey: 'nav.appsCrm.fileManager',
+                        icon: 'files',
+                        type: NAV_ITEM_TYPE_ITEM,
+                        authority: [ADMIN, USER],
+                        subMenu: [],
+                    },
                     // {
                     //     key: 'appsCrm.calendar',
                     //     path: `${APP_PREFIX_PATH}/crm/calendar`,
@@ -98,16 +108,6 @@ const appsNavigationConfig: NavigationTree[] = [
                     //     subMenu: [],
                     // },
                     {
-                        key: 'appsCrm.inventory',
-                        path: `${APP_PREFIX_PATH}/crm/inventory`,
-                        title: 'Inventory',
-                        translateKey: 'nav.appsCrm.inventory',
-                        icon: 'inventory',
-                        type: NAV_ITEM_TYPE_ITEM,
-                        authority: [ADMIN, USER],
-                        subMenu: [],
-                    },
-                    {
                         key: 'appsCrm.customers',
                         path: `${APP_PREFIX_PATH}/crm/customers`,
                         title: 'Leads',
@@ -117,6 +117,17 @@ const appsNavigationConfig: NavigationTree[] = [
                         authority: [ADMIN, USER],
                         subMenu: [],
                     },
+                    {
+                        key: 'appsCrm.inventory',
+                        path: `${APP_PREFIX_PATH}/crm/inventory`,
+                        title: 'Inventory',
+                        translateKey: 'nav.appsCrm.inventory',
+                        icon: 'inventory',
+                        type: NAV_ITEM_TYPE_ITEM,
+                        authority: [ADMIN, USER],
+                        subMenu: [],
+                    },
+                   
                     // {
                     //     key: 'appsCrm.customerDetails',
                     //     path: `${APP_PREFIX_PATH}/crm/customer-details?id=8`,

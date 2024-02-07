@@ -25,7 +25,7 @@ import {
     HiOutlineCode,
 } from 'react-icons/hi'
 import { MdOutlineDashboard } from "react-icons/md";
-import { LuWarehouse } from "react-icons/lu";
+import { LuWarehouse,LuFileStack } from "react-icons/lu";
 import { GoProject } from "react-icons/go";
 import { MdManageAccounts } from "react-icons/md";
 import { CiStopwatch } from "react-icons/ci";
@@ -39,6 +39,7 @@ const navigationIcon: NavigationIcons = {
     salesa: <HiOutlineTrendingUp />,
     dashboard:<MdOutlineDashboard/>,
     inventory:<LuWarehouse/>,
+    files:<LuFileStack/>,
     projects:<GoProject/>,
     lead:<MdManageAccounts/>,
     mom:<CiStopwatch/>,

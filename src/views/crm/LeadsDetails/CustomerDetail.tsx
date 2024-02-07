@@ -49,7 +49,8 @@ const CustomerDetail = () => {
     useEffect(() => {
       const fetchData = async () => {
         try {
-            const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c',);
+          const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c'); // Replace with your actual API endpoint
+  
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
@@ -68,42 +69,7 @@ const CustomerDetail = () => {
 
     return (
         <Container className="h-full">
-            <Loading loading={loading}>
-                {!isEmpty(projects[0]) && (
-                    <div className="flex flex-col xl:flex-col gap-4">
-                       
-                        <div className="w-full">
-                            <AdaptableCard>
-                                {/* <CurrentSubscription /> */}
-
-                                <Tabs defaultValue="details">
-                            <TabList>
-                                
-                                <TabNav value="details">
-                                    Details
-                                </TabNav>
-                                <TabNav value="personalInfo">
-                                    Quotation
-                                </TabNav>
-                                <TabNav value="social">Minutes Of Meeting</TabNav>
-                            </TabList>
-                            <div className="p-6">
-                                <TabContent value="details">
-                                   <CustomerProfile data={projects[0]}/>
-                                </TabContent>
-                                <TabContent value="personalInfo">
-                                   <PaymentHistory/>
-                                </TabContent>
-                                <TabContent value="social">
-                                   <MOM/>
-                                </TabContent>
-                            </div>
-                        </Tabs>
-                            </AdaptableCard>
-                        </div>
-                    </div>
-                )}
-            </Loading>
+         <CustomerProfile/>
             {!loading && isEmpty(data) && (
                 <div className="h-full flex flex-col items-center justify-center">
                     <DoubleSidedImage

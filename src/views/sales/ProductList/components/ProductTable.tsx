@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import Avatar from '@/components/ui/Avatar'
 import Badge from '@/components/ui/Badge'
 import DataTable from '@/components/shared/DataTable'
-import { HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi'
+import { HiOutlineEye, HiOutlinePencil, HiOutlineTrash, HiOutlineViewGrid, HiOutlineViewList } from 'react-icons/hi'
 import { FiPackage } from 'react-icons/fi'
 import {
     getProducts,
@@ -54,7 +54,7 @@ const ActionColumn = ({ row }: { row: Product }) => {
     const navigate = useNavigate()
 
     const onEdit = () => {
-        navigate(`/app/crm/lead-new/${row.id}`)
+        navigate(`/app/crm/lead`)
     }
 
     const onDelete = () => {
@@ -79,12 +79,12 @@ const ActionColumn = ({ row }: { row: Product }) => {
 
     return (
         <div className="flex justify-end text-lg">
-            {/* <span
+            <span
                 className={`cursor-pointer p-2 hover:${textTheme}`}
                 onClick={onEdit}
             >
-                <HiOutlinePencil />
-            </span> */}
+                <HiOutlineEye />
+            </span>
             <span
                 className="cursor-pointer p-2 hover:text-red-500"
                 onClick={onDelete}
@@ -172,12 +172,12 @@ const ProductTable = () => {
             {
                 header: 'Lead Date',
                 accessorKey: 'createdAt',
-                cell: (props) => {
-                    const row = props.row.original;
-                    const date = new Date(row.createdAt);
-                    const formattedDate = date.toISOString().split('T')[0];
-                    return formattedDate;
-                },
+                // cell: (props) => {
+                //     const row = props.row.original;
+                //     const date = new Date(row.createdAt);
+                //     const formattedDate = date.toISOString().split('T')[0];
+                //     return formattedDate;
+                // },
             },
             {
                 header: 'Status',
@@ -257,7 +257,8 @@ const ProductTable = () => {
     }, []);
 
     
-
+   console.log(data);
+   
     return (
         <>
             <DataTable

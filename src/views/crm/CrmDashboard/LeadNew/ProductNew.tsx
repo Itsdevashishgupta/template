@@ -49,6 +49,7 @@ const ProductNew = () => {
                 type="new"
                 onFormSubmit={handleFormSubmit}
                 onDiscard={handleDiscard}
+                
             />
         </>
     )

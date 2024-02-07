@@ -219,8 +219,7 @@ const Customers = () => {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c0b29f1564e92b81703b4d'); // Replace with your actual API endpoint
-  
+            const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }

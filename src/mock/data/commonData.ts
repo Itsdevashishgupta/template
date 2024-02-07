@@ -138,6 +138,13 @@ export const searchQueryPoolData = [
         categoryTitle: 'Apps',
     },
     {
+        title: 'Lead Details',
+        url: '/app/crm/lead',
+        icon: 'crm',
+        category: 'CRM',
+        categoryTitle: 'Apps',
+    },
+    {
         title: 'Mail',
         url: '/app/crm/mail',
         icon: 'crm',

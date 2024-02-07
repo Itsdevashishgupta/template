@@ -163,7 +163,7 @@ const BasicInformationFields = (props: BasicInformationFields) => {
                 errorMessage={errors.productCode}
             >
                   <Select
-                placeholder="Please Select"
+                placeholder="Project Status"
                 options={projectStatus}
             ></Select>
             </FormItem>

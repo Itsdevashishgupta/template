@@ -11,6 +11,7 @@
         "appsCrm": {
             "crm": "CRM",
             "dashboard": "Dashboard",
+            "fileManager":"File Manager",
             "calendar": "Calendar",
             "customers": "Projects",
             "customerDetails": "Customer Details",
@@ -19,6 +20,7 @@
         "appsSales": {
             "sales": "Sales",
             "dashboard": "Dashboard",
+            "fileManager": "File Manager",
             "productList": "Lead Management",
             "productEdit": "Product Edit",
             "productNew": "New Product",
