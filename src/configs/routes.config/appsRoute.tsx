@@ -157,8 +157,8 @@ const appsRoute: Routes = [
     },
     {
         key: 'appsSales.productNew',
-        path: `${APP_PREFIX_PATH}/sales/product-new`,
-        component: lazy(() => import('@/views/sales/ProductNew')),
+        path: `${APP_PREFIX_PATH}/crm/lead-project`,
+        component: lazy(() => import('@/views/crm/ProjectNew')),
         authority: [ADMIN, USER],
         meta: {
             header: 'Add Project',
