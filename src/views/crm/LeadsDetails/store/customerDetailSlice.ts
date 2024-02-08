@@ -3,7 +3,7 @@ import {
     apiGetCrmCustomerDetails,
     apiDeleteCrmCustomer,
     apPutCrmCustomer,
-} from '@/services/CrmService'
+} from '@/services/leadService'
 
 export const SLICE_NAME = 'crmCustomerDetails'
 
@@ -26,6 +26,9 @@ export type OrderHistory = {
     date: number
     source:string
     momid:string
+}
+export type Notes = {
+    content:string
 }
 export type minutesofMeeting = {
     id: string
@@ -52,25 +55,20 @@ export type Subscription = {
 }
 
 export type Customer = {
-    id: string
-    project_name: string
-    project_id:string
-    project_type:string
-    description:string
-    project_status:string
-    project_start_date:string
-    timeline_date:string
-    project_budget:string
-    email: string
-    img: string
-    role: string
-    lastOnline: string
-    status: string
-    personalInfo: PersonalInfo
+    _id: string
+    name: string
+    lead_id:string
+    email:string
+    phone:string
+    location:string
+    status:string
+    source:string
+    notes: Notes
 }
 
 type GetCrmCustomerDetailsResponse = Customer & {
     orderHistory?: OrderHistory[]
+    notes?: Notes[]
     paymentMethod?: PaymentMethod[]
     subscription?: Subscription[]
 }
@@ -87,6 +85,7 @@ export type CustomerDetailState = {
     profileData: Partial<Customer>
     subscriptionData: Subscription[]
     paymentHistoryData: OrderHistory[]
+    notesData: Notes[]
     paymentMethodData: PaymentMethod[]
     deletePaymentMethodDialog: boolean
     editPaymentMethodDialog: boolean
@@ -128,6 +127,7 @@ const initialState: CustomerDetailState = {
     loading: true,
     profileData: {},
     subscriptionData: [],
+    notesData:[],
     paymentHistoryData: [],
     paymentMethodData: [],
     deletePaymentMethodDialog: false,

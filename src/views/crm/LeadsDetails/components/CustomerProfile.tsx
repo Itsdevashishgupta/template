@@ -130,7 +130,7 @@ const CustomerProfileAction = ({ id }: { id?: string }) => {
     )
 }
 
-const CustomerProfile = ({ data = {} }: CustomerProfileProps) => {
+const CustomerProfile = ({myParam}) => {
     const [datas, setData] = useState<InitialData | null>(null);
 
   useEffect(() => {
@@ -138,27 +138,32 @@ const CustomerProfile = ({ data = {} }: CustomerProfileProps) => {
       try {
         // Make a GET request to your API endpoint to fetch data
         
-   
         
-        const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/');
+        // const urlParams = new URLSearchParams(window.location.search);
+        // const myParam = urlParams.get('id');
+        console.log(myParam);
+        
+  
+        const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getsingle/lead/?lead_id=${myParam}`);
         
         
         // Update the state with the fetched data
-    
-        console.log('Response from server:', typeof(datas));
+        
+        
+ 
         const jsonData = await response.json();
         setData(jsonData)
-        console.log(jsonData);
         
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
+
+
     
     // Call the fetchData function when the component mounts
     fetchData();
 }, []);
-      console.log(datas);
     const leadStatus = [
         { value: 'followUp', label: 'Follow Up' },
         { value: 'interested', label: 'Interested' },
@@ -166,9 +171,13 @@ const CustomerProfile = ({ data = {} }: CustomerProfileProps) => {
         { value: 'noResponse', label: 'No Response' },
     ]
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    
+    
+    
+    
     const formik = useFormik({
         initialValues: {
-          lead_id: '959303',
+          lead_id:'' ,
           status:"",
           date:"",
           content:"",
@@ -253,6 +262,7 @@ const CustomerProfile = ({ data = {} }: CustomerProfileProps) => {
        );
      }
  
+// console.log(datas.data[0].name);
 
     
     return (
@@ -264,18 +274,19 @@ const CustomerProfile = ({ data = {} }: CustomerProfileProps) => {
                     
                 <CustomerInfoField
                         title="Name"
-                        value="Devashish"
+                        // value={datas.data[0].name}
+                      
                     />
                     <CustomerInfoField
                         title="Email"
-                        value="Devashish@gmail.com"
+                      
                     />
                   
             
  
                 </div>
                 <div className="mt-4 flex flex-col xl:flex-row gap-2">
-                    <CustomerProfileAction id={data.id} />
+                   
                 </div>
             </div>
         </Card>
@@ -327,10 +338,10 @@ const CustomerProfile = ({ data = {} }: CustomerProfileProps) => {
         
       '
     >
-        <option value="option1">Follow Up</option>
-          <option value="option2">Interested</option>
-          <option value="option2">Not Interested</option>
-          <option value="option2">No Response</option>
+        <option value="Follow Up">Follow Up</option>
+          <option value="Interested">Interested</option>
+          <option value="Not Interested">Not Interested</option>
+          <option value="No Response">No Response</option>
     </select>
      
     </div>

@@ -39,7 +39,7 @@ const CustomerDetail = () => {
     }, [])
 
     const fetchData = () => {
-        const id = query.get('id')
+        const id = query.get('lead_id')
         if (id) {
             dispatch(getCustomer({ id }))
         }
@@ -65,11 +65,13 @@ const CustomerDetail = () => {
   
       fetchData();
     }, []);
+    console.log(data);
+    
 
     return (
         <Container className="h-full">
             <Loading loading={loading}>
-                {!isEmpty(projects[0]) && (
+                {!isEmpty(data) && (
                     <div className="flex flex-col xl:flex-col gap-4">
                        
                         <div className="w-full">
@@ -89,7 +91,7 @@ const CustomerDetail = () => {
                             </TabList>
                             <div className="p-6">
                                 <TabContent value="details">
-                                   <CustomerProfile data={projects[0]}/>
+                                   <CustomerProfile data={data}/>
                                 </TabContent>
                                 <TabContent value="personalInfo">
                                    <PaymentHistory/>

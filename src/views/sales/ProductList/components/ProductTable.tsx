@@ -75,7 +75,7 @@ const ActionColumn = ({ row }: { row: Product }) => {
 
     const onEdit = () => {
 
-        navigate(`/app/crm/lead/`)
+        navigate(`/app/crm/lead/?id=${row.lead_id}`)
     }
 
     const onDelete = () => {
@@ -179,7 +179,7 @@ const ProductTable = () => {
                 <Avatar size={28} shape="circle" src={row.img} />
                 <Link
                     className={`hover:${textTheme} ml-2 rtl:mr-2 font-semibold`}
-                    to={`/app/crm/lead?id=${row.lead_id}`}
+                    to={`/app/crm/customer-details?lead_id=${row.lead_id}`}
                 >
                     {row.name}
                 </Link>

@@ -18,6 +18,7 @@ import TabList from '@/components/ui/Tabs/TabList'
 import TabNav from '@/components/ui/Tabs/TabNav'
 import TabContent from '@/components/ui/Tabs/TabContent'
 import PersonalInfoForm from '../CustomerForm/PersonalInfoForm'
+import { log } from 'console'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -27,7 +28,7 @@ const CustomerDetail = () => {
     const query = useQuery()
 
     const data = useAppSelector(
-        (state) => state.crmCustomerDetails.data.profileData
+        (state) => state.crmCustomerDetails
     )
     const loading = useAppSelector(
         (state) => state.crmCustomerDetails.data.loading
@@ -39,7 +40,7 @@ const CustomerDetail = () => {
     }, [])
 
     const fetchData = () => {
-        const id = query.get('id')
+        const id = query.get('lead_id')
         if (id) {
             dispatch(getCustomer({ id }))
         }
@@ -66,11 +67,20 @@ const CustomerDetail = () => {
   
       fetchData();
     }, []);
+    
+  
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const myParam = urlParams.get('id');
+    console.log(typeof(myParam));
+     // Replace with your actual lead_id value
+    console.log(myParam);
+
 
     return (
         <Container className="h-full">
-         <CustomerProfile/>
-            {!loading && isEmpty(data) && (
+         <CustomerProfile myParam={myParam}/>
+         
                 <div className="h-full flex flex-col items-center justify-center">
                     <DoubleSidedImage
                         src="/img/others/img-2.png"
@@ -79,7 +89,7 @@ const CustomerDetail = () => {
                     />
                     <h3 className="mt-8">No user found!</h3>
                 </div>
-            )}
+            
         </Container>
     )
 }

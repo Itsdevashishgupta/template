@@ -232,16 +232,16 @@ const appsNavigationConfig: NavigationTree[] = [
             //             subMenu: [],
             //         },
 
-            //         {
-            //             key: 'appsSales.orderDetails',
-            //             path: `${APP_PREFIX_PATH}/sales/order-details/95954`,
-            //             title: 'Order Details',
-            //             translateKey: 'nav.appsSales.orderDetails',
-            //             icon: '',
-            //             type: NAV_ITEM_TYPE_ITEM,
-            //             authority: [ADMIN, USER],
-            //             subMenu: [],
-            //         },
+                    {
+                        key: 'appsSales.orderDetails',
+                        path: `${APP_PREFIX_PATH}/sales/order-details/95954`,
+                        title: 'Order Details',
+                        translateKey: 'nav.appsSales.orderDetails',
+                        icon: '',
+                        type: NAV_ITEM_TYPE_ITEM,
+                        authority: [ADMIN, USER],
+                        subMenu: [],
+                    },
             //     ],
             // },
             // {

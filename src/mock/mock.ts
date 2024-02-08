@@ -49,6 +49,7 @@ import {
 
 const { apiPrefix } = appConfig
 
+
 export function mockServer({ environment = 'test' }) {
     return createServer({
         environment,

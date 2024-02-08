@@ -138,6 +138,12 @@ const appsRoute: Routes = [
         authority: [ADMIN, USER],
     },
     {
+        key: 'appsSales.orders-details',
+        path: `${APP_PREFIX_PATH}//sales/orders-details/:orderId`,
+        component: lazy(() => import('@/views/sales/OrderDetails')),
+        authority: [ADMIN, USER],
+    },
+    {
         key: 'appsSales.productEdit',
         path: `${APP_PREFIX_PATH}/sales/product-edit/:productId`,
         component: lazy(() => import('@/views/sales/ProductEdit')),
