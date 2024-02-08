@@ -25,7 +25,7 @@ import * as Yup from 'yup'
 import axios from 'axios'
 import { AdaptableCard, RichTextEditor } from '@/components/shared'
 import { Input, Select } from '@/components/ui'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 type FormikRef = FormikProps<any>
@@ -115,15 +115,40 @@ const DeleteProductButton = ({ onDelete }: { onDelete: OnDelete }) => {
     )
 }
 
+
+
+
+
+
 const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
     const navigate = useNavigate()
+
+    interface QueryParams {
+        id: string;
+        name: string;
+        email: string;
+        phone: string;
+        location: string;
+      }
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    
+    // Create an object to store and map the query parameters
+    const allQueryParams: QueryParams = {
+      id: queryParams.get('id') || '',
+      name: queryParams.get('name') || '',
+      email: queryParams.get('email') || '',
+      phone: queryParams.get('phone') || '',
+      location: queryParams.get('location') || '',
+    };
+
     const formik = useFormik({
         initialValues: {
-            lead_id: '833500',
-            client_name: '',
-            client_email: '',
-            client_contact: '',
-            location: '',
+            lead_id: allQueryParams.id,
+            client_name: allQueryParams.name,
+            client_email: allQueryParams.email,
+            client_contact: allQueryParams.phone,
+            location: allQueryParams.location,
             description: '',
             project_type: '',
             project_name: '',
@@ -174,7 +199,7 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                     </FormItem>
                                     <FormItem label="Name">
                                         <Input
-                                            placeholder="Name"
+                                            
                                             name="client_name"
                                             id="client_name"
                                             onChange={formik.handleChange}
@@ -186,6 +211,7 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             placeholder="Phone"
                                             name="client_contact"
                                             id="client_contact"
+                                           
                                             onChange={formik.handleChange}
                                             value={formik.values.client_contact}
                                         />

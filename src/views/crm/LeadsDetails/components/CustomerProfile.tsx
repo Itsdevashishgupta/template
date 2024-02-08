@@ -282,6 +282,8 @@ const onDialogOk = (e: MouseEvent) => {
     setIsOpen(false)
 }
 
+const navigate=useNavigate();
+
 
 
 
@@ -291,7 +293,10 @@ const onDialogOk = (e: MouseEvent) => {
         <div className=' flex flex-col gap-3'>
         <Card>
             <div className="flex flex-col xl:justify-between h-full 2xl:min-w-[360px] mx-auto">
+              <div className='flex justify-between items-center'>
               <h5>Basic Information</h5>
+              <Button variant='solid' onClick={()=>(navigate(`/app/crm/lead-project/?id=${myParam}&name=${data?.name}&email=${data?.email}&phone=${data?.phone}&location=${data?.location}`))}>Create Project</Button>
+              </div>
                 <div className="grid grid-cols-3 sm:grid-cols-2 xl:grid-cols-3 gap-y-7 gap-x-4 mt-8">
                     
                 <CustomerInfoField
