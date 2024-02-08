@@ -156,6 +156,15 @@ const appsRoute: Routes = [
         },
     },
     {
+        key: 'appsSales.productNew',
+        path: `${APP_PREFIX_PATH}/sales/product-new`,
+        component: lazy(() => import('@/views/sales/ProductNew')),
+        authority: [ADMIN, USER],
+        meta: {
+            header: 'Add Project',
+        },
+    },
+    {
         key: 'appsSales.orderList',
         path: `${APP_PREFIX_PATH}/sales/order-list`,
         component: lazy(() => import('@/views/sales/OrderList')),
@@ -232,7 +241,7 @@ const appsRoute: Routes = [
                 () =>
                     import(
                         '@/views/knowledge-base/ManageArticles/components/PanelHeader'
-                    )
+                    ),
             ),
             headerContainer: true,
         },

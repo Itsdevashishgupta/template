@@ -50,7 +50,6 @@ type InitialData = {
     project_budget?: string
     project_location?: string
     id: '65c32e19e0f36d8e1f30955c'
-    files: File[] | null
 }
 export type FormModel = Omit<InitialData, 'tags'> & {
     tags: { label: string; value: string }[] | string[]
@@ -142,13 +141,21 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
             project_budget: '',
             project_location: '',
             id: '65c32e19e0f36d8e1f30955c',
-            files: null,
+            files: [], // Array to hold selected files
         },
         onSubmit: async (values, formikHelpers) => {
             try {
                 const formData = new FormData()
                 Object.entries(values).forEach(([key, value]) => {
-                    formData.append(key, value)
+                    if (key === 'files') {
+                        let filearray = []
+                        value.forEach((file: File, index: number) => {
+                            formData.append(`files`, file)
+                            console.log('hello')
+                        })
+                    } else {
+                        formData.append(key, value)
+                    }
                 })
 
                 setShowSuccessMessage(true)
@@ -185,13 +192,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
     const submit = () => {}
 
     const [showSuccessMessage, setShowSuccessMessage] = useState(false)
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const filesArray = Array.from(event.target.files); // Convert FileList to array
-      formik.setFieldValue('files', filesArray);
-    }
-  };
 
+    // Function to handle file input change
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(event.target.files || [])
+        formik.setFieldValue('files', files)
+    }
 
     return (
         <>
@@ -215,38 +221,14 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                         />
                                     </FormItem>
                                     <FormItem label="Upload Files">
-                                        <input
+                                        <Input
                                             type="file"
                                             name="files"
                                             id="files"
-                                            onChange={(event) => {
-                                                if (event.target.files) {
-                                                    const filesArray =
-                                                        Array.from(
-                                                            event.target.files,
-                                                        )
-                                                    formik.setFieldValue(
-                                                        'files',
-                                                        filesArray,
-                                                    )
-                                                }
-                                            }}
+                                            onChange={handleFileChange}
                                             multiple
                                         />
                                     </FormItem>
-                                    {formik.values.files && (
-                                        <div>
-                                            Selected files:
-                                            {formik.values.files.map(
-                                                (file, index) => (
-                                                    <FileItem
-                                                        key={index}
-                                                        file={file}
-                                                    />
-                                                ),
-                                            )}
-                                        </div>
-                                    )}
 
                                     <FormItem label="Client Name">
                                         <Input
