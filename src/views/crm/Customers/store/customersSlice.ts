@@ -43,20 +43,9 @@ type Subscription = {
 }
 
 export type Customer = {
-    project_id: string
-    project_name: string
-    client:client[]
-    client_contact: string
-    project_type: string
-    description: string
-    project_status: string
-    project_start_date:string
-    timeline_date:string
-    project_end_date:string
-    personalInfo: PersonalInfo
-    orderHistory: OrderHistory[]
-    paymentMethod: PaymentMethod[]
-    subscription: Subscription[]
+ name:string
+ email:string
+
 }
 type client={
     client_name:string

@@ -14,7 +14,7 @@ import {
 } from '../store'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import ProductDeleteConfirmation from './ProductDeleteConfirmation'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import cloneDeep from 'lodash/cloneDeep'
 import type {
     DataTableResetHandle,
@@ -49,12 +49,33 @@ const inventoryStatusColor: Record<
 }
 
 const ActionColumn = ({ row }: { row: Product }) => {
+    const [leads, setLeads] = useState<any[]>([]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/'); // Replace with your actual API endpoint
+           
+           
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+  
+          const jsonData = await response.json();
+          setLeads(jsonData.data);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+      fetchData();
+    }, []);
     const dispatch = useAppDispatch()
     const { textTheme } = useThemeClass()
     const navigate = useNavigate()
 
     const onEdit = () => {
-        navigate(`/app/crm/lead`)
+
+        navigate(`/app/crm/lead/`)
     }
 
     const onDelete = () => {
@@ -66,7 +87,7 @@ const ActionColumn = ({ row }: { row: Product }) => {
         const fetchData = async () => {
           try {
             const leadsData = await fetchLeads();
-            console.log(leadsData);
+           
             // Handle and use the leadsData in your component
           } catch (error) {
             // Handle errors if needed
@@ -127,7 +148,7 @@ const ProductTable = () => {
         (state) => state.salesProductList.data.loading
     )
 
-    const data = useAppSelector(
+    var data = useAppSelector(
         (state) => state.salesProductList.data.productList
     )
 
@@ -150,6 +171,21 @@ const ProductTable = () => {
     const fetchData = () => {
         dispatch(getProducts({ pageIndex, pageSize, sort, query, filterData }))
     }
+    const NameColumn = ({ row }: { row: Product }) => {
+        const { textTheme } = useThemeClass()
+    
+        return (
+            <div className="flex items-center">
+                <Avatar size={28} shape="circle" src={row.img} />
+                <Link
+                    className={`hover:${textTheme} ml-2 rtl:mr-2 font-semibold`}
+                    to={`/app/crm/lead?id=${row.lead_id}`}
+                >
+                    {row.name}
+                </Link>
+            </div>
+        )
+    }
 
     const columns: ColumnDef<Product>[] = useMemo(
         () => [
@@ -158,7 +194,7 @@ const ProductTable = () => {
                 accessorKey: 'name',
                 cell: (props) => {
                     const row = props.row.original
-                    return <ProductColumn row={row} />
+                    return <NameColumn row={row} />
                 },
             },
             {
@@ -241,33 +277,34 @@ const ProductTable = () => {
       const fetchData = async () => {
         try {
           const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/'); // Replace with your actual API endpoint
-  
+           
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
   
           const jsonData = await response.json();
           setLeads(jsonData.data);
+          data=jsonData;
+          console.log(data);
+          
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       };
-  
       fetchData();
     }, []);
-
+  
     
-   console.log(data);
    
     return (
         <>
             <DataTable
                 ref={tableRef}
                 columns={columns}
-                data={leads}
+                data={data}
                 skeletonAvatarColumns={[0]}
                 skeletonAvatarProps={{ className: 'rounded-md' }}
-                loading={loading}
+                
                 pagingData={{
                     total: tableData.total as number,
                     pageIndex: tableData.pageIndex as number,

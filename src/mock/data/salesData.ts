@@ -18,6 +18,8 @@ export const fetchLeads = async (): Promise<Lead[]> => {
   try {
     const response: AxiosResponse<Lead[]> = await axios.get(apiUrl);
     return response.data;
+    console.log(response.data);
+    
   } catch (error) {
     console.error('Axios error:', error.message);
     throw error;
@@ -168,367 +170,42 @@ export const salesDashboardData = {
     },
 }
 
+
+
+  
+  
+  
+
+
+
+
 const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/');
 const jsonData = await response.json();
-
-export const productsData1=()=>{
-    return jsonData
-}
-const leadsdata=()=>{
-
-
-const [leads, setLeads] = useState<any[]>([]);
-
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/'); // Replace with your actual API endpoint
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const jsonData = await response.json();
-      setLeads(jsonData.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
-  fetchData();
-}, []);
-return leads
-
-}
-
-export const productsData=leadsdata
-console.log(productsData);
+console.log(jsonData.data);
+export const productsData=jsonData.data
        
-// export const productsData= [
+// export const productsData=[
 //     {
-//         id: '12',
-//         name: 'Devashish Gupta',
-//         productCode: 'BIS-012',
-//         leadDate:"22-12-2000",
-//         phone:"3835384304",
-//         email:"devashi@gmail.com",
-//         img: '/img/products/product-1.jpg',
-//         imgList: [
-//             {
-//                 id: '12-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-1.jpg',
-//             },
-//             {
-//                 id: '12-img-1',
-//                 name: 'image-2',
-//                 img: '/img/products/product-1-2.jpg',
-//             },
-//             {
-//                 id: '12-img-2',
-//                 name: 'image-3',
-//                 img: '/img/products/product-1-3.jpg',
-//             },
-//             {
-//                 id: '12-img-3',
-//                 name: 'image-4',
-//                 img: '/img/products/product-1-4.jpg',
-//             },
-//         ],
-//         category: 'devices',
-//         price: 252,
-//         stock: 46,
-//         status: 0,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Luminaire',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
+//       _id: "65c35bd30bd5c3b0ec1ed5bb",
+//       name: "Devashish Gupta",
+//       lead_id: "833500",
+//       email: "Devashishgupta20102000@gmail.com",
+//       phone: "+916389707199",
+//       location: "delhi",
+//       status: "Follow Up",
+//       source: "Online",
+//       notes: [
+//         {
+//           content: "this is a candidate referred by arvind",
+//           createdBy: "Admin",
+//           _id: "65c35bd30bd5c3b0ec1ed5bc",
+//           createdAt: "2024-02-07T10:30:43.883Z",
+//         },
+//       ],
+//       createdAt: "2024-02-07T10:30:43.883Z",
+//       __v: 0,
 //     },
-//     {
-//         id: '13',
-//         name: 'White Backpack',
-//         productCode: 'BIS-013',
-//         img: '/img/products/product-2.jpg',
-//         imgList: [
-//             {
-//                 id: '13-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-2.jpg',
-//             },
-//             {
-//                 id: '13-img-1',
-//                 name: 'image-2',
-//                 img: '/img/products/product-2-2.jpg',
-//             },
-//         ],
-//         category: 'bags',
-//         price: 139,
-//         stock: 28,
-//         status: 0,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Adidas',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-//     },
-//     {
-//         id: '14',
-//         name: 'Black Sneaker',
-//         productCode: 'BIS-014',
-//         img: '/img/products/product-3.jpg',
-//         imgList: [
-//             {
-//                 id: '14-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-3.jpg',
-//             },
-//         ],
-//         category: 'shoes',
-//         price: 99,
-//         stock: 52,
-//         status: 0,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Adidas',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-//     },
-//     {
-//         id: '15',
-//         name: 'Gray Hoodies',
-//         productCode: 'BIS-015',
-//         img: '/img/products/product-4.jpg',
-//         imgList: [
-//             {
-//                 id: '15-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-4.jpg',
-//             },
-//         ],
-//         category: 'cloths',
-//         price: 68,
-//         stock: 92,
-//         status: 0,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Adidas',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-//     },
-//     {
-//         id: '16',
-//         name: 'Blue Backpack',
-//         productCode: 'BIS-016',
-//         img: '/img/products/product-5.jpg',
-//         imgList: [
-//             {
-//                 id: '16-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-5.jpg',
-//             },
-//         ],
-//         category: 'bags',
-//         price: 70,
-//         stock: 0,
-//         status: 2,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Adidas',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-//     },
-//     {
-//         id: '17',
-//         name: 'White Sneaker',
-//         productCode: 'BIS-017',
-//         img: '/img/products/product-6.jpg',
-//         imgList: [
-//             {
-//                 id: '17-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-6.jpg',
-//             },
-//         ],
-//         category: 'shoes',
-//         price: 29,
-//         stock: 18,
-//         status: 0,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Adidas',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-//     },
-//     {
-//         id: '18',
-//         name: 'Strip Analog Watch',
-//         productCode: 'BIS-018',
-//         img: '/img/products/product-7.jpg',
-//         imgList: [
-//             {
-//                 id: '18-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-7.jpg',
-//             },
-//         ],
-//         category: 'watches',
-//         price: 389,
-//         stock: 7,
-//         status: 1,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Adidas',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-//     },
-//     {
-//         id: '19',
-//         name: 'Beats Solo Headphone',
-//         productCode: 'BIS-019',
-//         img: '/img/products/product-8.jpg',
-//         imgList: [
-//             {
-//                 id: '19-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-8.jpg',
-//             },
-//         ],
-//         category: 'devices',
-//         price: 869,
-//         stock: 0,
-//         status: 2,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Beat',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-//     },
-//     {
-//         id: '20',
-//         name: 'Apple Macbook Pro',
-//         productCode: 'BIS-020',
-//         img: '/img/products/product-9.jpg',
-//         imgList: [
-//             {
-//                 id: '20-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-9.jpg',
-//             },
-//         ],
-//         category: 'devices',
-//         price: 1599,
-//         stock: 27,
-//         status: 0,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Apple',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-//     },
-//     {
-//         id: '21',
-//         name: 'Bronze Analog Watch',
-//         productCode: 'BIS-021',
-//         img: '/img/products/product-10.jpg',
-//         imgList: [
-//             {
-//                 id: '21-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-10.jpg',
-//             },
-//         ],
-//         category: 'watches',
-//         price: 729,
-//         stock: 6,
-//         status: 1,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Seiko',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-//     },
-//     {
-//         id: '22',
-//         name: 'Apple Watch',
-//         productCode: 'BIS-022',
-//         img: '/img/products/product-11.jpg',
-//         imgList: [
-//             {
-//                 id: '22-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-11.jpg',
-//             },
-//         ],
-//         category: 'devices',
-//         price: 388,
-//         stock: 51,
-//         status: 0,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Apple',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-//     },
-//     {
-//         id: '23',
-//         name: 'Antique Analog Watch',
-//         productCode: 'BIS-023',
-//         img: '/img/products/product-12.jpg',
-//         imgList: [
-//             {
-//                 id: '23-img-0',
-//                 name: 'image-1',
-//                 img: '/img/products/product-12.jpg',
-//             },
-//         ],
-//         category: 'watches',
-//         price: 599,
-//         stock: 30,
-//         status: 0,
-//         costPerItem: 12,
-//         bulkDiscountPrice: 68,
-//         taxRate: 6,
-//         tags: ['trend', 'unisex'],
-//         brand: 'Seiko',
-//         vendor: 'WindForce co, Ltd',
-//         description:
-//             '<p>Make a brew a right royal knees up and we all like figgy pudding a comely wench gutted its nicked pulled out the eating irons, ask your mother if on goggle box toad in the whole Sherlock rather, ar kid pennyboy naff superb pezzy little. </p><br/><ul><li>Scally utter shambles blighty squirrel numbskull rumpy pumpy apple and pears bow ties are cool</li><li>pompous nosh have a butcher at this flabbergasted a right toff black cab jolly good made a pigs ear of it</li><li>Roast beef conked him one on the nose had a barney with the inlaws beefeater is she avin a laugh supper, gobsmacked argy-bargy challenge you to a duel</li><li>whizz air one dirty linen chav not some sort of dosshouse.</li></ul>',
-//     },
-// ]
+//   ];
 
 export const ordersData = [
     {
@@ -669,7 +346,7 @@ for (let i = 0; i < ordersData.length; i++) {
     ordersData[i].quantity = quantity[i % quantity.length];
 }
 
-console.log(ordersData);
+
 
 
 

@@ -148,7 +148,7 @@ const Customers = () => {
         () => [
             {
                 header: 'Name',
-                accessorKey: 'project_name',
+                accessorKey: 'name',
                 // cell: (props) => {
                 //     const row = props.row.original
                 //     return <NameColumn row={row} />
@@ -156,40 +156,40 @@ const Customers = () => {
             },
             {
                 header: 'Client Name',
-                accessorKey: 'client_name',
-                cell: (props) => {
-                    const row = props.row.original;
-                    const client = row.client[0]; // Assuming there's only one client for each project
-                    return (
-                        <span>
-                            {client.client_name}</span>
+                accessorKey: 'email',
+                // cell: (props) => {
+                //     const row = props.row.original;
+                //     const client = row.client[0]; // Assuming there's only one client for each project
+                //     return (
+                //         <span>
+                //             {client.client_name}</span>
                     
-                    );
-                },
+                //     );
+                // },
             },
-            {
-                header: 'Status',
-                accessorKey: 'project_status',
-            },
-            {
-                header: 'Date',
-                accessorKey: 'timeline_date',
-                cell: (props) => {
-                    const row = props.row.original;
-                    const date = new Date(row.timeline_date);
-                    const formattedDate = date.toISOString().split('T')[0];
-                    return formattedDate;
-                },
-            },
-            {
-                header: 'Project Type',
-                accessorKey: 'project_type',
-               },
-            {
-                header: '',
-                id: 'action',
-                cell: (props) => <ActionColumn row={props.row.original} />,
-            },
+            // {
+            //     header: 'Status',
+            //     accessorKey: 'project_status',
+            // },
+            // {
+            //     header: 'Date',
+            //     accessorKey: 'timeline_date',
+            //     // cell: (props) => {
+            //     //     const row = props.row.original;
+            //     //     const date = new Date(row.timeline_date);
+            //     //     const formattedDate = date.toISOString().split('T')[0];
+            //     //     return formattedDate;
+            //     // },
+            // },
+            // {
+            //     header: 'Project Type',
+            //     accessorKey: 'project_type',
+            //    },
+            // {
+            //     header: '',
+            //     id: 'action',
+            //     cell: (props) => <ActionColumn row={props.row.original} />,
+            // },
         ],
         []
     )
@@ -238,7 +238,7 @@ const Customers = () => {
         <>
             <DataTable
                 columns={columns}
-                data={projects}
+                data={data}
                 skeletonAvatarColumns={[0]}
                 skeletonAvatarProps={{ width: 28, height: 28 }}
                 
