@@ -63,8 +63,9 @@ export type Customer = {
     location:string
     status:string
     source:string
-    notes: Notes
+    notes: string[]
 }
+export 
 
 type GetCrmCustomerDetailsResponse = Customer & {
     orderHistory?: OrderHistory[]

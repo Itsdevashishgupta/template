@@ -49,26 +49,6 @@ const inventoryStatusColor: Record<
 }
 
 const ActionColumn = ({ row }: { row: Product }) => {
-    const [leads, setLeads] = useState<any[]>([]);
-
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/'); // Replace with your actual API endpoint
-           
-           
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-  
-          const jsonData = await response.json();
-          setLeads(jsonData.data);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-      fetchData();
-    }, []);
     const dispatch = useAppDispatch()
     const { textTheme } = useThemeClass()
     const navigate = useNavigate()

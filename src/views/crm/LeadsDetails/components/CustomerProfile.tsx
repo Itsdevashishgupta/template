@@ -6,6 +6,7 @@ import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
 import ConfirmDialog from '@/components/shared/ConfirmDialog'
 import dayjs from 'dayjs'
+import type { MouseEvent } from 'react'
 import {
     FaFacebookF,
     FaTwitter,
@@ -21,7 +22,7 @@ import {
     Customer,
 } from '../store'
 import EditCustomerProfile from './EditCustomerProfile'
-import { FormItem, Input } from '@/components/ui'
+import { Dialog, FormItem, Input } from '@/components/ui'
 
 import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
 import { Field, FieldProps, FormikProvider, useFormik } from 'formik'
@@ -29,6 +30,7 @@ import { RichTextEditor } from '@/components/shared'
 import axios, { AxiosResponse } from 'axios'
 import { log } from 'console'
 import { MenuItem, OutlinedInput, Select, useTheme,Theme, SelectChangeEvent, FormControl, InputLabel } from '@mui/material'
+import { values } from 'lodash'
 
 
 type CustomerInfoFieldProps = {
@@ -130,27 +132,18 @@ const CustomerProfileAction = ({ id }: { id?: string }) => {
     )
 }
 
+
+
+
+
 const CustomerProfile = ({myParam}) => {
     const [datas, setData] = useState<InitialData | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Make a GET request to your API endpoint to fetch data
-        
-        
-        // const urlParams = new URLSearchParams(window.location.search);
-        // const myParam = urlParams.get('id');
         console.log(myParam);
-        
-  
         const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getsingle/lead/?lead_id=${myParam}`);
-        
-        
-        // Update the state with the fetched data
-        
-        
- 
         const jsonData = await response.json();
         setData(jsonData)
         
@@ -161,7 +154,8 @@ const CustomerProfile = ({myParam}) => {
 
 
     
-    // Call the fetchData function when the component mounts
+    
+    // Form data
     fetchData();
 }, []);
     const leadStatus = [
@@ -172,12 +166,9 @@ const CustomerProfile = ({myParam}) => {
     ]
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     
-    
-    
-    
     const formik = useFormik({
         initialValues: {
-          lead_id:'' ,
+          lead_id:'797856' ,
           status:"",
           date:"",
           content:"",
@@ -209,7 +200,6 @@ const CustomerProfile = ({myParam}) => {
           }
         },
       });
-      console.log(formik.values.date);
       
       const exampleDate:Date=new Date();
      const formattedDateTimeString: string = dayjs(exampleDate).format('MM/DD/YYYY HH:mm:ss');
@@ -226,18 +216,6 @@ const CustomerProfile = ({myParam}) => {
        },
      };
      
-     const names = [
-       'Oliver Hansen',
-       'Van Henry',
-       'April Tucker',
-       'Ralph Hubbard',
-       'Omar Alexander',
-       'Carlos Abbott',
-       'Miriam Wagner',
-       'Bradley Wilkerson',
-       'Virginia Andrews',
-       'Kelly Snyder',
-     ];
      
      function getStyles(name: string, personName: string[], theme: Theme) {
        return {
@@ -261,8 +239,61 @@ const CustomerProfile = ({myParam}) => {
          typeof value === 'string' ? value.split(',') : value,
        );
      }
+
+     
  
-// console.log(datas.data[0].name);
+// view Last Update
+
+const [update, setUpdate] = useState<InitialData | null>(null);
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      console.log(myParam);
+
+      const response = await axios.get('https://col-u3yp.onrender.com/v1/api/admin/getsingle/lead/?lead_id=797856');
+      
+      // Assuming your API response has a structure like { data: [{ notes: ... }] }
+      const jsonData = response.data;
+
+      console.log(jsonData.data);
+
+      setUpdate(jsonData);
+      console.log(customer);
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+ 
+  
+  
+
+  // Form data
+  fetchData();
+}, [update]);
+
+
+
+
+const [dialogIsOpen, setIsOpen] = useState(false)
+
+const openDialog = () => {
+    setIsOpen(true)
+}
+
+const onDialogClose = (e: MouseEvent) => {
+    console.log('onDialogClose', e)
+    setIsOpen(false)
+}
+
+const onDialogOk = (e: MouseEvent) => {
+    console.log('onDialogOk', e)
+    setIsOpen(false)
+}
+
+
 
     
     return (
@@ -275,13 +306,34 @@ const CustomerProfile = ({myParam}) => {
                 <CustomerInfoField
                         title="Name"
                         // value={datas.data[0].name}
+                        value={update?.data.notes[0]}
                       
                     />
                     <CustomerInfoField
                         title="Email"
                       
                     />
-                  
+                     <Dialog
+                isOpen={dialogIsOpen}
+                onClose={onDialogClose}
+                onRequestClose={onDialogClose}
+            >
+               <ul>
+              
+            </ul>
+                <div className="text-right mt-6">
+                    <Button
+                        className="ltr:mr-2 rtl:ml-2"
+                        variant="plain"
+                        onClick={onDialogClose}
+                    >
+                        Cancel
+                    </Button>
+                    <Button variant="solid" onClick={onDialogOk}>
+                        Okay
+                    </Button>
+                </div>
+            </Dialog>
             
  
                 </div>
@@ -291,25 +343,27 @@ const CustomerProfile = ({myParam}) => {
             </div>
         </Card>
         <Card>
+
+        <div className=' flex justify-between items-center '>
+
+<h5>Actions</h5> 
+<div>
+
+<Button
+  
+  // icon={<HiPencilAlt />}
+  variant="solid"
+  onClick={() => openDialog()}
+>
+  View Last Updates
+</Button>
+</div>
+</div>
         <form onSubmit={formik.handleSubmit}>
                
                <FormikProvider value={formik}>
         <div className="flex flex-col xl:justify-between h-full 2xl:min-w-[360px] mx-auto">
-              <div className=' flex justify-between items-center '>
-
-              <h5>Actions</h5> 
-            <div>
-
-            <Button
-                block
-                // icon={<HiPencilAlt />}
-                variant="solid"
-                
-            >
-                View Last Updates
-            </Button>
-            </div>
-            </div>
+              
 
              
               <div className="grid grid-cols-3 sm:grid-cols-2 xl:grid-cols-3 gap-y-7 gap-x-6 mt-8">
@@ -373,6 +427,7 @@ const CustomerProfile = ({myParam}) => {
                 block
                 // icon={<HiPencilAlt />}
                 variant="solid"
+                type='submit'
                 
             >
                 Submit
