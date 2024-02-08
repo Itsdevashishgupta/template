@@ -14,7 +14,7 @@ import {
     FaPinterestP,
 } from 'react-icons/fa'
 import { HiPencilAlt, HiOutlineTrash } from 'react-icons/hi'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
     deleteCustomer,
     openEditCustomerDetailDialog,
@@ -131,33 +131,47 @@ const CustomerProfileAction = ({ id }: { id?: string }) => {
         </>
     )
 }
+interface CustomerProfilePropss {
+  data: {
+    // Define the structure of the data object here
+    _id: string;
+    name: string;
+    lead_id: string;
+    email: string;
+    phone: string;
+    location: string;
+    status: string;
+    source: string;
+    date: string;
+    notes?: Note[]; // Make notes optional
+    createdAt: string;
+    __v: number;
+    // Add other properties as needed
+  };
+}
+interface Note {
+  _id: string;
+  content: string;
+  createdBy: string;
+  date: string;
+  status: string;
+}
 
 
 
 
+const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
 
-const CustomerProfile = ({myParam}) => {
     const [datas, setData] = useState<InitialData | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log(myParam);
-        const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getsingle/lead/?lead_id=${myParam}`);
-        const jsonData = await response.json();
-        setData(jsonData)
-        
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+  
+    
 
 
+  
     
     
-    // Form data
-    fetchData();
-}, []);
+  
     const leadStatus = [
         { value: 'followUp', label: 'Follow Up' },
         { value: 'interested', label: 'Interested' },
@@ -165,41 +179,49 @@ const CustomerProfile = ({myParam}) => {
         { value: 'noResponse', label: 'No Response' },
     ]
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
+    // const urlParams = new URLSearchParams(window.location.search);
+    // let myParam = urlParams.get('id');
+    // console.log(typeof(myParam));
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const myParam = queryParams.get('id') || '';
+   
     
+  
+
     const formik = useFormik({
-        initialValues: {
-          lead_id:'797856' ,
-          status:"",
-          date:"",
-          content:"",
-          createdBy:"Devashish"
-          
-          
-        },
-        onSubmit: async (values,formikHelpers) => {
-          try {
-            // Make a POST request to your API endpoint
-            console.log(values);
-            console.log(values);
-            
-            setShowSuccessMessage(true);
-            formikHelpers.setSubmitting(false);
-            formikHelpers.resetForm();
-            setTimeout(() => {
-              setShowSuccessMessage(false);
-              
-            }, 2000);
-           console.log("hello");
-           
-            const response = await axios.put('https://col-u3yp.onrender.com/v1/api/admin/update/lead/', values);
-            
-           
-            
-          } catch (error) {
-            console.error('Error submitting form:', error);
-          }
-        },
-      });
+      initialValues: {
+        lead_id: myParam,
+        status: "",
+        date: "",
+        content: "",
+        createdBy: "Devashish",
+      },
+      onSubmit: async (values, formikHelpers) => {
+        try {
+          // Make a POST request to your API endpoint
+          setShowSuccessMessage(true);
+          formikHelpers.setSubmitting(false);
+          formikHelpers.resetForm();
+          setTimeout(() => {
+            setShowSuccessMessage(false);
+          }, 2000);
+    
+          const response = await axios.put('https://col-u3yp.onrender.com/v1/api/admin/update/lead/', values);
+    
+          // console.log("API Response:", response.data); // Log the response data to the console
+    
+          console.log("hello");
+    
+          // You can further handle the response data as needed
+    
+        } catch (error) {
+          console.error('Error submitting form:', error);
+          setShowErrorMessage(true);
+        }
+      },
+    });
       
       const exampleDate:Date=new Date();
      const formattedDateTimeString: string = dayjs(exampleDate).format('MM/DD/YYYY HH:mm:ss');
@@ -244,39 +266,6 @@ const CustomerProfile = ({myParam}) => {
  
 // view Last Update
 
-const [update, setUpdate] = useState<InitialData | null>(null);
-
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      console.log(myParam);
-
-      const response = await axios.get('https://col-u3yp.onrender.com/v1/api/admin/getsingle/lead/?lead_id=797856');
-      
-      // Assuming your API response has a structure like { data: [{ notes: ... }] }
-      const jsonData = response.data;
-
-      console.log(jsonData.data);
-
-      setUpdate(jsonData);
-      console.log(customer);
-
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
- 
-  
-  
-
-  // Form data
-  fetchData();
-}, [update]);
-
-
-
-
 const [dialogIsOpen, setIsOpen] = useState(false)
 
 const openDialog = () => {
@@ -295,6 +284,8 @@ const onDialogOk = (e: MouseEvent) => {
 
 
 
+
+
     
     return (
         <div className=' flex flex-col gap-3'>
@@ -306,33 +297,57 @@ const onDialogOk = (e: MouseEvent) => {
                 <CustomerInfoField
                         title="Name"
                         // value={datas.data[0].name}
-                        value={update?.data.notes[0]}
+                        value={data?.name}
+                        
                       
                     />
                     <CustomerInfoField
                         title="Email"
+                        value={data?.email}
+                      
+                    />
+                    <CustomerInfoField
+                        title="Location"
+                        value={data?.location}
+                      
+                    />
+                    <CustomerInfoField
+                        title="Status"
+                        value={data?.status}
+                      
+                    />
+                    <CustomerInfoField
+                        title="Source"
+                        value={data?.source}
                       
                     />
                      <Dialog
                 isOpen={dialogIsOpen}
                 onClose={onDialogClose}
                 onRequestClose={onDialogClose}
+                width={1000}
+                height={490}
             >
-               <ul>
-              
-            </ul>
-                <div className="text-right mt-6">
-                    <Button
-                        className="ltr:mr-2 rtl:ml-2"
-                        variant="plain"
-                        onClick={onDialogClose}
-                    >
-                        Cancel
-                    </Button>
-                    <Button variant="solid" onClick={onDialogOk}>
-                        Okay
-                    </Button>
-                </div>
+              <div style={{ maxHeight: '400px', overflowY: 'auto', marginRight:"2%", marginLeft:"1%"  }} className='scrollbar-hide  whitespace-nowrap'>
+        {data?.notes?.map((note) => (
+          <div key={note._id} className='mb-4 mr-4'>
+            <Card>
+              <div className='flex flex-row justify-between items-center mb-4 '>
+                <CustomerInfoField title="Date" value={note.date} />
+                <CustomerInfoField title="Status" value={note.status} />
+              </div>
+              <CustomerInfoField title="Description" value={note.content} />
+            </Card>
+            
+          </div>
+        ))}
+        <div className="text-right mt-6 mb-4 mr-[2%]">
+        <Button variant="solid" onClick={onDialogOk}>
+          Okay
+        </Button>
+      </div>
+      </div>
+      
             </Dialog>
             
  
@@ -442,6 +457,11 @@ const onDialogOk = (e: MouseEvent) => {
         <ConfirmDialog isOpen={showSuccessMessage} type="success" title="Success" onClose={() => setShowSuccessMessage(false)}>
           <p>Data added successfully!</p>
         </ConfirmDialog>
+      )}
+       {showErrorMessage && (
+        <Notification title={'Submission Error'} type='error'>
+          Error submitting data. Please try again.
+        </Notification>
       )}
         </div>
 

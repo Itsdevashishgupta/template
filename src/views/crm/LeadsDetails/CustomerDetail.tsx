@@ -19,6 +19,8 @@ import TabNav from '@/components/ui/Tabs/TabNav'
 import TabContent from '@/components/ui/Tabs/TabContent'
 import PersonalInfoForm from '../CustomerForm/PersonalInfoForm'
 import { log } from 'console'
+import { useParams } from 'react-router-dom'
+import { fetchDetails } from '../services/api'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -45,28 +47,7 @@ const CustomerDetail = () => {
             dispatch(getCustomer({ id }))
         }
     }
-    const [projects, setprojects] = useState<any[]>([]);
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c'); // Replace with your actual API endpoint
-  
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-  
-          const jsonData = await response.json();
-          console.log(jsonData.data.projects);
-          
-          setprojects(jsonData.data.projects);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-  
-      fetchData();
-    }, []);
     
   
     
@@ -75,23 +56,45 @@ const CustomerDetail = () => {
     console.log(typeof(myParam));
      // Replace with your actual lead_id value
     console.log(myParam);
+    const { id } = useParams<{ id: string }>();
+    const [details, setDetails] = useState<any | null>(null);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getsingle/lead/?lead_id=${myParam}`);
+                const data = await response.json();
+                setDetails(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
 
-    return (
-        <Container className="h-full">
-         <CustomerProfile myParam={myParam}/>
-         
-                <div className="h-full flex flex-col items-center justify-center">
-                    <DoubleSidedImage
-                        src="/img/others/img-2.png"
-                        darkModeSrc="/img/others/img-2-dark.png"
-                        alt="No user found!"
-                    />
-                    <h3 className="mt-8">No user found!</h3>
-                </div>
-            
-        </Container>
-    )
-}
+        fetchData();
+    }, [myParam]);
+
+    // Check if details is not null and if details.data is an array with at least one element
+    const lead = details?.data?.[0];
+    console.log(lead);
+    
+    
+    // Only proceed if lead is not null
+    if (lead) {
+        const name = lead.name;
+        const email = lead.email;
+        const id=lead.lead_id
+        
+        // You can use name and email as needed in your component
+    }
+
+      return (
+          <Container className="h-full">
+              <CustomerProfile data={lead} />
+              {/* Other components or logic related to the customer detail */}
+          </Container>
+      );
+ 
+};
+
 
 export default CustomerDetail

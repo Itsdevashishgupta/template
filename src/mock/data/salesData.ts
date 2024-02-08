@@ -12,19 +12,7 @@ interface Lead {
   // Add other properties based on the API response
 }
 
-export const fetchLeads = async (): Promise<Lead[]> => {
-  const apiUrl = 'https://col-u3yp.onrender.com/v1/api/admin/getall/lead/';
 
-  try {
-    const response: AxiosResponse<Lead[]> = await axios.get(apiUrl);
-    return response.data;
-    console.log(response.data);
-    
-  } catch (error) {
-    console.error('Axios error:', error.message);
-    throw error;
-  }
-};
 
 export const salesDashboardData = {
     statisticData: {

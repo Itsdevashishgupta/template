@@ -122,7 +122,7 @@ const appsRoute: Routes = [
     {
         key: 'appsSales.orderList',
         path: `${APP_PREFIX_PATH}/sales/order-list`,
-        component: lazy(() => import('@/views/sales/OrderList')),
+        component: lazy(() => import('@/views/crm/Inventory')),
         authority: [ADMIN, USER],
     },
     {
@@ -134,7 +134,7 @@ const appsRoute: Routes = [
     {
         key: 'appsSales.productList',
         path: `${APP_PREFIX_PATH}/leads`,
-        component: lazy(() => import('@/views/sales/ProductList')),
+        component: lazy(() => import('@/views/crm/LeadList')),
         authority: [ADMIN, USER],
     },
     {
@@ -173,7 +173,7 @@ const appsRoute: Routes = [
     {
         key: 'appsSales.orderList',
         path: `${APP_PREFIX_PATH}/sales/order-list`,
-        component: lazy(() => import('@/views/sales/OrderList')),
+        component: lazy(() => import('@/views/crm/Inventory')),
         authority: [ADMIN, USER],
     },
     {

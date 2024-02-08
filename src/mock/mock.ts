@@ -13,7 +13,7 @@ import {
     productsData,
     ordersData,
     orderDetailsData,
-    salesDashboardData,fetchLeads
+    salesDashboardData
 } from './data/salesData'
 import {
     portfolioData,
@@ -67,7 +67,7 @@ export function mockServer({ environment = 'test' }) {
                 productsData,
                 ordersData,
                 orderDetailsData,
-                fetchLeads,
+                
                 settingData,
                 settingIntergrationData,
                 settingBillingData,

@@ -22,7 +22,7 @@ import type {
     ColumnDef,
 } from '@/components/shared/DataTable'
 
-import { fetchLeads } from '@/mock/data/salesData'
+
 const inventoryStatusColor: Record<
     string,
     {
@@ -63,19 +63,7 @@ const ActionColumn = ({ row }: { row: Product }) => {
         dispatch(setSelectedProduct(row.id))
     }
 
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const leadsData = await fetchLeads();
-           
-            // Handle and use the leadsData in your component
-          } catch (error) {
-            // Handle errors if needed
-          }
-        };
-    
-        fetchData();
-      }, []);
+  
     
 
     return (
@@ -86,30 +74,17 @@ const ActionColumn = ({ row }: { row: Product }) => {
             >
                 <HiOutlineEye />
             </span>
-            <span
+            {/* <span
                 className="cursor-pointer p-2 hover:text-red-500"
                 onClick={onDelete}
             >
                 <HiOutlineTrash />
-            </span>
+            </span> */}
         </div>
     )
 }
 
-const ProductColumn = ({ row }: { row: Product }) => {
-    const avatar = row.img ? (
-        <Avatar src={row.img} />
-    ) : (
-        <Avatar icon={<FiPackage />} />
-    )
 
-    return (
-        <div className="flex items-center">
-            {/* {avatar} */}
-            <span className={`ml-2 rtl:mr-2 font-semibold`}>{row.name}</span>
-        </div>
-    )
-}
 
 const ProductTable = () => {
     const tableRef = useRef<DataTableResetHandle>(null)
@@ -151,31 +126,13 @@ const ProductTable = () => {
     const fetchData = () => {
         dispatch(getProducts({ pageIndex, pageSize, sort, query, filterData }))
     }
-    const NameColumn = ({ row }: { row: Product }) => {
-        const { textTheme } = useThemeClass()
-    
-        return (
-            <div className="flex items-center">
-                <Avatar size={28} shape="circle" src={row.img} />
-                <Link
-                    className={`hover:${textTheme} ml-2 rtl:mr-2 font-semibold`}
-                    to={`/app/crm/customer-details?lead_id=${row.lead_id}`}
-                >
-                    {row.name}
-                </Link>
-            </div>
-        )
-    }
-
+ 
     const columns: ColumnDef<Product>[] = useMemo(
         () => [
             {
                 header: 'Name',
                 accessorKey: 'name',
-                cell: (props) => {
-                    const row = props.row.original
-                    return <NameColumn row={row} />
-                },
+               
             },
             {
                 header: 'Email',
@@ -188,12 +145,12 @@ const ProductTable = () => {
             {
                 header: 'Lead Date',
                 accessorKey: 'createdAt',
-                // cell: (props) => {
-                //     const row = props.row.original;
-                //     const date = new Date(row.createdAt);
-                //     const formattedDate = date.toISOString().split('T')[0];
-                //     return formattedDate;
-                // },
+                cell: (props) => {
+                    const row = props.row.original;
+                    const date = new Date(row.createdAt);
+                    const formattedDate = date.toISOString().split('T')[0];
+                    return formattedDate;
+                },
             },
             {
                 header: 'Status',
@@ -249,32 +206,6 @@ const ProductTable = () => {
         dispatch(setTableData(newTableData))
     }
 
-
-
-    const [leads, setLeads] = useState<any[]>([]);
-
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/'); // Replace with your actual API endpoint
-           
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-  
-          const jsonData = await response.json();
-          setLeads(jsonData.data);
-          data=jsonData;
-          console.log(data);
-          
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-      fetchData();
-    }, []);
-  
-    
    
     return (
         <>
