@@ -141,7 +141,16 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
             //   setShowSuccessMessage(false);
             //   navigate('/app/leads')
             // }, 2000);
+<<<<<<< Updated upstream
           
+=======
+            formik.initialValues.email='';
+            await axios.post('https://col-u3yp.onrender.com/v1/api/admin/create/lead/', values).then((response) => {
+console.log(response);
+            });
+           
+           
+>>>>>>> Stashed changes
             
               navigate(-1) 
             // formik.initialValues.email='';

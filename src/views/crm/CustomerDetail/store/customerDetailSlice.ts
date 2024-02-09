@@ -19,12 +19,12 @@ type PersonalInfo = {
 }
 
 export type OrderHistory = {
-    id: string
-    item: string
-    status: string
+    mom_id: string
+    meetingdate: string
+    source: string
     amount: number
     date: number
-    source:string
+    
     momid:string
 }
 export type Notes = {
@@ -57,14 +57,16 @@ export type Subscription = {
 
 export type Customer = {
     _id: string
-    name: string
-    lead_id:string
-    email:string
-    phone:string
-    location:string
-    status:string
-    source:string
+    project_name: string
+    project_id:string
+    project_type:string
+    project_status:string
+    project_start_date:string
+    timeline_date:string
+    project_budget:string
+    description:string
     notes: Notes
+    
 }
 
 type GetCrmCustomerDetailsResponse = Customer & {

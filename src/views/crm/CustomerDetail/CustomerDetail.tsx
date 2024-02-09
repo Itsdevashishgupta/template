@@ -18,6 +18,9 @@ import TabList from '@/components/ui/Tabs/TabList'
 import TabNav from '@/components/ui/Tabs/TabNav'
 import TabContent from '@/components/ui/Tabs/TabContent'
 import PersonalInfoForm from '../CustomerForm/PersonalInfoForm'
+import { log } from 'console'
+import { useLocation, useParams } from 'react-router-dom'
+import { fetchDetails } from '../services/api'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -27,7 +30,7 @@ const CustomerDetail = () => {
     const query = useQuery()
 
     const data = useAppSelector(
-        (state) => state.crmCustomerDetails.data.profileData
+        (state) => state.crmCustomerDetails
     )
     const loading = useAppSelector(
         (state) => state.crmCustomerDetails.data.loading
@@ -44,80 +47,77 @@ const CustomerDetail = () => {
             dispatch(getCustomer({ id }))
         }
     }
-    const [projects, setprojects] = useState<any[]>([]);
+
+    
+  
+    
+    interface QueryParams {
+        id: string;
+        project_id: string;
+      
+      }
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    
+    // Create an object to store and map the query parameters
+    const allQueryParams: QueryParams = {
+      id: queryParams.get('id') || '',
+      project_id: queryParams.get('project_id') || '',
+
+    };
+    console.log(allQueryParams.id);
+    console.log(allQueryParams.project_id);
+    
+    const [details, setDetails] = useState<any | null>(null);
 
     useEffect(() => {
-      const fetchData = async () => {
-        try {
-            const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c',);
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-  
-          const jsonData = await response.json();
-          console.log(jsonData.data.projects);
-          
-          setprojects(jsonData.data.projects);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-  
-      fetchData();
-    }, []);
-    console.log(data);
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getsingle/project/?project_id=${allQueryParams.project_id}&id=${allQueryParams.id}`);
+                const data = await response.json();
+                setDetails(data.data[0]);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [allQueryParams.id]);
+
+    // Check if details is not null and if details.data is an array with at least one element
+    const lead = details
+    console.log(lead);
     
+    
+    // Only proceed if lead is not null
+   
 
-    return (
-        <Container className="h-full">
-            <Loading loading={loading}>
-                {!isEmpty(data) && (
-                    <div className="flex flex-col xl:flex-col gap-4">
-                       
-                        <div className="w-full">
-                            <AdaptableCard>
-                                {/* <CurrentSubscription /> */}
+      return (
+        <div>
+        <Tabs defaultValue="tab1">
+            <TabList>
+                <TabNav value="tab1">Details</TabNav>
+                <TabNav value="tab2">Quotation</TabNav>
+                <TabNav value="tab3">MOM</TabNav>
+            </TabList>
+            <div className="p-4">
+                <TabContent value="tab1">
+                    <Container>
+                        <CustomerProfile data={details}/>
+                    </Container>
+                </TabContent>
+                <TabContent value="tab2">
+                   <PaymentHistory/>
+                </TabContent>
+                <TabContent value="tab3">
+                  <MOM/>
+                </TabContent>
+            </div>
+        </Tabs>
+    </div>
+      );
+ 
+};
 
-                                <Tabs defaultValue="details">
-                            <TabList>
-                                
-                                <TabNav value="details">
-                                    Details
-                                </TabNav>
-                                <TabNav value="personalInfo">
-                                    Quotation
-                                </TabNav>
-                                <TabNav value="social">Minutes Of Meeting</TabNav>
-                            </TabList>
-                            <div className="p-6">
-                                <TabContent value="details">
-                                   <CustomerProfile data={data}/>
-                                </TabContent>
-                                <TabContent value="personalInfo">
-                                   <PaymentHistory/>
-                                </TabContent>
-                                <TabContent value="social">
-                                   <MOM/>
-                                </TabContent>
-                            </div>
-                        </Tabs>
-                            </AdaptableCard>
-                        </div>
-                    </div>
-                )}
-            </Loading>
-            {!loading && isEmpty(data) && (
-                <div className="h-full flex flex-col items-center justify-center">
-                    <DoubleSidedImage
-                        src="/img/others/img-2.png"
-                        darkModeSrc="/img/others/img-2-dark.png"
-                        alt="No user found!"
-                    />
-                    <h3 className="mt-8">No user found!</h3>
-                </div>
-            )}
-        </Container>
-    )
-}
 
 export default CustomerDetail

@@ -13,50 +13,50 @@ import {
 } from '../store'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import CustomerEditDialog from './CustomerEditDialog'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import cloneDeep from 'lodash/cloneDeep'
 import type { OnSortParam, ColumnDef } from '@/components/shared/DataTable'
+import { HiOutlineEye } from 'react-icons/hi'
 
 const statusColor: Record<string, string> = {
-    active: 'bg-emerald-500',
+    FollowUp: 'bg-emerald-500',
     blocked: 'bg-red-500',
 }
 
-const ActionColumn = ({ row }: { row: Customer }) => {
-    const { textTheme } = useThemeClass()
-    const dispatch = useAppDispatch()
 
-    const onEdit = () => {
-        dispatch(setDrawerOpen())
-        dispatch(setSelectedCustomer(row))
-    }
+    const ActionColumn = ({ row }: { row: Customer }) => {
+        const dispatch = useAppDispatch()
+        const { textTheme } = useThemeClass()
+        const navigate = useNavigate()
+    
+        const onEdit = () => {
+    navigate(`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c`)
 
-    return (
-        <div
-            className={`${textTheme} cursor-pointer select-none font-semibold`}
-            onClick={onEdit}
-        >
-            Edit
-        </div>
-    )
+    
+   
+        }
+
+  
+        return (
+            <div className="flex justify-end text-lg">
+                <span
+                    className={`cursor-pointer p-2 hover:${textTheme}`}
+                    onClick={onEdit}
+                >
+                    <HiOutlineEye />
+                </span>
+                {/* <span
+                    className="cursor-pointer p-2 hover:text-red-500"
+                    onClick={onDelete}
+                >
+                    <HiOutlineTrash />
+                </span> */}
+            </div>
+        )
 }
 
-const NameColumn = ({ row }: { row: Customer }) => {
-    const { textTheme } = useThemeClass()
 
-    return (
-        <div className="flex items-center">
-            <Avatar size={28} shape="circle" src={row.img} />
-            <Link
-                className={`hover:${textTheme} ml-2 rtl:mr-2 font-semibold`}
-                to={`/app/crm/customer-details?id=${row.id}`}
-            >
-                {row.name}
-            </Link>
-        </div>
-    )
-}
 
 const Customers = () => {
     const dispatch = useAppDispatch()
@@ -86,43 +86,39 @@ const Customers = () => {
     const columns: ColumnDef<Customer>[] = useMemo(
         () => [
             {
-                header: 'Name',
-                accessorKey: 'name',
-                cell: (props) => {
-                    const row = props.row.original
-                    return <NameColumn row={row} />
-                },
+                header: 'Project Name',
+                accessorKey: 'project_name',
+               
             },
             {
-                header: 'Email',
-                accessorKey: 'email',
+                header: 'Ptoject Type',
+                accessorKey: 'project_type',
             },
             {
                 header: 'Status',
-                accessorKey: 'status',
+                accessorKey: 'project_status',
                 cell: (props) => {
                     const row = props.row.original
                     return (
                         <div className="flex items-center">
-                            <Badge className={statusColor[row.status]} />
+                            <Badge className={statusColor[row.project_status]} />
                             <span className="ml-2 rtl:mr-2 capitalize">
-                                {row.status}
+                                {row.project_status}
                             </span>
                         </div>
                     )
                 },
             },
             {
-                header: 'Last online',
-                accessorKey: 'lastOnline',
+                header: 'Timeline',
+                accessorKey: 'timeline_date',
                 cell: (props) => {
-                    const row = props.row.original
-                    return (
-                        <div className="flex items-center">
-                            {dayjs.unix(row.lastOnline).format('MM/DD/YYYY')}
-                        </div>
-                    )
+                    const row = props.row.original;
+                    const date = new Date(row.timeline_date);
+                    const formattedDate = date.toISOString().split('T')[0];
+                    return formattedDate;
                 },
+                
             },
             {
                 header: '',

@@ -84,6 +84,16 @@ const appsRoute: Routes = [
     },
     {
         key: 'appsCrm.mail',
+        path: `${APP_PREFIX_PATH}/crm/projectform`,
+        component: lazy(() => import('@/views/sales/ProductForm')),
+        authority: [ADMIN, USER],
+        meta: {
+            pageContainerType: 'gutterless',
+            footer: false,
+        },
+    },
+    {
+        key: 'appsCrm.mail',
         path: `${APP_PREFIX_PATH}/crm/mail/:category`,
         component: lazy(() => import('@/views/crm/Mail')),
         authority: [ADMIN, USER],

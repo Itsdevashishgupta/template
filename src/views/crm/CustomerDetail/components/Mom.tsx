@@ -76,7 +76,7 @@ const ActionColumn = ({ row }: { row: Order }) => {
 }
 
 const columns = [
-    columnHelper.accessor('id', {
+    columnHelper.accessor('mom_id', {
         header: 'MOMId',
         // cell: (props) => {
         //     const row = props.row.original

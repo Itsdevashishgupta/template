@@ -187,6 +187,13 @@ export const searchQueryPoolData = [
         categoryTitle: 'Apps',
     },
     {
+        title: 'Sales Dashboard',
+        url: '/app/crm/projectform',
+        icon: 'sales',
+        category: 'Sales',
+        categoryTitle: 'Apps',
+    },
+    {
         title: 'Product List',
         url: '/app/leads',
         icon: 'sales',

@@ -106,7 +106,7 @@ const CustomerProfileAction = ({ id }: { id?: string }) => {
     )
 }
 
-const CustomerProfile = ({ data = {} }: CustomerProfileProps) => {
+const CustomerProfile = ({ data }: CustomerProfileProps) => {
     console.log(data);
 
     
@@ -115,38 +115,38 @@ const CustomerProfile = ({ data = {} }: CustomerProfileProps) => {
             <div className="flex flex-col xl:justify-between h-full 2xl:min-w-[360px] mx-auto">
                 <div className="flex xl:flex-row gap-4 justify-between">
                     <div  className='flex xl:flex-row items-center gap-4'>
-                    <Avatar size={90} shape="circle" src={data.img} />
-                    <h4 className="font-bold">{data.project_name}</h4>
+                  
+                    <h4 className="font-bold">{data?.project_name}</h4>
                     </div>
                     <div className="mt-4 flex flex-col xl:flex-row gap-2">
-                    <CustomerProfileAction id={data.id} />
+                    <CustomerProfileAction id={data?.id} />
                 </div>
                 </div>
                 <div className="grid grid-cols-3 sm:grid-cols-2 xl:grid-cols-3 gap-y-7 gap-x-4 mt-8">
-                    <CustomerInfoField title="Project Id" value={data.project_id} />
+                    <CustomerInfoField title="Project Id" value={data?.project_id} />
                     <CustomerInfoField
                         title="Project Type"
-                        value={data.project_type}
+                        value={data?.project_type}
                     />
                     <CustomerInfoField
                         title="Project status"
-                        value={data.project_status}
+                        value={data?.project_status}
                     />
                     <CustomerInfoField
                         title="Project Start Date"
-                        value={data.project_start_date}
+                        value={data?.project_start_date}
                     />
                     <CustomerInfoField
                         title="Timeline"
-                        value={data.timeline_date}
+                        value={data?.timeline_date}
                     />
                     <CustomerInfoField
                         title="Project Budget"
-                        value={data.project_budget}
+                        value={data?.project_budget}
                     />
                     <CustomerInfoField
                         title="Description"
-                        value={data.description}
+                        value={data?.description}
                     />
  
                 </div>
