@@ -28,6 +28,31 @@ import { Input, Select } from '@/components/ui'
 import { useNavigate } from 'react-router-dom'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+
+const validationSchema = Yup.object().shape({
+    project_name: Yup.string().required('Project Name is required'),
+    client_name: Yup.string().required('Client Name is required'),
+    client_contact: Yup.string()
+        .matches(/^\d{10}$/, 'Client Contact must be a 10-digit number')
+        .required(' phone number  invalid'),
+    client_email: Yup.string()
+        .email('Invalid email address')
+        .required('Client Email is required'),
+    project_type: Yup.string().required('Project Type is required'),
+    description: Yup.string().required('Description is required'),
+    leadmanager: Yup.string().required('Lead Manager is required'),
+    junior_designer: Yup.string().required('Junior Designer is required'),
+    senior_designer: Yup.string().required('Senior Designer is required'),
+    supervisor: Yup.string().required('Supervisor is required'),
+    visualizer: Yup.string().required('Visualizer is required'),
+    project_status: Yup.string().required('Project Status is required'),
+    project_start_date: Yup.string().required('Project Start Date is required'),
+    timeline_date: Yup.string().required('Timeline Date is required'),
+   
+    project_budget: Yup.string().required('Project Budget is required'),
+    project_location: Yup.string().required('Project Location is required'),
+})
+
 type FormikRef = FormikProps<any>
 
 type InitialData = {
@@ -46,7 +71,6 @@ type InitialData = {
     project_status?: string
     project_start_date?: string
     timeline_date?: string
-    project_end_date?: string
     project_budget?: string
     project_location?: string
     id: '65c32e19e0f36d8e1f30955c'
@@ -137,12 +161,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
             project_status: '',
             project_start_date: '',
             timeline_date: '',
-            project_end_date: '',
             project_budget: '',
             project_location: '',
             id: '65c32e19e0f36d8e1f30955c',
             files: [], // Array to hold selected files
         },
+        validationSchema: validationSchema,
         onSubmit: async (values, formikHelpers) => {
             try {
                 const formData = new FormData()
@@ -219,6 +243,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.project_name}
                                         />
+                                        {formik.errors.project_name &&
+                                            formik.touched.project_name && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.project_name}
+                                                </div>
+                                            )}
                                     </FormItem>
                                     <FormItem label="Upload Files">
                                         <Input
@@ -238,6 +268,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.client_name}
                                         />
+                                        {formik.errors.client_name &&
+                                            formik.touched.client_name && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.client_name}
+                                                </div>
+                                            )}
                                     </FormItem>
 
                                     <FormItem label="Client Contact">
@@ -248,6 +284,15 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.client_contact}
                                         />
+                                        {formik.errors.client_contact &&
+                                            formik.touched.client_contact && (
+                                                <div className="text-red-500">
+                                                    {
+                                                        formik.errors
+                                                            .client_contact
+                                                    }
+                                                </div>
+                                            )}
                                     </FormItem>
 
                                     <FormItem label="Client Email">
@@ -258,6 +303,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.client_email}
                                         />
+                                        {formik.errors.client_email &&
+                                            formik.touched.client_email && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.client_email}
+                                                </div>
+                                            )}
                                     </FormItem>
 
                                     <FormItem label="Project Type">
@@ -268,6 +319,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.project_type}
                                         />
+                                        {formik.errors.project_type &&
+                                            formik.touched.project_type && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.project_type}
+                                                </div>
+                                            )}
                                     </FormItem>
 
                                     <FormItem label="Description">
@@ -278,6 +335,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.description}
                                         />
+                                        {formik.errors.description &&
+                                            formik.touched.description && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.description}
+                                                </div>
+                                            )}  
                                     </FormItem>
 
                                     <FormItem label="Lead Manager">
@@ -288,6 +351,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.leadmanager}
                                         />
+                                        {formik.errors.leadmanager &&
+                                            formik.touched.leadmanager && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.leadmanager}
+                                                </div>
+                                            )}
                                     </FormItem>
                                     <FormItem label="Timeline">
                                         <Input
@@ -297,6 +366,13 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.timeline_date}
                                         />
+                                        {formik.errors.timeline_date &&
+                                            formik.touched.timeline_date && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.timeline_date}
+                                                </div>
+                                            )}
+
                                     </FormItem>
                                     <FormItem label="Junior Designer">
                                         <Input
@@ -308,6 +384,13 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                                 formik.values.junior_designer
                                             }
                                         />
+                                        {formik.errors.junior_designer &&
+                                            formik.touched.junior_designer && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.junior_designer}
+                                                </div>
+                                            )}
+
                                     </FormItem>
                                     <FormItem label="Senior Designer">
                                         <Input
@@ -319,6 +402,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                                 formik.values.senior_designer
                                             }
                                         />
+                                        {formik.errors.senior_designer &&
+                                            formik.touched.senior_designer && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.senior_designer}
+                                                </div>
+                                            )}
                                     </FormItem>
 
                                     <FormItem label="Supervisor">
@@ -329,6 +418,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.supervisor}
                                         />
+                                        {formik.errors.supervisor &&
+                                            formik.touched.supervisor && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.supervisor}
+                                                </div>
+                                            )}
                                     </FormItem>
 
                                     <FormItem label="Visualizer">
@@ -339,6 +434,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.visualizer}
                                         />
+                                        {formik.errors.visualizer &&
+                                            formik.touched.visualizer && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.visualizer}
+                                                </div>
+                                            )}  
                                     </FormItem>
 
                                     <FormItem label="Project Status">
@@ -349,6 +450,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.project_status}
                                         />
+                                        {formik.errors.project_status &&
+                                            formik.touched.project_status && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.project_status}
+                                                </div>
+                                            )}
                                     </FormItem>
 
                                     <FormItem label="Project Start Date">
@@ -361,18 +468,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                                 formik.values.project_start_date
                                             }
                                         />
-                                    </FormItem>
-
-                                    <FormItem label="Project End Date">
-                                        <Input
-                                            placeholder="Project End Date"
-                                            name="project_end_date"
-                                            id="project_end_date"
-                                            onChange={formik.handleChange}
-                                            value={
-                                                formik.values.project_end_date
-                                            }
-                                        />
+                                        {formik.errors.project_start_date &&
+                                            formik.touched.project_start_date && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.project_start_date}
+                                                </div>
+                                            )}
                                     </FormItem>
 
                                     <FormItem label="Project Budget">
@@ -383,6 +484,12 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.project_budget}
                                         />
+                                        {formik.errors.project_budget &&
+                                            formik.touched.project_budget && (
+                                                <div className="text-red-500">
+                                                    {formik.errors.project_budget}
+                                                </div>
+                                            )}
                                     </FormItem>
 
                                     <FormItem label="Project Location">
@@ -395,6 +502,13 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                                 formik.values.project_location
                                             }
                                         />
+                                        {formik.errors.project_location &&
+                                            formik.touched.project_location && (
+                                                <div className="text-red-500">
+
+                                                    {formik.errors.project_location}
+                                                </div>
+                                            )}
                                     </FormItem>
                                 </div>
                                 {/* 
