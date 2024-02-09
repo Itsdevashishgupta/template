@@ -22,14 +22,14 @@ import {
     Customer,
 } from '../store'
 import EditCustomerProfile from './EditCustomerProfile'
-import { Dialog, FormItem, Input } from '@/components/ui'
-
+import { Dialog, FormItem, Input, Select } from '@/components/ui'
+import * as Yup from 'yup';
 import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
 import { Field, FieldProps, FormikProvider, useFormik } from 'formik'
 import { RichTextEditor } from '@/components/shared'
 import axios, { AxiosResponse } from 'axios'
 import { log } from 'console'
-import { MenuItem, OutlinedInput, Select, useTheme,Theme, SelectChangeEvent, FormControl, InputLabel } from '@mui/material'
+import { MenuItem, OutlinedInput, useTheme,Theme, SelectChangeEvent, FormControl, InputLabel } from '@mui/material'
 import { values } from 'lodash'
 
 
@@ -187,26 +187,33 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
     const queryParams = new URLSearchParams(location.search);
     const myParam = queryParams.get('id') || '';
    
-    
+    const validationSchema = Yup.object({
+      status: Yup.string().required('Status is required'),
+      date:  Yup.date().required('Date is required for Follow Up'),
+      
+      content: Yup.string().required("Today's Update is required"),
+    }); 
   
 
     const formik = useFormik({
-      initialValues: {
+      initialValues:{
         lead_id: myParam,
         status: "",
         date: "",
         content: "",
         createdBy: "Devashish",
       },
+      validationSchema:validationSchema,
       onSubmit: async (values, formikHelpers) => {
         try {
           // Make a POST request to your API endpoint
-          setShowSuccessMessage(true);
-          formikHelpers.setSubmitting(false);
+          // setShowSuccessMessage(true);
           formikHelpers.resetForm();
-          setTimeout(() => {
-            setShowSuccessMessage(false);
-          }, 2000);
+        //   setTimeout(() => {
+        //     alert(JSON.stringify(values, null, 2))
+        //     formikHelpers.setSubmitting(false);
+           
+        // }, 400)
     
           const response = await axios.put('https://col-u3yp.onrender.com/v1/api/admin/update/lead/', values);
     
@@ -284,7 +291,18 @@ const onDialogOk = (e: MouseEvent) => {
 
 const navigate=useNavigate();
 
+type Option = {
+  value: string
+  label: string
+}
 
+const statusOptions = [
+  { value: '', label: 'Select Status' },
+  { value: 'followUp', label: 'Follow Up' },
+  { value: 'notInterested', label: 'Not Interested' },
+  { value: 'noResponse', label: 'No Response' },
+  { value: 'interested', label: 'Interested' },
+];
 
 
 
@@ -387,45 +405,32 @@ const navigate=useNavigate();
 
              
               <div className="grid grid-cols-3 sm:grid-cols-2 xl:grid-cols-3 gap-y-7 gap-x-6 mt-8">
-        <FormItem
-                label="Project Status"  
-            >
-                    <div>
-   
-        <select
-        name='status'
-      value={formik.values.status}
-      onChange={formik.handleChange}
-      placeholder='Status'
-      className='
-        block
-        w-full
-        px-4
-        py-2
-        border
-        border-gray-300
-        rounded-md
-        shadow-sm
-        focus:outline-none
-        focus:ring
-        focus:border-blue-300
+              <FormItem label="Select" 
+                            >
+                                <Select
+        id="status"
+        name="status"
+        options={statusOptions}
+        value={statusOptions.find((option) => option.value === formik.values.status)}
+        onChange={(option) => formik.setFieldValue('status', option?.value)}
+        onBlur={formik.handleBlur}
+      />
+      {formik.touched.status && formik.errors.status && (
+        <div style={{ color: 'red' }}>{formik.errors.status}</div>
+      )}
+         
         
-      '
-    >
-        <option value="Follow Up">Follow Up</option>
-          <option value="Interested">Interested</option>
-          <option value="Not Interested">Not Interested</option>
-          <option value="No Response">No Response</option>
-    </select>
-     
-    </div>
-            </FormItem>
+                            </FormItem>
 
             <FormItem label="To Follow Up On">
             <DateTimepicker placeholder="Pick date & time" type='text' name='date' value={formik.values.date ? new Date(formik.values.date) : null} onChange={(date: Date | null) => {
       // The date parameter will be of type 'Date | null'
       formik.setFieldValue('date', date); // Update the formik value
     }} />
+    {formik.touched.date && formik.errors.date && (
+        <div style={{ color: 'red' }}>{formik.errors.date}</div>
+      )}
+         
             </FormItem>
             </div></div>
      <div className='flex items-center justify-between'>
@@ -441,6 +446,10 @@ const navigate=useNavigate();
                     name='content'
                     onChange={formik.handleChange}
                 />
+                {formik.touched.content && formik.errors.content && (
+        <div style={{ color: 'red' }}>{formik.errors.content}</div>
+      )}
+         
             </FormItem>
             <div>
             <Button

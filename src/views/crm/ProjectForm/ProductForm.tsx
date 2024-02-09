@@ -27,6 +27,7 @@ import { AdaptableCard, RichTextEditor } from '@/components/shared'
 import { Input, Select } from '@/components/ui'
 import { useLocation, useNavigate } from 'react-router-dom'
 
+
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 type FormikRef = FormikProps<any>
 
@@ -142,6 +143,21 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
       location: queryParams.get('location') || '',
     };
 
+    const validationSchema1 = Yup.object().shape({
+        client_name: Yup.string().required('Name is required'),
+        client_contact: Yup.string()
+          .required('Phone is required')
+          .matches(/^[0-9]{10}$/, 'Phone must be 10 digits'),
+        client_email: Yup.string()
+          .email('Invalid email address')
+          .required('Email is required')
+          .matches(/@gmail\.com$/, 'Email must be a Gmail address'),
+        location: Yup.string().required('Location is required'),
+        project_type: Yup.string().required('Project Type is required'),
+        project_name: Yup.string().required('Project Name is required'),
+        description: Yup.string().required('Description is required'),
+      });
+
     const formik = useFormik({
         initialValues: {
             lead_id: allQueryParams.id,
@@ -153,6 +169,7 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
             project_type: '',
             project_name: '',
         },
+        validationSchema:validationSchema1,
         onSubmit: async (values, formikHelpers) => {
             try {
                 console.log(values)
@@ -190,13 +207,7 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                     Section to config basic lead information
                                 </p>
                                 <div className="grid xl:grid-cols-3 xl:grid grid-cols-1 sm:grid-cols-2 :grid gap-5 ">
-                                    <FormItem>
-                                        <Input
-                                            type="hidden"
-                                            name="lead_id"
-                                            value="833500"
-                                        />
-                                    </FormItem>
+                                    
                                     <FormItem label="Name">
                                         <Input
                                             
@@ -205,6 +216,9 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.client_name}
                                         />
+                                         {formik.touched.client_name && formik.errors.client_name && (
+    <div className="error-message">{formik.errors.client_name}</div>
+  )}
                                     </FormItem>
                                     <FormItem label="Phone">
                                         <Input
@@ -215,6 +229,9 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.client_contact}
                                         />
+                                        {formik.touched.client_contact && formik.errors.client_contact && (
+    <div className="error-message">{formik.errors.client_contact}</div>
+  )}
                                     </FormItem>
                                     <FormItem label="Email">
                                         <Input
@@ -224,6 +241,9 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.client_email}
                                         />
+                                        {formik.touched.client_email && formik.errors.client_email && (
+    <div className="error-message">{formik.errors.client_email}</div>
+  )}
                                     </FormItem>
 
                                     <FormItem label="Location">
@@ -234,6 +254,9 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.location}
                                         />
+                                        {formik.touched.location && formik.errors.location && (
+    <div className="error-message">{formik.errors.location}</div>
+  )}
                                     </FormItem>
                                     <FormItem label="Project Type">
                                         <Input
@@ -243,6 +266,9 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.project_type}
                                         />
+                                        {formik.touched.project_type && formik.errors.project_type && (
+    <div className="error-message">{formik.errors.project_type}</div>
+  )}
                                     </FormItem>
                                     <FormItem label="Project Name">
                                         <Input
@@ -252,6 +278,9 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.project_name}
                                         />
+                                        {formik.touched.project_name && formik.errors.project_name && (
+    <div className="error-message">{formik.errors.project_name}</div>
+  )}
                                     </FormItem>
                                     <FormItem label="Description">
                                         <Input
@@ -261,6 +290,9 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.description}
                                         />
+                                        {formik.touched.description && formik.errors.description && (
+    <div className="error-message">{formik.errors.description}</div>
+  )}
                                     </FormItem>
                                 </div>
                             </AdaptableCard>

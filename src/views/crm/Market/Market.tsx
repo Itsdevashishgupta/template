@@ -78,18 +78,9 @@ const Market = () => {
                     variant="pill"
                     onChange={handleTabChange}
                 >
-                    <div className="flex lg:items-center justify-between flex-col lg:flex-row gap-4">
-                        <TabList>
-                            <TabNav value="all">All</TabNav>
- 
-                        </TabList>
-                        <QueryInput
-                            ref={inputRef}
-                            onInputChange={handleInputChange}
-                        />
-                    </div>
+                  <h3>Projects</h3>
                     <div className="mt-4">
-                        <TabContent value="all">
+                       
                             <AllTable
                                 {...{
                                     data: data as AllMarket[],
@@ -97,7 +88,7 @@ const Market = () => {
                                     tableData,
                                 }}
                             />
-                        </TabContent>
+                        
                         {/* <TabContent value="spot">
                             <SpotTable
                                 {...{

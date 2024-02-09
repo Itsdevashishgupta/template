@@ -43,15 +43,15 @@ const appsRoute: Routes = [
         component: lazy(() => import('@/views/crm/Projects')),
         authority: [ADMIN, USER],
     },
-    {
-        key: 'appsCrm.customers',
-        path: `${APP_PREFIX_PATH}/crm/customers`,
-        component: lazy(() => import('@/views/crm/Customers')),
-        authority: [ADMIN, USER],
-        meta: {
-            header: 'Projects',
-        },
-    },
+    // {
+    //     key: 'appsCrm.customers',
+    //     path: `${APP_PREFIX_PATH}/crm/projects`,
+    //     component: lazy(() => import('@/views/crm/ProjectList')),
+    //     authority: [ADMIN, USER],
+    //     meta: {
+          
+    //     },
+    // },
     {
         key: 'appsCrm.customerDetails',
         path: `${APP_PREFIX_PATH}/crm/customer-details`,
@@ -177,10 +177,13 @@ const appsRoute: Routes = [
         authority: [ADMIN, USER],
     },
     {
-        key: 'appsSales.orderList',
-        path: `${APP_PREFIX_PATH}/crm/project`,
-        component: lazy(() => import('@/views/crm/Projects')),
+        key: 'appsCrypto.market',
+        path: `${APP_PREFIX_PATH}/crm/projectslist`,
+        component: lazy(() => import('@/views/crm/Customers')),
         authority: [ADMIN, USER],
+        meta: {
+            
+        },
     },
     {
         key: 'appsSales.orderDetails',

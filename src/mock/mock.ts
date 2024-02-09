@@ -10,7 +10,7 @@ import {
 import { usersData, userDetailData } from './data/usersData'
 import { eventsData, mailData, crmDashboardData } from './data/crmData'
 import {
-    productsData,
+    productsData,projectdata,
     ordersData,
     orderDetailsData,
     salesDashboardData
@@ -41,6 +41,7 @@ import {
     projectFakeApi,
     crmFakeApi,
     salesFakeApi,
+    projectsFakeApi,
     accountFakeApi,
     cryptoFakeApi,
     authFakeApi,
@@ -65,9 +66,9 @@ export function mockServer({ environment = 'test' }) {
                 eventsData,
                 mailData,
                 productsData,
+                projectdata,
                 ordersData,
                 orderDetailsData,
-                
                 settingData,
                 settingIntergrationData,
                 settingBillingData,
@@ -100,6 +101,7 @@ export function mockServer({ environment = 'test' }) {
             commonFakeApi(this, apiPrefix)
             projectFakeApi(this, apiPrefix)
             crmFakeApi(this, apiPrefix)
+            projectFakeApi(this,apiPrefix)
             salesFakeApi(this, apiPrefix)
             accountFakeApi(this, apiPrefix)
             authFakeApi(this, apiPrefix)

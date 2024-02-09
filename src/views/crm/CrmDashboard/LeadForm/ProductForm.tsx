@@ -54,11 +54,14 @@ type ProductForm = {
 const { useUniqueId } = hooks
 
 const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Product Name Required'),
-    price: Yup.number().required('Price Required'),
-    stock: Yup.number().required('SKU Required'),
-    category: Yup.string().required('Category Required'),
-})
+    name: Yup.string().required('Name is required'),
+    phone: Yup.string().required('Phone is required').matches(/^\d{10}$/, 'Phone must be 10 digits'),
+    email: Yup.string().email('Invalid email address').required('Email is required').matches(/@gmail\.com$/, 'Email must be a Gmail address'),
+    location: Yup.string().required('Location is required'),
+    status: Yup.string().required('Status is required'),
+    source: Yup.string().required('Source is required'),
+    content: Yup.string().required('Description is required'),
+  });
 
 const DeleteProductButton = ({ onDelete }: { onDelete: OnDelete }) => {
     const [dialogOpen, setDialogOpen] = useState(false)
@@ -107,6 +110,7 @@ const DeleteProductButton = ({ onDelete }: { onDelete: OnDelete }) => {
     )
 }
 
+
 const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
     const navigate=useNavigate()
     const formik = useFormik({
@@ -122,17 +126,18 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
           role:'Admin'
           
         },
+        validationSchema:validationSchema,
         onSubmit: async (values,formikHelpers) => {
           try {
             // Make a POST request to your API endpoint
             
-            setShowSuccessMessage(true);
+            // setShowSuccessMessage(true);
             formikHelpers.setSubmitting(false);
             formikHelpers.resetForm();
-            setTimeout(() => {
-              setShowSuccessMessage(false);
-              navigate('/app/leads')
-            }, 2000);
+            // setTimeout(() => {
+            //   setShowSuccessMessage(false);
+            //   navigate('/app/leads')
+            // }, 2000);
             formik.initialValues.email='';
             const response = await axios.post('https://col-u3yp.onrender.com/v1/api/admin/create/lead/', values);
            
@@ -170,38 +175,52 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                 <FormItem label='Name'>
                 <Input placeholder="Name" name='name' id='name' 
                 onChange={formik.handleChange} value={formik.values.name} />
-
+  {formik.touched.name && formik.errors.name && (
+    <div className="error-message">{formik.errors.name}</div>
+  )}
                 </FormItem>
                 <FormItem label='Phone'>
                 <Input placeholder="Phone" name='phone' id='phone' 
                 onChange={formik.handleChange} value={formik.values.phone}/>
-
+  {formik.touched.phone && formik.errors.phone && (
+    <div className="error-message">{formik.errors.phone}</div>
+  )}
                 </FormItem>
                 <FormItem label='Email'>
                 <Input placeholder="Email" name='email' id='email' 
                 onChange={formik.handleChange} value={formik.values.email} />
-
+  {formik.touched.email && formik.errors.email && (
+    <div className="error-message">{formik.errors.email}</div>
+  )}
                 </FormItem>
                
                 <FormItem label='Location'>
-                <Input placeholder="Status" name='location' id='location' 
+                <Input placeholder="Location" name='location' id='location' 
                 onChange={formik.handleChange} value={formik.values.location} />
-
+  {formik.touched.location && formik.errors.location && (
+    <div className="error-message">{formik.errors.location}</div>
+  )}
                 </FormItem>
                 <FormItem label='Status'>
                 <Input placeholder="Status" name='status' id='status' 
                 onChange={formik.handleChange} value={formik.values.status}/>
-
+  {formik.touched.status && formik.errors.status && (
+    <div className="error-message">{formik.errors.status}</div>
+  )}
                 </FormItem>
                 <FormItem label='Source'>
                 <Input placeholder="Source" name='source' id='source' 
                 onChange={formik.handleChange} value={formik.values.source} />
-
+  {formik.touched.source && formik.errors.source && (
+    <div className="error-message">{formik.errors.source}</div>
+  )}
                 </FormItem>
                 <FormItem label='Description'>
                 <Input placeholder="Description" name='content' textArea id='content' 
                 onChange={formik.handleChange} value={formik.values.content} />
-
+  {formik.touched.content && formik.errors.content && (
+    <div className="error-message">{formik.errors.content}</div>
+  )}
                 </FormItem>
                 </div>
 {/* 
@@ -270,11 +289,11 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                  
                         </FormikProvider>
                 </form>
-                {showSuccessMessage && (
+                {/* {showSuccessMessage && (
         <ConfirmDialog isOpen={showSuccessMessage} type="success" title="Success" onClose={() => setShowSuccessMessage(false)}>
           <p>Data added successfully!</p>
         </ConfirmDialog>
-      )}
+      )} */}
         </>
     )
 })

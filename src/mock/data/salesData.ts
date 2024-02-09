@@ -171,6 +171,10 @@ const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/
 const jsonData = await response.json();
 console.log(jsonData.data);
 export const productsData=jsonData.data
+
+const responseProject = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
+const jsonProject = await responseProject.json();
+export const projectdata=jsonProject
        
 // export const productsData=[
 //     {

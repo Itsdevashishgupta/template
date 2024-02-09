@@ -109,6 +109,13 @@ export const searchQueryPoolData = [
         category: 'CRM',
         categoryTitle: 'Apps',
     },
+    // {
+    //     title: 'Projects',
+    //     url: '/app/crm/projects',
+    //     icon: 'crm',
+    //     category: 'CRM',
+    //     categoryTitle: 'Apps',
+    // },
     {
         title: 'Calendar',
         url: '/app/crm/calendar',
@@ -166,10 +173,10 @@ export const searchQueryPoolData = [
         categoryTitle: 'Apps',
     },
     {
-        title: 'Projects',
-        url: '/app/sales/order-list',
-        icon: 'sales',
-        category: 'Sales',
+        title: 'Market',
+        url: '/app/crm/projectslist',
+        icon: 'projects',
+        category: 'Crypto',
         categoryTitle: 'Apps',
     },
     {
@@ -214,13 +221,13 @@ export const searchQueryPoolData = [
         category: 'Sales',
         categoryTitle: 'Apps',
     },
-    {
-        title: 'Projects',
-        url: '/app/crm/projects',
-        icon: 'sales',
-        category: 'Sales',
-        categoryTitle: 'Apps',
-    },
+    // {
+    //     title: 'Projects',
+    //     url: '/app/crm/projects',
+    //     icon: 'sales',
+    //     category: 'Sales',
+    //     categoryTitle: 'Apps',
+    // },
     {
         title: 'Order Details',
         url: '/app/sales/order-details/95954',

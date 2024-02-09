@@ -6,6 +6,7 @@
             "dashboard": "Dashboard",
             "projectList": "Project List",
             "scrumBoard": "Scrum Board",
+            "market":"Project",
             "issue": "Issue"
         },
         "appsCrm": {
@@ -31,7 +32,7 @@
             "crypto": "Crypto",
             "dashboard": "Dashboard",
             "portfolio": "Portfolio",
-            "market": "Market",
+            "market": "Project",
             "wallets": "Wallets"
         },
         "appsknowledgeBase": {

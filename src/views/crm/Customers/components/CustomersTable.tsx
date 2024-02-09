@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo, useState } from 'react'
+import { useEffect, useCallback, useMemo } from 'react'
 import Avatar from '@/components/ui/Avatar'
 import Badge from '@/components/ui/Badge'
 import DataTable from '@/components/shared/DataTable'
@@ -13,13 +13,10 @@ import {
 } from '../store'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import CustomerEditDialog from './CustomerEditDialog'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import dayjs from 'dayjs'
 import cloneDeep from 'lodash/cloneDeep'
 import type { OnSortParam, ColumnDef } from '@/components/shared/DataTable'
-import { Tag } from '@/components/ui'
-import { log } from 'console'
-import { HiOutlineEye } from 'react-icons/hi'
 
 const statusColor: Record<string, string> = {
     active: 'bg-emerald-500',
@@ -29,22 +26,18 @@ const statusColor: Record<string, string> = {
 const ActionColumn = ({ row }: { row: Customer }) => {
     const { textTheme } = useThemeClass()
     const dispatch = useAppDispatch()
-        const navigate = useNavigate()
 
     const onEdit = () => {
         dispatch(setDrawerOpen())
         dispatch(setSelectedCustomer(row))
     }
-    const onView = useCallback(() => {
-        navigate(`/app/crm/customer-details?id=8`)
-    }, [navigate, row])
 
     return (
         <div
             className={`${textTheme} cursor-pointer select-none font-semibold`}
-            onClick={onView}
+            onClick={onEdit}
         >
-            <HiOutlineEye/>
+            Edit
         </div>
     )
 }
@@ -90,106 +83,52 @@ const Customers = () => {
         [pageIndex, pageSize, sort, query, total]
     )
 
-    const LeadStatus = ({ projectType }: { projectType: number }) => {
-        switch (projectType) {
-            case 0:
-                return <Tag className="rounded-md">New</Tag>
-            case 1:
-                return (
-                    <Tag className="bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100  border-0 rounded">
-                        Commercial
-                    </Tag>
-                )
-            case 2:
-                return (
-                    <Tag className="text-amber-600 bg-amber-100 dark:text-amber-100 dark:bg-amber-500/20  border-0 rounded">
-                        Not Interested
-                    </Tag>
-                )
-            case 3:
-                return (
-                    <Tag className="bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100 border-0 rounded">
-                        Residential
-                    </Tag>
-                )
-            default:
-                return <></>
-        }
-    }
-
-    const inventoryStatusColor: Record<
-    string,
-    {
-        label: string
-        dotClass: string
-        textClass: string
-    }
-> = {
-   "Interested" : {
-        label: 'Interested',
-        dotClass: 'bg-emerald-500',
-        textClass: 'text-emerald-500',
-    },
-    "followUp": {
-        label: 'Follow Up',
-        dotClass: 'bg-amber-500',
-        textClass: 'text-amber-500',
-    },
-    "cancel": {
-        label: 'Not Interested',
-        dotClass: 'bg-red-500',
-        textClass: 'text-red-500',
-    },
-}
-
-
-
     const columns: ColumnDef<Customer>[] = useMemo(
         () => [
             {
                 header: 'Name',
                 accessorKey: 'name',
-                // cell: (props) => {
-                //     const row = props.row.original
-                //     return <NameColumn row={row} />
-                // },
+                cell: (props) => {
+                    const row = props.row.original
+                    return <NameColumn row={row} />
+                },
             },
             {
-                header: 'Client Name',
+                header: 'Email',
                 accessorKey: 'email',
-                // cell: (props) => {
-                //     const row = props.row.original;
-                //     const client = row.client[0]; // Assuming there's only one client for each project
-                //     return (
-                //         <span>
-                //             {client.client_name}</span>
-                    
-                //     );
-                // },
             },
-            // {
-            //     header: 'Status',
-            //     accessorKey: 'project_status',
-            // },
-            // {
-            //     header: 'Date',
-            //     accessorKey: 'timeline_date',
-            //     // cell: (props) => {
-            //     //     const row = props.row.original;
-            //     //     const date = new Date(row.timeline_date);
-            //     //     const formattedDate = date.toISOString().split('T')[0];
-            //     //     return formattedDate;
-            //     // },
-            // },
-            // {
-            //     header: 'Project Type',
-            //     accessorKey: 'project_type',
-            //    },
-            // {
-            //     header: '',
-            //     id: 'action',
-            //     cell: (props) => <ActionColumn row={props.row.original} />,
-            // },
+            {
+                header: 'Status',
+                accessorKey: 'status',
+                cell: (props) => {
+                    const row = props.row.original
+                    return (
+                        <div className="flex items-center">
+                            <Badge className={statusColor[row.status]} />
+                            <span className="ml-2 rtl:mr-2 capitalize">
+                                {row.status}
+                            </span>
+                        </div>
+                    )
+                },
+            },
+            {
+                header: 'Last online',
+                accessorKey: 'lastOnline',
+                cell: (props) => {
+                    const row = props.row.original
+                    return (
+                        <div className="flex items-center">
+                            {dayjs.unix(row.lastOnline).format('MM/DD/YYYY')}
+                        </div>
+                    )
+                },
+            },
+            {
+                header: '',
+                id: 'action',
+                cell: (props) => <ActionColumn row={props.row.original} />,
+            },
         ],
         []
     )
@@ -213,27 +152,6 @@ const Customers = () => {
         dispatch(setTableData(newTableData))
     }
 
-    const [projects, setprojects] = useState<any[]>([]);
-    console.log(projects);
-
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-            const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-  
-          const jsonData = await response.json();
-          setprojects(jsonData.data.projects);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-  
-      fetchData();
-    }, []);
-
     return (
         <>
             <DataTable
@@ -241,7 +159,7 @@ const Customers = () => {
                 data={data}
                 skeletonAvatarColumns={[0]}
                 skeletonAvatarProps={{ width: 28, height: 28 }}
-                
+                loading={loading}
                 pagingData={{
                     total: tableData.total as number,
                     pageIndex: tableData.pageIndex as number,
