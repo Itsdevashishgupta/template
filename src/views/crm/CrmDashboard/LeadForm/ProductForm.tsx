@@ -17,6 +17,7 @@ import axios from 'axios'
 import { AdaptableCard, RichTextEditor } from '@/components/shared'
 import { Input, Select } from '@/components/ui'
 import { useNavigate } from 'react-router-dom'
+import DatePicker from '@/components/ui/DatePicker'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 type FormikRef = FormikProps<any>
@@ -31,6 +32,7 @@ type InitialData = {
     source?: string
     content?: string
     createBy?: string
+    date?:string
 }
 
 export type FormModel = Omit<InitialData, 'tags'> & {
@@ -122,6 +124,7 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
           status: '',
           source: '',
           content: '',
+          date:'',
           createdBy: 'Admin',
           role:'Admin'
           
@@ -138,10 +141,19 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
             //   setShowSuccessMessage(false);
             //   navigate('/app/leads')
             // }, 2000);
-            formik.initialValues.email='';
-            const response = await axios.post('https://col-u3yp.onrender.com/v1/api/admin/create/lead/', values);
-           
+          
             
+              navigate(-1) 
+            // formik.initialValues.email='';
+            const response = await axios.post('https://col-u3yp.onrender.com/v1/api/admin/create/lead/', values);
+            // navigate(-1) 
+        //    window.location.reload() 
+             console.log('API response:', response.data) // Print API response in console
+
+             navigate(-1) // Navigate back to previous page
+
+             // Clear the form values
+             formik.initialValues.email = ''
           } catch (error) {
             console.error('Error submitting form:', error);
           }
@@ -159,71 +171,175 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
     }
 
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const statusOptions = [
+        { value: '', label: 'Select Status' },
+        { value: 'followUp', label: 'Follow Up' },
+        { value: 'notInterested', label: 'Not Interested' },
+        { value: 'noResponse', label: 'No Response' },
+        { value: 'interested', label: 'Interested' },
+    ]
+
     
 
     return (
         <>
-           <form onSubmit={formik.handleSubmit}>
-               
-                  <FormikProvider value={formik}>
-                        <FormContainer>
-                            <div className="grid grid-cols-1 lg:grid-cols gap-4">
+            <form onSubmit={formik.handleSubmit}>
+                <FormikProvider value={formik}>
+                    <FormContainer>
+                        <div className="grid grid-cols-1 lg:grid-cols gap-4">
                             <AdaptableCard divider className="mb-4">
-            <h5>Basic Information</h5>
-            <p className="mb-6">Section to config basic lead information</p>
-            <div className='grid xl:grid-cols-3 xl:grid grid-cols-1 sm:grid-cols-2 :grid gap-5 '>
-                <FormItem label='Name'>
-                <Input placeholder="Name" name='name' id='name' 
-                onChange={formik.handleChange} value={formik.values.name} />
-  {formik.touched.name && formik.errors.name && (
-    <div className="error-message">{formik.errors.name}</div>
-  )}
-                </FormItem>
-                <FormItem label='Phone'>
-                <Input placeholder="Phone" name='phone' id='phone' 
-                onChange={formik.handleChange} value={formik.values.phone}/>
-  {formik.touched.phone && formik.errors.phone && (
-    <div className="error-message">{formik.errors.phone}</div>
-  )}
-                </FormItem>
-                <FormItem label='Email'>
-                <Input placeholder="Email" name='email' id='email' 
-                onChange={formik.handleChange} value={formik.values.email} />
-  {formik.touched.email && formik.errors.email && (
-    <div className="error-message">{formik.errors.email}</div>
-  )}
-                </FormItem>
-               
-                <FormItem label='Location'>
-                <Input placeholder="Location" name='location' id='location' 
-                onChange={formik.handleChange} value={formik.values.location} />
-  {formik.touched.location && formik.errors.location && (
-    <div className="error-message">{formik.errors.location}</div>
-  )}
-                </FormItem>
-                <FormItem label='Status'>
-                <Input placeholder="Status" name='status' id='status' 
-                onChange={formik.handleChange} value={formik.values.status}/>
-  {formik.touched.status && formik.errors.status && (
-    <div className="error-message">{formik.errors.status}</div>
-  )}
-                </FormItem>
-                <FormItem label='Source'>
-                <Input placeholder="Source" name='source' id='source' 
-                onChange={formik.handleChange} value={formik.values.source} />
-  {formik.touched.source && formik.errors.source && (
-    <div className="error-message">{formik.errors.source}</div>
-  )}
-                </FormItem>
-                <FormItem label='Description'>
-                <Input placeholder="Description" name='content' textArea id='content' 
-                onChange={formik.handleChange} value={formik.values.content} />
-  {formik.touched.content && formik.errors.content && (
-    <div className="error-message">{formik.errors.content}</div>
-  )}
-                </FormItem>
-                </div>
-{/* 
+                                <h5>Basic Information</h5>
+                                <p className="mb-6">
+                                    Section to config basic lead information
+                                </p>
+                                <div className="grid xl:grid-cols-3 xl:grid grid-cols-1 sm:grid-cols-2 :grid gap-5 ">
+                                    <FormItem label="Name">
+                                        <Input
+                                            placeholder="Name"
+                                            name="name"
+                                            id="name"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.name}
+                                        />
+                                        {formik.touched.name &&
+                                            formik.errors.name && (
+                                                <div className="error-message">
+                                                    {formik.errors.name}
+                                                </div>
+                                            )}
+                                    </FormItem>
+                                    <FormItem label="Phone">
+                                        <Input
+                                            placeholder="Phone"
+                                            name="phone"
+                                            id="phone"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.phone}
+                                        />
+                                        {formik.touched.phone &&
+                                            formik.errors.phone && (
+                                                <div className="error-message">
+                                                    {formik.errors.phone}
+                                                </div>
+                                            )}
+                                    </FormItem>
+                                    <FormItem label="Email">
+                                        <Input
+                                            placeholder="Email"
+                                            name="email"
+                                            id="email"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.email}
+                                        />
+                                        {formik.touched.email &&
+                                            formik.errors.email && (
+                                                <div className="error-message">
+                                                    {formik.errors.email}
+                                                </div>
+                                            )}
+                                    </FormItem>
+
+                                    <FormItem label="Location">
+                                        <Input
+                                            placeholder="Location"
+                                            name="location"
+                                            id="location"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.location}
+                                        />
+                                        {formik.touched.location &&
+                                            formik.errors.location && (
+                                                <div className="error-message">
+                                                    {formik.errors.location}
+                                                </div>
+                                            )}
+                                    </FormItem>
+                                    <FormItem label="Select">
+                                        <Select
+                                            id="status"
+                                            name="status"
+                                            options={statusOptions}
+                                            value={statusOptions.find(
+                                                (option) =>
+                                                    option.value ===
+                                                    formik.values.status,
+                                            )}
+                                            onChange={(option) =>
+                                                formik.setFieldValue(
+                                                    'status',
+                                                    option?.value,
+                                                )
+                                            }
+                                            onBlur={formik.handleBlur}
+                                        />
+                                        {formik.touched.status &&
+                                            formik.errors.status && (
+                                                <div style={{ color: 'red' }}>
+                                                    {formik.errors.status}
+                                                </div>
+                                            )}
+                                    </FormItem>
+                                    <FormItem label="Date">
+                                        <DatePicker
+                                            placeholder="Pick a date"
+                                            name="date"
+                                            // id="date"
+                                            onChange={(date: Date | null) => {
+                                                // The date parameter will be of type 'Date | null'
+                                                formik.setFieldValue(
+                                                    'date',
+                                                    date,
+                                                ) // Update the formik value
+                                            }}
+                                            value={
+                                                formik.values.date
+                                                    ? new Date(
+                                                          formik.values.date,
+                                                      )
+                                                    : null
+                                            }
+                                        />
+                                        {formik.touched.date &&
+                                            formik.errors.date && (
+                                                <div className="error-message">
+                                                    {formik.errors.location}
+                                                </div>
+                                            )}
+                                    </FormItem>
+
+                                    <FormItem label="Source">
+                                        <Input
+                                            placeholder="Source"
+                                            name="source"
+                                            id="source"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.source}
+                                        />
+                                        {formik.touched.source &&
+                                            formik.errors.source && (
+                                                <div className="error-message">
+                                                    {formik.errors.source}
+                                                </div>
+                                            )}
+                                    </FormItem>
+                                    <FormItem label="Description">
+                                        <Input
+                                            placeholder="Description"
+                                            name="content"
+                                            textArea
+                                            id="content"
+                                            onChange={formik.handleChange}
+                                            value={formik.values.content}
+                                        />
+                                        {formik.touched.content &&
+                                            formik.errors.content && (
+                                                <div className="error-message">
+                                                    {formik.errors.content}
+                                                </div>
+                                            )}
+                                    </FormItem>
+                                </div>
+                                {/* 
             <FormItem
                         label="Project Id"
                         invalid={(errors.number && touched.number) as boolean}
@@ -250,46 +366,38 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                             }}
                         </Field>
                     </FormItem> */}
-
-
-        
- 
-        
-        </AdaptableCard>
-                                
+                            </AdaptableCard>
+                        </div>
+                        <StickyFooter
+                            className="-mx-8 px-8 flex items-center justify-between py-4"
+                            stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                        >
+                            <div className="md:flex items-center">
+                                <Button
+                                    size="sm"
+                                    className="ltr:mr-3 rtl:ml-3"
+                                    type="button"
+                                    onClick={() => {
+                                        navigate(-1)
+                                        // window.location.reload()
+                                    }}
+                                >
+                                    Discard
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="solid"
+                                    icon={<AiOutlineSave />}
+                                    type="submit"
+                                >
+                                    Save
+                                </Button>
                             </div>
-                            <StickyFooter
-                                className="-mx-8 px-8 flex items-center justify-between py-4"
-                                stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-                            >
-                              
-                                <div className="md:flex items-center">
-                                    <Button
-                                        size="sm"
-                                        className="ltr:mr-3 rtl:ml-3"
-                                        type="button"
-                                        
-                                      
-                                    >
-                                        Discard
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="solid"
-                                      
-                                        icon={<AiOutlineSave />}
-                                        type="submit"
-                                      
-                                    >
-                                        Save
-                                    </Button>
-                                </div>
-                            </StickyFooter>
-                        </FormContainer>
-                 
-                        </FormikProvider>
-                </form>
-                {/* {showSuccessMessage && (
+                        </StickyFooter>
+                    </FormContainer>
+                </FormikProvider>
+            </form>
+            {/* {showSuccessMessage && (
         <ConfirmDialog isOpen={showSuccessMessage} type="success" title="Success" onClose={() => setShowSuccessMessage(false)}>
           <p>Data added successfully!</p>
         </ConfirmDialog>
