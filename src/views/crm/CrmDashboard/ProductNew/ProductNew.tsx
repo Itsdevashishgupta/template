@@ -29,18 +29,18 @@ const ProductNew = () => {
                     type="success"
                     duration={2500}
                 >
-                    Project successfuly added
+                    Product successfuly added
                 </Notification>,
                 {
                     placement: 'top-center',
                 }
             )
-            navigate('/app/leads')
+            navigate('/app/sales/product-list')
         }
     }
 
     const handleDiscard = () => {
-        navigate('/app/leads')
+        navigate('/app/sales/product-list')
     }
 
     return (
@@ -49,7 +49,6 @@ const ProductNew = () => {
                 type="new"
                 onFormSubmit={handleFormSubmit}
                 onDiscard={handleDiscard}
-                
             />
         </>
     )

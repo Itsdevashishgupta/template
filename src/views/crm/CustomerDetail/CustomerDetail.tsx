@@ -69,6 +69,7 @@ const CustomerDetail = () => {
     console.log(allQueryParams.project_id);
     
     const [details, setDetails] = useState<any | null>(null);
+    const[momdata,setmomdata]= useState<any | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -76,6 +77,7 @@ const CustomerDetail = () => {
                 const response = await fetch(`https://col-u3yp.onrender.com/v1/api/admin/getsingle/project/?project_id=${allQueryParams.project_id}&id=${allQueryParams.id}`);
                 const data = await response.json();
                 setDetails(data.data[0]);
+                setmomdata(data.data[0].mom)
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -85,8 +87,7 @@ const CustomerDetail = () => {
     }, [allQueryParams.id]);
 
     // Check if details is not null and if details.data is an array with at least one element
-    const lead = details
-    console.log(lead);
+  
     
     
     // Only proceed if lead is not null
@@ -110,7 +111,7 @@ const CustomerDetail = () => {
                    <PaymentHistory/>
                 </TabContent>
                 <TabContent value="tab3">
-                  <MOM/>
+                  <MOM datas={momdata}/>
                 </TabContent>
             </div>
         </Tabs>

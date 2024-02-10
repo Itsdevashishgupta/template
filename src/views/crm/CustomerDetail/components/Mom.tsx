@@ -139,10 +139,13 @@ const columns = [
     // }),
 ]
 
-const MOM = () => {
+
+const MOM = ({datas}) => {
     const data = useAppSelector(
         (state) => state.crmCustomerDetails.data.paymentHistoryData
     )
+    console.log(datas);
+    
 
     const [sorting, setSorting] = useState<
         {
@@ -162,27 +165,6 @@ const MOM = () => {
         getSortedRowModel: getSortedRowModel(),
     })
 
-
-    const [projects, setprojects] = useState<any[]>([]);
-    console.log(projects);
-
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-            const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-  
-          const jsonData = await response.json();
-          setprojects(jsonData.data.projects);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-  
-      fetchData();
-    }, []);
 
 const navigate=useNavigate();
 
@@ -219,7 +201,7 @@ const validationSchema = Yup.object().shape({
 
 const colourOptions = [
     { value: 'online', label: 'Online' },
-    { value: 'atCLientPLace', label: 'At CLient PLace' },
+    { value: 'atClientPLace', label: 'At Client PLace' },
     { value: 'onSite', label: 'On Site' },
     { value: 'inOffice', label: 'In Office' },
  
@@ -291,31 +273,7 @@ const addInput = () => {
 
                             <h5>Attendees</h5>
 
-                            {/* {inputValues.map((value, index) => (
-             <div className=' grid grid-cols-1 xl:grid xl:grid-cols-2 gap-3'>
-                            <FormItem
-                                label="Role"
-                                invalid={errors.userName && touched.userName}
-                                errorMessage={errors.userName}
-                            >
-                              <Input placeholder="Role" />
-                            </FormItem>
-                            <FormItem
-                                label="Name"
-                                invalid={errors.userName && touched.userName}
-                                errorMessage={errors.userName}
-                            >
-                              <Input placeholder="Name" />
-                            </FormItem>
-                          
-                            </div>
-        ))}
-<div className=' flex justify-between items-center mb-4 mr-4'>
-    <div></div>
-<Button variant="solid" type="submit" onClick={addInput}>
-                                    +
-                                </Button>
-                                </div> */}
+                           
                             {inputValues.map((value, index) => (
              <div className=' grid grid-cols-2 xl:grid xl:grid-cols-2 gap-3 mr-4'>
                             <FormItem
@@ -399,67 +357,24 @@ const addInput = () => {
         </div>
           
                 </div>
-            <Table>
-                <THead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <Tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <Th
-                                        key={header.id}
-                                        colSpan={header.colSpan}
-                                    >
-                                        {header.isPlaceholder ? null : (
-                                            <div
-                                                {...{
-                                                    className:
-                                                        header.column.getCanSort()
-                                                            ? 'cursor-pointer select-none'
-                                                            : '',
-                                                    onClick:
-                                                        header.column.getToggleSortingHandler(),
-                                                }}
-                                            >
-                                                {flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext()
-                                                )}
-                                                {
-                                                    <Sorter
-                                                        sort={header.column.getIsSorted()}
-                                                    />
-                                                }
-                                            </div>
-                                        )}
-                                    </Th>
-                                )
-                            })}
-                        </Tr>
-                    ))}
-                </THead>
-                <TBody>
-                    {table
-                        .getRowModel()
-                        .rows.slice(0, 10)
-                        .map((row) => {
-                            return (
-                                <Tr key={row.id} onClick={()=>navigate('/app/crm/mom')} className=' cursor-pointer' >
-                                    {row.getVisibleCells().map((cell) => {
-                                        return (
-                                            <Td key={cell.id}>
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </Td>
-                                        )
-                                    })}
-                                </Tr>
-                            )
-                        })}
-                </TBody>
-            </Table>
+                <Table >
+      <thead>
+        <tr>
+          <th>Organizer</th>
+          <th>Date</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody>
+      {datas.map((data) => (
+        <tr key={data.id}>
+          <td>{data.attendees.organisor || 'N/A'}</td>
+          <td>{data.meetingdate}</td>
+          <td>{data.source}</td>
+        </tr>
+         ))}
+      </tbody>
+    </Table>
         </div>
     )
 }

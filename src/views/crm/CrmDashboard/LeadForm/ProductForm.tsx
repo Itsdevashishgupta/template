@@ -4,12 +4,7 @@ import Button from '@/components/ui/Button'
 import hooks from '@/components/ui/hooks'
 import StickyFooter from '@/components/shared/StickyFooter'
 import ConfirmDialog from '@/components/shared/ConfirmDialog'
-import { Field, FieldProps, Form, Formik, FormikProps, FormikProvider, useFormik,FormikHelpers } from 'formik'
-import BasicInformationFields from './BasicInformationFields'
-import PricingFields from './PricingFields'
-import OrganizationFields from './OrganizationFields'
-import ProductImages from './ProductImages'
-import cloneDeep from 'lodash/cloneDeep'
+import { FormikProps, FormikProvider, useFormik } from 'formik'
 import { HiOutlineTrash } from 'react-icons/hi'
 import { AiOutlineSave } from 'react-icons/ai'
 import * as Yup from 'yup'
@@ -132,36 +127,15 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
         validationSchema:validationSchema,
         onSubmit: async (values,formikHelpers) => {
           try {
-            // Make a POST request to your API endpoint
-            
-            // setShowSuccessMessage(true);
             formikHelpers.setSubmitting(false);
             formikHelpers.resetForm();
-            // setTimeout(() => {
-            //   setShowSuccessMessage(false);
-            //   navigate('/app/leads')
-            // }, 2000);
-<<<<<<< Updated upstream
-          
-=======
             formik.initialValues.email='';
             await axios.post('https://col-u3yp.onrender.com/v1/api/admin/create/lead/', values).then((response) => {
 console.log(response);
             });
-           
-           
->>>>>>> Stashed changes
-            
-              navigate(-1) 
-            // formik.initialValues.email='';
             const response = await axios.post('https://col-u3yp.onrender.com/v1/api/admin/create/lead/', values);
-            // navigate(-1) 
-        //    window.location.reload() 
-             console.log('API response:', response.data) // Print API response in console
-
-             navigate(-1) // Navigate back to previous page
-
-             // Clear the form values
+             console.log('API response:', response.data) 
+             navigate(-1) 
              formik.initialValues.email = ''
           } catch (error) {
             console.error('Error submitting form:', error);
@@ -175,9 +149,7 @@ console.log(response);
         { value: 'notInterested', label: 'Not Interested' },
         { value: 'noResponse', label: 'No Response' },
     ]
-    const submit=()=>{
-        
-    }
+
 
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const statusOptions = [

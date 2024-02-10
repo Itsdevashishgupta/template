@@ -84,8 +84,8 @@ const appsRoute: Routes = [
     },
     {
         key: 'appsCrm.mail',
-        path: `${APP_PREFIX_PATH}/crm/projectform`,
-        component: lazy(() => import('@/views/sales/ProductForm')),
+        path: `${APP_PREFIX_PATH}/crm/projectfo`,
+        component: lazy(() => import('@/views/crm/CrmDashboard/ProductNew')),
         authority: [ADMIN, USER],
         meta: {
             pageContainerType: 'gutterless',
@@ -164,7 +164,7 @@ const appsRoute: Routes = [
     },
     {
         key: 'appsSales.productNew',
-        path: `${APP_PREFIX_PATH}/sales/product-new`,
+        path: `${APP_PREFIX_PATH}/crm/projectform`,
         component: lazy(() => import('@/views/sales/ProductNew')),
         authority: [ADMIN, USER],
         meta: {

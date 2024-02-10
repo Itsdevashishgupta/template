@@ -64,34 +64,11 @@ type ProductForm = {
 const { useUniqueId } = hooks
 
 const validationSchema = Yup.object().shape({
-    project_name: Yup.string().required('Project Name is required'),
-    client_name: Yup.string().required('Client Name is required'),
-    client_email: Yup.string()
-      .required('Client Email is required')
-      .email('Invalid email address')
-      .test('is-gmail', 'Must be a Gmail address', (value) => {
-        // Custom validation for Gmail address
-        return value && value.endsWith('@gmail.com');
-      }),
-    client_contact: Yup.string()
-      .required('Client Contact is required')
-      .matches(/^\d{10}$/, 'Must be a 10-digit number'),
-    project_type: Yup.string().required('Project Type is required'),
-    description: Yup.string().required('Description is required'),
-    leadmanager: Yup.string().required('Lead Manager is required'),
-    junior_designer: Yup.string().required('Junior Designer is required'),
-    senior_designer: Yup.string().required('Senior Designer is required'),
-    supervisor: Yup.string().required('Supervisor is required'),
-    visualizer: Yup.string().required('Visualizer is required'),
-    project_status: Yup.string().required('Project Status is required'),
-    project_start_date: Yup.string().required('Project Start Date is required'),
-    timeline_date: Yup.string().required('Timeline Date is required'),
-    project_end_date: Yup.string().required('Project End Date is required'),
-    project_budget: Yup.string().required('Project Budget is required'),
-    project_location: Yup.string().required('Project Location is required'),
-    // Add validations for other fields as needed
-    // ...
-  });
+    name: Yup.string().required('Product Name Required'),
+    price: Yup.number().required('Price Required'),
+    stock: Yup.number().required('SKU Required'),
+    category: Yup.string().required('Category Required'),
+})
 
 const DeleteProductButton = ({ onDelete }: { onDelete: OnDelete }) => {
     const [dialogOpen, setDialogOpen] = useState(false)
@@ -142,7 +119,6 @@ const DeleteProductButton = ({ onDelete }: { onDelete: OnDelete }) => {
 
 const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
     const navigate = useNavigate()
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const formik = useFormik({
         initialValues: {
             role: 'ADMIN',
@@ -166,7 +142,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
             id: '65c32e19e0f36d8e1f30955c',
             files: [], // Array to hold selected files
         },
-        // validationSchema:validationSchema,
         onSubmit: async (values, formikHelpers) => {
             try {
                 const formData = new FormData()
@@ -181,18 +156,16 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                         formData.append(key, value)
                     }
                 })
-                
 
-                // setShowSuccessMessage(true)
+                setShowSuccessMessage(true)
                 formikHelpers.setSubmitting(false)
-                formikHelpers.resetForm()
 
                 setTimeout(() => {
                     setShowSuccessMessage(false)
-                    navigate('/app/leads')
+                    // navigate('/app/leads')
                 }, 2000)
 
-          
+                console.log(values)
                 const response = await axios.post(
                     'https://col-u3yp.onrender.com/v1/api/admin/create/project/',
                     formData,
@@ -201,8 +174,7 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                             'Content-Type': 'multipart/form-data',
                         },
                     },
-                );
-            
+                )
                 console.log(response)
             } catch (error) {
                 console.error('Error submitting form:', error)
@@ -239,12 +211,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.project_name}
                                         />
-                                            {formik.touched.project_name &&
-                      formik.errors.project_name && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.project_name}
-                        </div>
-                      )}
                                     </FormItem>
                                     <FormItem label="Upload Files">
                                         <Input
@@ -254,9 +220,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={handleFileChange}
                                             multiple
                                         />
-                                             {formik.touched.files && formik.errors.files && (
-                      <div style={{ color: 'red' }}>{formik.errors.files}</div>
-                    )}
                                     </FormItem>
 
                                     <FormItem label="Client Name">
@@ -267,12 +230,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.client_name}
                                         />
-                                          {formik.touched.client_name &&
-                      formik.errors.client_name && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.client_name}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Client Contact">
@@ -283,12 +240,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.client_contact}
                                         />
-                                          {formik.touched.client_contact &&
-                      formik.errors.client_contact && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.client_contact}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Client Email">
@@ -299,12 +250,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.client_email}
                                         />
-                                          {formik.touched.client_email &&
-                      formik.errors.client_email && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.client_email}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Project Type">
@@ -315,12 +260,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.project_type}
                                         />
-                                          {formik.touched.project_type &&
-                      formik.errors.project_type && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.project_type}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Description">
@@ -331,12 +270,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.description}
                                         />
-                                          {formik.touched.description &&
-                      formik.errors.description && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.description}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Lead Manager">
@@ -347,12 +280,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.leadmanager}
                                         />
-                                          {formik.touched.leadmanager &&
-                      formik.errors.leadmanager && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.leadmanager}
-                        </div>
-                      )}
                                     </FormItem>
                                     <FormItem label="Timeline">
                                         <Input
@@ -362,12 +289,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.timeline_date}
                                         />
-                                          {formik.touched.timeline_date &&
-                      formik.errors.timeline_date && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.timeline_date}
-                        </div>
-                      )}
                                     </FormItem>
                                     <FormItem label="Junior Designer">
                                         <Input
@@ -379,12 +300,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                                 formik.values.junior_designer
                                             }
                                         />
-                                          {formik.touched.junior_designer &&
-                      formik.errors.junior_designer && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.junior_designer}
-                        </div>
-                      )}
                                     </FormItem>
                                     <FormItem label="Senior Designer">
                                         <Input
@@ -396,12 +311,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                                 formik.values.senior_designer
                                             }
                                         />
-                                          {formik.touched.senior_designer &&
-                      formik.errors.senior_designer && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.senior_designer}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Supervisor">
@@ -412,12 +321,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.supervisor}
                                         />
-                                          {formik.touched.supervisor &&
-                      formik.errors.supervisor && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.supervisor}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Visualizer">
@@ -428,12 +331,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.visualizer}
                                         />
-                                          {formik.touched.visualizer &&
-                      formik.errors.visualizer && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.visualizer}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Project Status">
@@ -444,12 +341,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.project_status}
                                         />
-                                          {formik.touched.project_status &&
-                      formik.errors.project_status && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.project_status}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Project Start Date">
@@ -462,12 +353,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                                 formik.values.project_start_date
                                             }
                                         />
-                                          {formik.touched.project_start_date &&
-                      formik.errors.project_start_date && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.project_start_date}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Project End Date">
@@ -480,12 +365,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                                 formik.values.project_end_date
                                             }
                                         />
-                                          {formik.touched.project_end_date &&
-                      formik.errors.project_end_date && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.project_end_date}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Project Budget">
@@ -496,12 +375,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                             onChange={formik.handleChange}
                                             value={formik.values.project_budget}
                                         />
-                                          {formik.touched.project_budget &&
-                      formik.errors.project_budget && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.project_budget}
-                        </div>
-                      )}
                                     </FormItem>
 
                                     <FormItem label="Project Location">
@@ -514,15 +387,35 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                                                 formik.values.project_location
                                             }
                                         />
-                                          {formik.touched.project_location &&
-                      formik.errors.project_location && (
-                        <div style={{ color: 'red' }}>
-                          {formik.errors.project_location}
-                        </div>
-                      )}
                                     </FormItem>
                                 </div>
-                               
+                                {/* 
+            <FormItem
+                        label="Project Id"
+                        invalid={(errors.number && touched.number) as boolean}
+                        errorMessage={errors.number}
+                    >
+                        <Field name="id">
+                            {({ field, form }: FieldProps) => {
+                                return (
+                                    <NumericFormatInput
+                                        form={form}
+                                        field={field}
+                                        placeholder="Stock"
+                                        customInput={
+                                            NumberInput as ComponentType
+                                        }
+                                        onValueChange={(e) => {
+                                            form.setFieldValue(
+                                                field.name,
+                                                e.value
+                                            )
+                                        }}
+                                    />
+                                )
+                            }}
+                        </Field>
+                    </FormItem> */}
                             </AdaptableCard>
                         </div>
                         <StickyFooter
