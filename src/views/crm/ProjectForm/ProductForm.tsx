@@ -1,129 +1,43 @@
-import { forwardRef, useState } from 'react'
-import { FormContainer, FormItem } from '@/components/ui/Form'
-import Button from '@/components/ui/Button'
-import hooks from '@/components/ui/hooks'
-import StickyFooter from '@/components/shared/StickyFooter'
-import ConfirmDialog from '@/components/shared/ConfirmDialog'
-import {
-    Field,
-    FieldProps,
-    Form,
-    Formik,
-    FormikProps,
-    FormikProvider,
-    useFormik,
-    FormikHelpers,
-} from 'formik'
-import BasicInformationFields from './BasicInformationFields'
-import PricingFields from './PricingFields'
-import OrganizationFields from './OrganizationFields'
-import ProductImages from './ProductImages'
-import cloneDeep from 'lodash/cloneDeep'
-import { HiOutlineTrash } from 'react-icons/hi'
-import { AiOutlineSave } from 'react-icons/ai'
-import * as Yup from 'yup'
-import axios from 'axios'
-import { AdaptableCard, RichTextEditor } from '@/components/shared'
-import { Input, Select } from '@/components/ui'
-import { useLocation, useNavigate } from 'react-router-dom'
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import ValueType from 'react-select';
+import DatePicker from '@/components/ui/DatePicker/DatePicker';
+import { StickyFooter } from '@/components/shared';
+import { Button, FormContainer, FormItem, Input, Select } from '@/components/ui';
+import { AiOutlineSave } from 'react-icons/ai';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-type FormikRef = FormikProps<any>
-
-type InitialData = {
-    lead_id: '833500'
-    client_name?: string
-    client_email?: string
-    client_contact?: string
-    location?: string
-    description?: string
-    project_type?: string
-    project_name?: string
+interface FormData {
+  lead_id: string | null;
+  status: string;
+  date: Date | null;
+  content: string;
+  createdBy: string;
+  client_name: string;
+  client_email: string;
+  client_contact: string;
+  location: string;
+  description: string;
+  project_type: string;
+  project_name: string;
 }
 
-export type FormModel = Omit<InitialData, 'tags'> & {
-    tags: { label: string; value: string }[] | string[]
+interface CustomerProfileProps {
+  data?: Partial<Customer>;
 }
 
-export type SetSubmitting = (isSubmitting: boolean) => void
+type Customer = {
+  _id: string;
+  name: string;
+  lead_id: string;
+  email: string;
+  phone: string;
+  location: string;
+  status: string;
+  source: string;
+  notes: string[];
+};
 
-export type OnDeleteCallback = React.Dispatch<React.SetStateAction<boolean>>
-
-type OnDelete = (callback: OnDeleteCallback) => void
-
-type ProductForm = {
-    initialData?: InitialData
-    type: 'edit' | 'new'
-    onDiscard?: () => void
-    onDelete?: OnDelete
-    onFormSubmit: (formData: FormModel, setSubmitting: SetSubmitting) => void
-}
-
-const { useUniqueId } = hooks
-
-const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Product Name Required'),
-    price: Yup.number().required('Price Required'),
-    stock: Yup.number().required('SKU Required'),
-    category: Yup.string().required('Category Required'),
-})
-
-const DeleteProductButton = ({ onDelete }: { onDelete: OnDelete }) => {
-    const [dialogOpen, setDialogOpen] = useState(false)
-
-    const onConfirmDialogOpen = () => {
-        setDialogOpen(true)
-    }
-
-    const onConfirmDialogClose = () => {
-        setDialogOpen(false)
-    }
-
-    const handleConfirm = () => {
-        onDelete?.(setDialogOpen)
-    }
-
-    return (
-        <>
-            <Button
-                className="text-red-600"
-                variant="plain"
-                size="sm"
-                icon={<HiOutlineTrash />}
-                type="button"
-                onClick={onConfirmDialogOpen}
-            >
-                Delete
-            </Button>
-            <ConfirmDialog
-                isOpen={dialogOpen}
-                type="danger"
-                title="Delete product"
-                confirmButtonColor="red-600"
-                onClose={onConfirmDialogClose}
-                onRequestClose={onConfirmDialogClose}
-                onCancel={onConfirmDialogClose}
-                onConfirm={handleConfirm}
-            >
-                <p>
-                    Are you sure you want to delete this product? All record
-                    related to this product will be deleted as well. This action
-                    cannot be undone.
-                </p>
-            </ConfirmDialog>
-        </>
-    )
-}
-
-
-
-
-
-
-const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
-    const navigate = useNavigate()
-
+const YourFormComponent: React.FC<CustomerProfileProps> = ({ data }) => {
     interface QueryParams {
         id: string;
         name: string;
@@ -143,199 +57,188 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
       location: queryParams.get('location') || '',
     };
 
-    const validationSchema1 = Yup.object().shape({
-        client_name: Yup.string().required('Name is required'),
-        client_contact: Yup.string()
-          .required('Phone is required')
-          .matches(/^[0-9]{10}$/, 'Phone must be 10 digits'),
-        client_email: Yup.string()
-          .email('Invalid email address')
-          .required('Email is required')
-          .matches(/@gmail\.com$/, 'Email must be a Gmail address'),
-        location: Yup.string().required('Location is required'),
-        project_type: Yup.string().required('Project Type is required'),
-        project_name: Yup.string().required('Project Name is required'),
-        description: Yup.string().required('Description is required'),
+  const initialFormData: FormData = {
+    lead_id: allQueryParams.id,
+    status: '',
+    date: null,
+    content: '',
+    createdBy: 'Client',
+    client_name: allQueryParams.name,
+    client_email: allQueryParams.email,
+    client_contact: allQueryParams.phone,
+    location: allQueryParams.location,
+    description: '',
+    project_type: '',
+    project_name: '',
+  };
+
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [selectedStatus, setSelectedStatus] = useState<ValueType<{ value: string; label: string }>>(null);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const navigate = useNavigate();
+
+  const projectTypeOptions = [
+    { value: 'commercial', label: 'Commercial' },
+    { value: 'residential', label: 'Residential' },
+  ];
+
+  const handleStatusChange = (selectedOption: ValueType<{ value: string; label: string }>) => {
+    setSelectedStatus(selectedOption);
+    setFormData({
+      ...formData,
+      status: selectedOption ? (selectedOption as { value: string; label: string }).value : '',
+    });
+    setErrors({
+      ...errors,
+      status: '',
+    });
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    setFormData({ ...formData, date });
+    setErrors({
+      ...errors,
+      date: '',
+    });
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({
+      ...errors,
+      [name]: '',
+    });
+  };
+
+  const handleFormSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    // Validate the form data
+    const validationErrors: { [key: string]: string } = {};
+
+   
+    if (!formData.client_name.trim()) {
+      validationErrors.client_name = "Client's Name is required";
+    }
+    if (!formData.client_email.trim() || !/^\S+@\S+\.\S+$/.test(formData.client_email.trim())) {
+      validationErrors.client_email = 'Valid email is required';
+    }
+    if (!formData.client_contact.trim() || !/^\d{10}$/.test(formData.client_contact.trim())) {
+      validationErrors.client_contact = 'Valid 10-digit contact number is required';
+    }
+    if (!formData.location.trim()) {
+      validationErrors.location = 'Location is required';
+    }
+    if (!formData.description.trim()) {
+      validationErrors.description = 'Description is required';
+    }
+    if (!formData.project_type.trim()) {
+      validationErrors.project_type = 'Project Type is required';
+    }
+    if (!formData.project_name.trim()) {
+      validationErrors.project_name = 'Project Name is required';
+    }
+  
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    try {
+      // Assuming you have an API endpoint for creating projects
+      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/create/lead/project', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
 
-    const formik = useFormik({
-        initialValues: {
-            lead_id: allQueryParams.id,
-            client_name: allQueryParams.name,
-            client_email: allQueryParams.email,
-            client_contact: allQueryParams.phone,
-            location: allQueryParams.location,
-            description: '',
-            project_type: '',
-            project_name: '',
-        },
-        validationSchema:validationSchema1,
-        onSubmit: async (values, formikHelpers) => {
-            try {
-                console.log(values)
-                // Make a POST request to your API endpoint
-                const response = await axios.post(
-                    'https://col-u3yp.onrender.com/v1/api/admin/create/lead/project',
-                    values,
-                )
-                setShowSuccessMessage(true)
-                formikHelpers.setSubmitting(false)
-                // formikHelpers.resetForm()
-                setTimeout(() => {
-                    setShowSuccessMessage(false)
-                    // navigate('/app/leads')
-                }, 2000)
-            } catch (error) {
-                console.error('Error submitting form:', error)
-            }
-        },
-    })
+      if (response.ok) {
+        // Project creation successful, show success alert
+        alert('Project creation successful');
+        navigate(-1);
+      } else {
+        // Project creation failed, show error alert
+        alert('Project creation failed');
+      }
+    } catch (error) {
+      // Handle any other errors
+      console.error('Error:', error);
+      alert('An error occurred');
+    }
+  };
 
-    const submit = () => {}
+  return (
+    <div>
+      <div className='flex justify-between items-center'>
+        <h5>Basic Information</h5>
+        <Button
+          variant='solid'
+          onClick={() =>
+            navigate(
+              `/app/crm/lead-project/?id=${myParam}&name=${data?.name}&email=${data?.email}&phone=${data?.phone}&location=${data?.location}`
+            )
+          }
+        >
+          Create Project
+        </Button>
+      </div>
+      <form onSubmit={handleFormSubmit}>
+        <FormContainer>
+         
+          
+          <div className='grid grid-cols-3 gap-5 '>
+            <FormItem label="Client's Name" className=''>
+              <Input name='client_name' value={formData.client_name} onChange={handleInputChange} />
+              {errors.client_name && <span className='text-red-500'>{errors.client_name}</span>}
+            </FormItem>
+            <FormItem label='Client Email' className=''>
+              <Input name='client_email' value={formData.client_email} onChange={handleInputChange} />
+              {errors.client_email && <span className='text-red-500'>{errors.client_email}</span>}
+            </FormItem>
+            <FormItem label='Client Contact' className=''>
+              <Input name='client_contact' value={formData.client_contact} onChange={handleInputChange} />
+              {errors.client_contact && <span className='text-red-500'>{errors.client_contact}</span>}
+            </FormItem>
+            <FormItem label='Location' className=''>
+              <Input name='location' value={formData.location} onChange={handleInputChange} />
+              {errors.location && <span className='text-red-500'>{errors.location}</span>}
+            </FormItem>
+            <FormItem label='Description' className=''>
+              <Input name='description' value={formData.description} onChange={handleInputChange} />
+              {errors.description && <span className='text-red-500'>{errors.description}</span>}
+            </FormItem>
+            <FormItem label='Project Type' className=''>
+            <Select
+                options={projectTypeOptions}
+                value={projectTypeOptions.find((option) => option.value === formData.project_type)}
+                onChange={(selectedOption) => {
+                  setFormData({
+                    ...formData,
+                    project_type: selectedOption ? (selectedOption as { value: string; label: string }).value : '',
+                  });
+                  setErrors({
+                    ...errors,
+                    project_type: '',
+                  });
+                }}
+              />
+              {errors.project_type && <span className='text-red-500'>{errors.project_type}</span>}
+            </FormItem>
+            <FormItem label='Project Name' className=''>
+              <Input name='project_name' value={formData.project_name} onChange={handleInputChange} />
+              {errors.project_name && <span className='text-red-500'>{errors.project_name}</span>}
+            </FormItem>
+          </div>
+          <Button size='sm' variant='solid' type='submit'>
+            Submit
+          </Button>
+        </FormContainer>
+      </form>
+    </div>
+  );
+};
 
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false)
-
-    return (
-        <>
-            <form onSubmit={formik.handleSubmit}>
-                <FormikProvider value={formik}>
-                    <FormContainer>
-                        <div className="grid grid-cols-1 lg:grid-cols gap-4">
-                            <AdaptableCard divider className="mb-4">
-                                <h5>Basic Information</h5>
-                                <p className="mb-6">
-                                    Section to config basic lead information
-                                </p>
-                                <div className="grid xl:grid-cols-3 xl:grid grid-cols-1 sm:grid-cols-2 :grid gap-5 ">
-                                    
-                                    <FormItem label="Name">
-                                        <Input
-                                            
-                                            name="client_name"
-                                            id="client_name"
-                                            onChange={formik.handleChange}
-                                            value={formik.values.client_name}
-                                        />
-                                         {formik.touched.client_name && formik.errors.client_name && (
-    <div className="error-message">{formik.errors.client_name}</div>
-  )}
-                                    </FormItem>
-                                    <FormItem label="Phone">
-                                        <Input
-                                            placeholder="Phone"
-                                            name="client_contact"
-                                            id="client_contact"
-                                           
-                                            onChange={formik.handleChange}
-                                            value={formik.values.client_contact}
-                                        />
-                                        {formik.touched.client_contact && formik.errors.client_contact && (
-    <div className="error-message">{formik.errors.client_contact}</div>
-  )}
-                                    </FormItem>
-                                    <FormItem label="Email">
-                                        <Input
-                                            placeholder="Email"
-                                            name="client_email"
-                                            id="client_email"
-                                            onChange={formik.handleChange}
-                                            value={formik.values.client_email}
-                                        />
-                                        {formik.touched.client_email && formik.errors.client_email && (
-    <div className="error-message">{formik.errors.client_email}</div>
-  )}
-                                    </FormItem>
-
-                                    <FormItem label="Location">
-                                        <Input
-                                            placeholder="Location"
-                                            name="location"
-                                            id="location"
-                                            onChange={formik.handleChange}
-                                            value={formik.values.location}
-                                        />
-                                        {formik.touched.location && formik.errors.location && (
-    <div className="error-message">{formik.errors.location}</div>
-  )}
-                                    </FormItem>
-                                    <FormItem label="Project Type">
-                                        <Input
-                                            placeholder="Project Type"
-                                            name="project_type"
-                                            id="project_type"
-                                            onChange={formik.handleChange}
-                                            value={formik.values.project_type}
-                                        />
-                                        {formik.touched.project_type && formik.errors.project_type && (
-    <div className="error-message">{formik.errors.project_type}</div>
-  )}
-                                    </FormItem>
-                                    <FormItem label="Project Name">
-                                        <Input
-                                            placeholder="project name"
-                                            name="project_name"
-                                            id="project_name"
-                                            onChange={formik.handleChange}
-                                            value={formik.values.project_name}
-                                        />
-                                        {formik.touched.project_name && formik.errors.project_name && (
-    <div className="error-message">{formik.errors.project_name}</div>
-  )}
-                                    </FormItem>
-                                    <FormItem label="Description">
-                                        <Input
-                                            placeholder="Description"
-                                            name="description"
-                                            id="description"
-                                            onChange={formik.handleChange}
-                                            value={formik.values.description}
-                                        />
-                                        {formik.touched.description && formik.errors.description && (
-    <div className="error-message">{formik.errors.description}</div>
-  )}
-                                    </FormItem>
-                                </div>
-                            </AdaptableCard>
-                        </div>
-                        <StickyFooter
-                            className="-mx-8 px-8 flex items-center justify-between py-4"
-                            stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-                        >
-                            <div className="md:flex items-center">
-                                <Button
-                                    size="sm"
-                                    className="ltr:mr-3 rtl:ml-3"
-                                    type="button"
-                                >
-                                    Discard
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="solid"
-                                    icon={<AiOutlineSave />}
-                                    type="submit"
-                                >
-                                    Save
-                                </Button>
-                            </div>
-                        </StickyFooter>
-                    </FormContainer>
-                </FormikProvider>
-            </form>
-            {showSuccessMessage && (
-                <ConfirmDialog
-                    isOpen={showSuccessMessage}
-                    type="success"
-                    title="Success"
-                    onClose={() => setShowSuccessMessage(false)}
-                >
-                    <p>Data added successfully!</p>
-                </ConfirmDialog>
-            )}
-        </>
-    )
-})
-
-ProductForm.displayName = 'ProductForm'
-
-export default ProductForm
+export default YourFormComponent;

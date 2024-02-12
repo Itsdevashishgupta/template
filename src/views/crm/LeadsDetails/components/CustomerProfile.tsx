@@ -161,17 +161,10 @@ interface Note {
 
 
 const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
+console.log(data);
 
     const [datas, setData] = useState<InitialData | null>(null);
 
-  
-    
-
-
-  
-    
-    
-  
     const leadStatus = [
         { value: 'followUp', label: 'Follow Up' },
         { value: 'interested', label: 'Interested' },
@@ -380,93 +373,7 @@ const statusOptions = [
                 </div>
             </div>
         </Card>
-        <Card>
-
-        <div className=' flex justify-between items-center '>
-
-<h5>Actions</h5> 
-<div>
-
-<Button
-  
-  // icon={<HiPencilAlt />}
-  variant="solid"
-  onClick={() => openDialog()}
->
-  View Last Updates
-</Button>
-</div>
-</div>
-        <form onSubmit={formik.handleSubmit}>
-               
-               <FormikProvider value={formik}>
-        <div className="flex flex-col xl:justify-between h-full 2xl:min-w-[360px] mx-auto">
-              
-
-             
-              <div className="grid grid-cols-3 sm:grid-cols-2 xl:grid-cols-3 gap-y-7 gap-x-6 mt-8">
-              <FormItem label="Select" 
-                            >
-                                <Select
-        id="status"
-        name="status"
-        options={statusOptions}
-        value={statusOptions.find((option) => option.value === formik.values.status)}
-        onChange={(option) => formik.setFieldValue('status', option?.value)}
-        onBlur={formik.handleBlur}
-      />
-      {formik.touched.status && formik.errors.status && (
-        <div style={{ color: 'red' }}>{formik.errors.status}</div>
-      )}
-         
-        
-                            </FormItem>
-
-            <FormItem label="To Follow Up On">
-            <DateTimepicker placeholder="Pick date & time" type='text' name='date' value={formik.values.date ? new Date(formik.values.date) : null} onChange={(date: Date | null) => {
-      // The date parameter will be of type 'Date | null'
-      formik.setFieldValue('date', date); // Update the formik value
-    }} />
-    {formik.touched.date && formik.errors.date && (
-        <div style={{ color: 'red' }}>{formik.errors.date}</div>
-      )}
-         
-            </FormItem>
-            </div></div>
-     <div className='flex items-center justify-between'>
-            <FormItem
-                label="Today's Update"
-                labelClass="!justify-start"
-                className='w-2/3'
-            >
-                <Input
-                    placeholder="Invalid text area"
-                    textArea
-                    value={formik.values.content}
-                    name='content'
-                    onChange={formik.handleChange}
-                />
-                {formik.touched.content && formik.errors.content && (
-        <div style={{ color: 'red' }}>{formik.errors.content}</div>
-      )}
-         
-            </FormItem>
-            <div>
-            <Button
-                block
-                // icon={<HiPencilAlt />}
-                variant="solid"
-                type='submit'
-                
-            >
-                Submit
-            </Button>
-            </div>
-           
-            </div>
-            </FormikProvider>
-            </form>
-        </Card>
+       
         {showSuccessMessage && (
         <ConfirmDialog isOpen={showSuccessMessage} type="success" title="Success" onClose={() => setShowSuccessMessage(false)}>
           <p>Data added successfully!</p>

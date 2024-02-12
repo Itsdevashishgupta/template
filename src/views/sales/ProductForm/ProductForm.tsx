@@ -185,12 +185,9 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
 
                 // setShowSuccessMessage(true)
                 formikHelpers.setSubmitting(false)
-                formikHelpers.resetForm()
+              
 
-                setTimeout(() => {
-                    setShowSuccessMessage(false)
-                    navigate('/app/leads')
-                }, 2000)
+              
 
           
                 const response = await axios.post(

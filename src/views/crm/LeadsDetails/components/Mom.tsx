@@ -1,261 +1,277 @@
-import { useCallback, useEffect, useState } from 'react'
-import Table from '@/components/ui/Table'
-import Badge from '@/components/ui/Badge'
-import {
-    flexRender,
-    getCoreRowModel,
-    getSortedRowModel,
-    useReactTable,
-    createColumnHelper,
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 
-} from '@tanstack/react-table'
-import { NumericFormat } from 'react-number-format'
-import { useAppSelector, OrderHistory } from '../store'
-import dayjs from 'dayjs'
-import { Button, Tooltip } from '@/components/ui'
-import { HiOutlineEye, HiOutlineTrash, HiPlusCircle } from 'react-icons/hi'
-import { useNavigate } from 'react-router-dom'
+import ValueType from 'react-select';
+import DatePicker from '@/components/ui/DatePicker/DatePicker';
+import { StickyFooter } from '@/components/shared';
+import { Button, Card, Dialog, FormContainer, FormItem, Input, Select } from '@/components/ui';
+import { AiOutlineSave } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
+import type { MouseEvent } from 'react'
 
-const { Tr, Th, Td, THead, TBody, Sorter } = Table
-
-const statusColor: Record<string, string> = {
-    paid: 'bg-emerald-500',
-    pending: 'bg-amber-400',
+interface FormData {
+  lead_id: string | null;
+  status: string;
+  date: Date | null;
+  content: string;
+  createdBy: string;
 }
 
-const columnHelper = createColumnHelper<OrderHistory>()
-type Order = {
-    id: string
-    date: number
-    customer: string
-    status: number
-    paymentMehod: string
-    paymentIdendifier: string
-    totalAmount: number
+const urlParams = new URLSearchParams(window.location.search);
+const myParam = urlParams.get('id');
+
+type CustomerProfileProps = {
+    data?: Partial<Customer>
 }
-
-const ActionColumn = ({ row }: { row: Order }) => {
-    // const dispatch = useAppDispatch()
-    // const { textTheme } = useThemeClass()
-    const navigate = useNavigate()
-
-    // const onDelete = () => {
-    //     dispatch(setDeleteMode('single'))
-    //     dispatch(setSelectedRow([row.id]))
-    // }
-
-    const onView = useCallback(() => {
-        navigate(`/appy`)
-    }, [navigate, row])
-
-    return (
-        <div className="flex justify-end text-lg">
-            <Tooltip title="View">
-                <span
-                    className={`cursor-pointer p-2 hover:`}
-                    onClick={onView}
-                >
-                    <HiOutlineEye />
-                </span>
-            </Tooltip>
-            {/* <Tooltip title="Delete">
-                <span
-                    className="cursor-pointer p-2 hover:text-red-500"
-                    onClick={onDelete}
-                >
-                    <HiOutlineTrash />
-                </span>
-            </Tooltip> */}
-        </div>
-    )
+type Customer = {
+    _id: string
+    name: string
+    lead_id:string
+    email:string
+    phone:string
+    location:string
+    status:string
+    source:string
+    notes?: Note[];
 }
+interface Note {
+    _id: string;
+    content: string;
+    createdBy: string;
+    date: string;
+    status: string;
+  }
 
-const columns = [
-    columnHelper.accessor('id', {
-        header: 'MOMId',
-        // cell: (props) => {
-        //     const row = props.row.original
-        //     return (
-        //         <div>
-        //             <span className="cursor-pointer">{row.id}</span>
-        //         </div>
-        //     )
-        // },
-    }),
-    columnHelper.accessor('source', {
-        header: 'Mode Of Meeting',
-    }),
-    // columnHelper.accessor('date', {
-    //     header: 'Date',
-    //     cell: (props) => {
-    //         const row = props.row.original
-    //         return (
-    //             <div className="flex items-center">
-    //                 <Badge className={statusColor[row.status]} />
-    //                 <span className="ml-2 rtl:mr-2 capitalize">
-    //                     {row.status}
-    //                 </span>
-    //             </div>
-    //         )
-    //     },
-    // }),
-    columnHelper.accessor('date', {
-        header: 'Date',
-        cell: (props) => {
-            const row = props.row.original
-            return (
-                <>
-                <div className="flex items-center">
-                    {dayjs.unix(row.date).format('MM/DD/YYYY')}
-             
-                </div>
-                <div>
-                </div>
-                </>
-            )
-        },
-    }),
+interface CustomerProfilePropss {
+    data: {
+      // Define the structure of the data object here
+      _id: string;
+      name: string;
+      lead_id: string;
+      email: string;
+      phone: string;
+      location: string;
+      status: string;
+      source: string;
+      date: string;
+      // Make notes optional
+      createdAt: string;
+      __v: number;
+      // Add other properties as needed
+    };
+  }
+
+const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
+    console.log(data);
     
-    // columnHelper.accessor('amount', {
-    //     header: 'Amount',
-    //     cell: (props) => {
-    //         const row = props.row.original
-    //         return (
-    //             <div className="flex items-center">
-    //                 <NumericFormat
-    //                     displayType="text"
-    //                     value={(Math.round(row.amount * 100) / 100).toFixed(2)}
-    //                     prefix={'$'}
-    //                     thousandSeparator={true}
-    //                 />
-    //             </div>
-    //         )
-    //     },
-    // }),
-]
+  const initialFormData: FormData = {
+    lead_id: myParam,
+    status: '',
+    date: null,
+    content: '',
+    createdBy: 'Client',
+  };
 
-const MOM = () => {
-    const data = useAppSelector(
-        (state) => state.crmCustomerDetails.data.paymentHistoryData
-    )
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [selectedStatus, setSelectedStatus] = useState<ValueType<{ value: string; label: string }>>(null);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const navigate = useNavigate();
 
-    const [sorting, setSorting] = useState<
-        {
-            id: string
-            desc: boolean
-        }[]
-    >([])
+  const statusOptions = [
+    { value: 'cancel', label: 'Cancel' },
+    // Add other status options as needed
+  ];
 
-    const table = useReactTable({
-        data,
-        columns,
-        state: {
-            sorting,
+  const handleStatusChange = (selectedOption: ValueType<{ value: string; label: string }>) => {
+    setSelectedStatus(selectedOption);
+    setFormData({
+      ...formData,
+      status: selectedOption ? (selectedOption as { value: string; label: string }).value : '',
+    });
+    setErrors({
+      ...errors,
+      status: '',
+    });
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    setFormData({ ...formData, date });
+    setErrors({
+      ...errors,
+      date: '',
+    });
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({
+      ...errors,
+      [name]: '',
+    });
+  };
+
+  const handleFormSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    // Validate the form data
+    const validationErrors: { [key: string]: string } = {};
+    if (!selectedStatus) {
+      validationErrors.status = 'Status is required';
+    }
+    if (!formData.date) {
+      validationErrors.date = 'Date is required';
+    }
+    if (!formData.content.trim()) {
+      validationErrors.content = 'Content is required';
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    try {
+      // Assuming you have an API endpoint for updating leads
+      const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/update/lead/', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        onSortingChange: setSorting,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-    })
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        // Update successful, show success alert
+        alert('Update successful');
+        navigate(-1);
+      } else {
+        // Update failed, show error alert
+        alert('Update failed');
+      }
+    } catch (error) {
+      // Handle any other errors
+      console.error('Error:', error);
+      alert('An error occurred');
+    }
+  };
 
 
-    const [projects, setprojects] = useState<any[]>([]);
-    console.log(projects);
+  const [dialogIsOpen, setIsOpen] = useState(false)
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-            const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-  
-          const jsonData = await response.json();
-          setprojects(jsonData.data.projects);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-  
-      fetchData();
-    }, []);
+  const openDialog = () => {
+      setIsOpen(true)
+  }
 
-const navigate=useNavigate();
+  const onDialogClose = (e: MouseEvent) => {
+      console.log('onDialogClose', e)
+      setIsOpen(false)
+  }
 
+  const onDialogOk = (e: MouseEvent) => {
+      console.log('onDialogOk', e)
+      setIsOpen(false)
+  }
 
+const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
     return (
-        <div className="mb-4 relative">
-            <div  className='flex items-center justify-between mb-4'>
-                <div></div>
-                <div className=''>
-            <Button block variant="solid" size="sm" icon={<HiPlusCircle />}>
-                    Add MOM
-                </Button>
-                </div>
-          
-                </div>
-            <Table>
-                <THead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <Tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <Th
-                                        key={header.id}
-                                        colSpan={header.colSpan}
-                                    >
-                                        {header.isPlaceholder ? null : (
-                                            <div
-                                                {...{
-                                                    className:
-                                                        header.column.getCanSort()
-                                                            ? 'cursor-pointer select-none'
-                                                            : '',
-                                                    onClick:
-                                                        header.column.getToggleSortingHandler(),
-                                                }}
-                                            >
-                                                {flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext()
-                                                )}
-                                                {
-                                                    <Sorter
-                                                        sort={header.column.getIsSorted()}
-                                                    />
-                                                }
-                                            </div>
-                                        )}
-                                    </Th>
-                                )
-                            })}
-                        </Tr>
-                    ))}
-                </THead>
-                <TBody>
-                    {table
-                        .getRowModel()
-                        .rows.slice(0, 10)
-                        .map((row) => {
-                            return (
-                                <Tr key={row.id} onClick={()=>navigate('/app/crm/mom')} className=' cursor-pointer' >
-                                    {row.getVisibleCells().map((cell) => {
-                                        return (
-                                            <Td key={cell.id}>
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </Td>
-                                        )
-                                    })}
-                                </Tr>
-                            )
-                        })}
-                </TBody>
-            </Table>
+        <div>
+            <span>{title}</span>
+            <p className="text-gray-700 dark:text-gray-200 font-semibold">
+                {value}
+            </p>
         </div>
     )
 }
+  return (
+    <div>
+          <div className='flex justify-between items-center'>
+              <h5>Basic Information</h5>
+              <Button variant='solid' onClick={() => openDialog()} >View Last Update</Button>
+              </div>
+    <form onSubmit={handleFormSubmit}>
+      <FormContainer>
+    
+        <div className='grid grid-cols-3 gap-5'>
+          <FormItem>
+            Status:
+            <Select
+              value={selectedStatus}
+              onChange={handleStatusChange}
+              options={statusOptions}
+            />
+            {errors.status && <span className="text-red-500">{errors.status}</span>}
+          </FormItem>
 
-export default MOM
+          <FormItem>
+            Date:
+            <DatePicker
+              size='sm'
+              selected={formData.date}
+              onChange={handleDateChange}
+              dateFormat="MM/dd/yyyy"
+            />
+            {errors.date && <span className="text-red-500">{errors.date}</span>}
+            </FormItem>
+          
+          </div>
+          <div className='flex justify-between items-center '>
+          <FormItem
+                label="Today's Update"
+                labelClass="!justify-start"
+                className='w-2/3'
+            >
+                <Input
+                     textArea
+                     name="content"
+                     value={formData.content}
+                     onChange={handleInputChange}
+                />
+                </FormItem>
+          <Button
+              size="sm"
+              variant="solid"
+              type="submit"
+              className=''
+            >
+              Submit
+            </Button>
+         
+            </div>
+
+        
+      </FormContainer>
+    </form>
+
+    <Dialog
+                isOpen={dialogIsOpen}
+                onClose={onDialogClose}
+                onRequestClose={onDialogClose}
+                width={1000}
+                height={490}
+            >
+              <div style={{ maxHeight: '400px', overflowY: 'auto', marginRight:"2%", marginLeft:"1%"  }} className='scrollbar-hide  whitespace-nowrap'>
+        {data?.notes?.map((note) => (
+          <div key={note._id} className='mb-4 mr-4'>
+            <Card>
+              <div className='flex flex-row justify-between items-center mb-4 '>
+                <CustomerInfoField title="Date" value={note.date} />
+                <CustomerInfoField title="Status" value={note.status} />
+              </div>
+              <CustomerInfoField title="Description" value={note.content} />
+            </Card>
+            
+          </div>
+        ))}
+        <div className="text-right mt-6 mb-4 mr-[2%]">
+        <Button variant="solid" onClick={onDialogOk}>
+          Okay
+        </Button>
+      </div>
+      </div>
+      
+            </Dialog>
+    </div>
+  );
+};
+
+export default YourFormComponent;

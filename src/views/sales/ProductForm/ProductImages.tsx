@@ -1,256 +1,408 @@
-import { useState } from 'react'
-import AdaptableCard from '@/components/shared/AdaptableCard'
-import ConfirmDialog from '@/components/shared/ConfirmDialog'
-import DoubleSidedImage from '@/components/shared/DoubleSidedImage'
-import { FormItem } from '@/components/ui/Form'
-import Dialog from '@/components/ui/Dialog'
-import Upload from '@/components/ui/Upload'
-import { HiEye, HiTrash } from 'react-icons/hi'
-import cloneDeep from 'lodash/cloneDeep'
-import { Field, FieldProps, FieldInputProps, FormikProps } from 'formik'
+// File: FileUploadForm.tsx
 
-type Image = {
-    id: string
-    name: string
-    img: string
+import React, { useState } from 'react';
+import axios from 'axios';
+import Select from 'react-select';
+import DatePicker from '@/components/ui/DatePicker/DatePicker';
+import { Button, FormItem, Input } from '@/components/ui';
+import { format } from 'date-fns';
+
+interface FormData {
+  project_name: string;
+  project_type: string;
+  description: string;
+  leadmanager: string;
+  junior_designer: string;
+  supervisor: string;
+  visualizer: string;
+  role: string;
+  project_status: string;
+  project_start_date:Date 
+  timeline_date:Date 
+  project_end_date:Date 
+  project_budget: string;
+  project_location: string;
+  senior_designer: string;
+  client_name: string;
+  client_contact: string;
+  id: string;
+  client_email: string;
+  files: File[];
 }
 
-type FormModel = {
-    imgList: Image[]
-    [key: string]: unknown
-}
+const FileUploadForm: React.FC = () => {
+    const [formData, setFormData] = useState<FormData>({
+        project_name: '',
+        project_type: '',
+        description: 'asdf',
+        leadmanager: '',
+        junior_designer: '',
+        supervisor: '',
+        visualizer: '',
+        role: '',
+        project_status: '',
+        project_start_date:new Date() ,
+        timeline_date: new Date(),
+        project_end_date:new Date(),
+        project_budget: '',
+        project_location: '',
+        senior_designer: '',
+        client_name: '',
+        client_contact: '',
+        id: '65c32e19e0f36d8e1f30955c',
+        client_email: '',
+        files: [],
+      });
 
-type ImageListProps = {
-    imgList: Image[]
-    onImageDelete: (img: Image) => void
-}
+      const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-type ProductImagesProps = {
-    values: FormModel
-}
+      const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+        setErrors({
+            ...errors,
+            [name]: '',
+          });
+      };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setFormData((prevData) => ({ ...prevData, files }));
+  };
 
-const ImageList = (props: ImageListProps) => {
-    const { imgList, onImageDelete } = props
+  const handleDateChange = (date: Date | null, fieldName: string) => {
+    setFormData({
+      ...formData,
+      [fieldName]: date ? format(date, 'MM-dd-yyyy') : null,
+    });
+    setErrors({
+        ...errors,
+        date: '',
+      });
+  };
 
-    const [selectedImg, setSelectedImg] = useState<Image>({} as Image)
-    const [viewOpen, setViewOpen] = useState(false)
-    const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false)
+  const projectTypeOptions = [
+    { value: 'Commercial', label: 'Commercial' },
+    { value: 'residential', label: 'Residential' },
+  ];
+  const projectStatusOptions = [
+    { value: 'Completed', label: 'Completed' },
+    { value: 'Executing', label: 'Executing' },
+    { value: 'Designing', label: 'Designing' },
+  ];
 
-    const onViewOpen = (img: Image) => {
-        setSelectedImg(img)
-        setViewOpen(true)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const validationErrors: { [key: string]: string } = {};
+
+   
+    if (!formData.client_name.trim()) {
+      validationErrors.client_name = "Client's Name is required";
+    }
+    if (!formData.client_email.trim() || !/^\S+@\S+\.\S+$/.test(formData.client_email.trim())) {
+      validationErrors.client_email = 'Valid email is required';
+    }
+    if (
+        !formData.client_contact.trim() || 
+        !/^\d{10}$/.test(formData.client_contact.trim()) || 
+        /\s/.test(formData.client_contact.trim()) ||
+        /^\s|\s$/.test(formData.client_contact)
+      ) {
+        validationErrors.client_contact = 'Valid 10-digit contact number without spaces';
+      }
+    if (!formData.project_location.trim()) {
+      validationErrors.location = 'Location is required';
+    }
+    if (!formData.description.trim()) {
+      validationErrors.description = 'Description is required';
+    }
+    if (!formData.project_type.trim()) {
+      validationErrors.project_type = 'Project Type is required';
+    }
+    if (!formData.project_name.trim()) {
+      validationErrors.project_name = ' Name is required';
+    }
+    if (!formData.leadmanager.trim()) {
+      validationErrors.leadmanager = ' Name is required';
+    }
+    if (!formData.junior_designer.trim()) {
+      validationErrors.junior_designer = ' Name is required';
+    }
+    if (!formData.supervisor.trim()) {
+      validationErrors.supervisor = ' Name is required';
+    }
+    if (!formData.visualizer.trim()) {
+      validationErrors.visualizer = ' Name is required';
+    }
+    if (!formData.senior_designer.trim()) {
+      validationErrors.senior_designer = ' Name is required';
+    }
+    if (!formData.project_budget.trim()) {
+      validationErrors.project_budget= ' Budgetis required';
+    }
+    if (!formData.project_location.trim()) {
+      validationErrors.project_location = ' Location is required';
+    }
+   
+   
+  
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
     }
 
-    const onDialogClose = () => {
-        setViewOpen(false)
-        setTimeout(() => {
-            setSelectedImg({} as Image)
-        }, 300)
-    }
-
-    const onDeleteConfirmation = (img: Image) => {
-        setSelectedImg(img)
-        setDeleteConfirmationOpen(true)
-    }
-
-    const onDeleteConfirmationClose = () => {
-        setSelectedImg({} as Image)
-        setDeleteConfirmationOpen(false)
-    }
-
-    const onDelete = () => {
-        onImageDelete?.(selectedImg)
-        setDeleteConfirmationOpen(false)
-    }
-
-    return (
-        <>
-            {imgList.map((img) => (
-                <div
-                    key={img.id}
-                    className="group relative rounded border p-2 flex"
-                >
-                    <img
-                        className="rounded max-h-[140px] max-w-full"
-                        src={img.img}
-                        alt={img.name}
-                    />
-                    <div className="absolute inset-2 bg-gray-900/[.7] group-hover:flex hidden text-xl items-center justify-center">
-                        <span
-                            className="text-gray-100 hover:text-gray-300 cursor-pointer p-1.5"
-                            onClick={() => onViewOpen(img)}
-                        >
-                            <HiEye />
-                        </span>
-                        <span
-                            className="text-gray-100 hover:text-gray-300 cursor-pointer p-1.5"
-                            onClick={() => onDeleteConfirmation(img)}
-                        >
-                            <HiTrash />
-                        </span>
-                    </div>
-                </div>
-            ))}
-            <Dialog
-                isOpen={viewOpen}
-                onClose={onDialogClose}
-                onRequestClose={onDialogClose}
-            >
-                <h5 className="mb-4">{selectedImg.name}</h5>
-                <img
-                    className="w-full"
-                    src={selectedImg.img}
-                    alt={selectedImg.name}
-                />
-            </Dialog>
-            <ConfirmDialog
-                isOpen={deleteConfirmationOpen}
-                type="danger"
-                title="Remove image"
-                confirmButtonColor="red-600"
-                onClose={onDeleteConfirmationClose}
-                onRequestClose={onDeleteConfirmationClose}
-                onCancel={onDeleteConfirmationClose}
-                onConfirm={onDelete}
-            >
-                <p> Are you sure you want to remove this image? </p>
-            </ConfirmDialog>
-        </>
-    )
-}
-
-const ProductImages = (props: ProductImagesProps) => {
-    const { values } = props
-
-    const beforeUpload = (file: FileList | null) => {
-        let valid: boolean | string = true
-
-        const allowedFileType = ['image/jpeg', 'image/png']
-        const maxFileSize = 500000
-
-        if (file) {
-            for (const f of file) {
-                if (!allowedFileType.includes(f.type)) {
-                    valid = 'Please upload a .jpeg or .png file!'
-                }
-
-                if (f.size >= maxFileSize) {
-                    valid = 'Upload image cannot more then 500kb!'
-                }
-            }
+    try {
+      const formDataToSend = new FormData();
+      // Append non-file fields
+      for (const key in formData) {
+        if (key !== 'files') {
+          formDataToSend.append(key, formData[key]);
         }
+      }
+      // Append files
+      formData.files.forEach((file) => {
+        formDataToSend.append('files', file);
+      });
 
-        return valid
+      const response = await axios.post(
+        'https://col-u3yp.onrender.com/v1/api/admin/create/project/',
+        formDataToSend
+      );
+
+      if (response.status === 200) {
+        alert('Project creation successful');
+      } else {
+        alert('Project creation failed');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred');
     }
+  };
 
-    const onUpload = (
-        form: FormikProps<FormModel>,
-        field: FieldInputProps<FormModel>,
-        files: File[]
-    ) => {
-        let imageId = '1-img-0'
-        const latestUpload = files.length - 1
-        if (values.imgList.length > 0) {
-            const prevImgId = values.imgList[values.imgList.length - 1].id
-            const splitImgId = prevImgId.split('-')
-            const newIdNumber = parseInt(splitImgId[splitImgId.length - 1]) + 1
-            splitImgId.pop()
-            const newIdArr = [...splitImgId, ...[newIdNumber]]
-            imageId = newIdArr.join('-')
-        }
-        const image = {
-            id: imageId,
-            name: files[latestUpload].name,
-            img: URL.createObjectURL(files[latestUpload]),
-        }
-        const imageList = [...values.imgList, ...[image]]
-        console.log('imageList', imageList)
-        form.setFieldValue(field.name, imageList)
-    }
+  return (
+    <form onSubmit={handleSubmit}>
+        <div className='grid grid-cols-3 gap-5'>
+        <FormItem label='Client Name'>
+        <Input
+          size='sm'
+          type="text"
+          id="client_name"
+          name="client_name"
+          value={formData.client_name}
+          onChange={handleInputChange}
+          required
+        />
+            {errors.client_name && <span className='text-red-500'>{errors.client_name}</span>}
+        </FormItem>
+        <FormItem label='Client Contact'>
+        <Input
+          size='sm'
+          type="text"
+          id="client_contact"
+          name="client_contact"
+          value={formData.client_contact}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.client_contact && <span className='text-red-500'>{errors.client_contact}</span>}
+        </FormItem>
+        <FormItem label='Client Email'>
+        <Input
+          size='sm'
+          type="text"
+          id="client_email"
+          name="client_email"
+          value={formData.client_email}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.client_email && <span className='text-red-500'>{errors.client_email}</span>}
+        </FormItem>
+        <FormItem label='Project Name'>
+        <Input
+          size='sm'
+          type="text"
+          id="project_name"
+          name="project_name"
+          value={formData.project_name}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.project_name && <span className='text-red-500'>{errors.project_name}</span>}
+        </FormItem>
+        <FormItem label='Project Type'>
+        <Select
+                options={projectTypeOptions}
+                value={projectTypeOptions.find((option) => option.value === formData.project_type)}
+                onChange={(selectedOption) => {
+                  setFormData({
+                    ...formData,
+                    project_type: selectedOption ? (selectedOption as { value: string; label: string }).value : '',
+                  });
+                  setErrors({
+                    ...errors,
+                    project_type: '',
+                  });
+                }}
+              />
+              {errors.project_type && <span className='text-red-500'>{errors.project_type}</span>}
+        </FormItem>
+        <FormItem label='Lead Manager'>
+        <Input
+          size='sm'
+          type="text"
+          id="leadmanager" 
+          name="leadmanager"
+          value={formData.leadmanager}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.leadmanager && <span className='text-red-500'>{errors.leadmanager}</span>}
+        </FormItem>
+        <FormItem label='Junior Designer'>
+        <Input
+          size='sm'
+          type="text"
+          id="junior_designer"
+          name="junior_designer"
+          value={formData.junior_designer}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.junior_designer && <span className='text-red-500'>{errors.junior_designer}</span>}
+        </FormItem>
+        <FormItem label='Supervisor'>
+        <Input
+          size='sm'
+          type="text"
+          id="supervisor"
+          name="supervisor"
+          value={formData.supervisor}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.supervisor && <span className='text-red-500'>{errors.supervisor}</span>}
+        </FormItem>
+        <FormItem label='Visualizer'>
+        <Input
+          size='sm'
+          type="text"
+          id="visualizer"
+          name="visualizer"
+          value={formData.visualizer}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.visualizer && <span className='text-red-500'>{errors.visualizer}</span>}
+        </FormItem>
+        <FormItem label='Senior Designer'>
+        <Input
+          size='sm'
+          type="text"
+          id="senior_designer"
+          name="senior_designer"
+          value={formData.senior_designer}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.senior_designer && <span className='text-red-500'>{errors.senior_designer}</span>}
+        </FormItem>
+        <FormItem label='Project Status'>
+        <Select
+                options={projectStatusOptions}
+                value={projectStatusOptions.find((option) => option.value === formData.project_status)}
+                onChange={(selectedOption) => {
+                  setFormData({
+                    ...formData,
+                    project_status: selectedOption ? (selectedOption as { value: string; label: string }).value : '',
+                  });
+                  setErrors({
+                    ...errors,
+                    project_status: '',
+                  });
+                }}
+              />
+              {errors.project_status && <span className='text-red-500'>{errors.project_status}</span>}
+        </FormItem>
+        <FormItem label='Project Start Date'>
+        <DatePicker
+          size='sm'
+          selected={formData.project_start_date ? new Date(formData.project_start_date) : null}
+          onChange={(date) => handleDateChange(date, 'project_start_date')}
+          dateFormat="MM/dd/yyyy"
+        />
+        {errors.project_start_date && <span className='text-red-500'>{errors.project_start_date}</span>}
+      </FormItem>
+      <FormItem label='Timeline Date'>
+        <DatePicker
+          size='sm'
+          selected={formData.timeline_date ? new Date(formData.timeline_date) : null}
+          onChange={(date) => handleDateChange(date, 'timeline_date')}
+          dateFormat="MM/dd/yyyy"
+        />
+        {errors.timeline_date && <span className='text-red-500'>{errors.timeline_date}</span>}
+      </FormItem>
+        <FormItem label='Project Budget'>
+        <Input
+          size='sm'
+          type="text"
+          id="project_budget"
+          name="project_budget"
+          value={formData.project_budget}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.project_budget && <span className='text-red-500'>{errors.project_budget}</span>}
+        </FormItem>
+        <FormItem label='Project Location'>
+        <Input
+          size='sm'
+          type="text"
+          id="project_location"
+          name="project_location"
+          value={formData.project_location}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.project_location && <span className='text-red-500'>{errors.project_location}</span>}
+        </FormItem>
+        <FormItem label='Description'>
+        <Input
+          size='sm'
+          type="text"
+          id="description"
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.project_location && <span className='text-red-500'>{errors.project_location}</span>}
+        </FormItem>
+        <FormItem label='Project Location'>
+        <Input
+          size='sm'
+          type="text"
+          id="project_location"
+          name="project_location"
+          value={formData.project_location}
+          onChange={handleInputChange}
+          required
+        />
+        {errors.project_location && <span className='text-red-500'>{errors.project_location}</span>}
+        </FormItem>
+       
+      
+      <div>
+        <label htmlFor="files">Files:</label>
+        <input type="file" id="files" name="files" multiple onChange={handleFileChange} />
+      </div>
+      <Button type="submit" variant='solid'>Submit</Button>
+      </div>
+    </form>
+  );
+};
 
-    const handleImageDelete = (
-        form: FormikProps<FormModel>,
-        field: FieldInputProps<FormModel>,
-        deletedImg: Image
-    ) => {
-        let imgList = cloneDeep(values.imgList)
-        imgList = imgList.filter((img) => img.id !== deletedImg.id)
-        form.setFieldValue(field.name, imgList)
-    }
-
-    return (
-        <AdaptableCard className="mb-4">
-            <h5>Product Image</h5>
-            <p className="mb-6">Add or change image for the product</p>
-            <FormItem>
-                <Field name="imgList">
-                    {({ field, form }: FieldProps) => {
-                        if (values.imgList.length > 0) {
-                            return (
-                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-                                    <ImageList
-                                        imgList={values.imgList}
-                                        onImageDelete={(img: Image) =>
-                                            handleImageDelete(form, field, img)
-                                        }
-                                    />
-                                    <Upload
-                                        draggable
-                                        className="min-h-fit"
-                                        beforeUpload={beforeUpload}
-                                        showList={false}
-                                        onChange={(files) =>
-                                            onUpload(form, field, files)
-                                        }
-                                    >
-                                        <div className="max-w-full flex flex-col px-4 py-2 justify-center items-center">
-                                            <DoubleSidedImage
-                                                src="/img/others/upload.png"
-                                                darkModeSrc="/img/others/upload-dark.png"
-                                            />
-                                            <p className="font-semibold text-center text-gray-800 dark:text-white">
-                                                Upload
-                                            </p>
-                                        </div>
-                                    </Upload>
-                                </div>
-                            )
-                        }
-
-                        return (
-                            <Upload
-                                draggable
-                                beforeUpload={beforeUpload}
-                                showList={false}
-                                onChange={(files) =>
-                                    onUpload(form, field, files)
-                                }
-                            >
-                                <div className="my-16 text-center">
-                                    <DoubleSidedImage
-                                        className="mx-auto"
-                                        src="/img/others/upload.png"
-                                        darkModeSrc="/img/others/upload-dark.png"
-                                    />
-                                    <p className="font-semibold">
-                                        <span className="text-gray-800 dark:text-white">
-                                            Drop your image here, or{' '}
-                                        </span>
-                                        <span className="text-blue-500">
-                                            browse
-                                        </span>
-                                    </p>
-                                    <p className="mt-1 opacity-60 dark:text-white">
-                                        Support: jpeg, png
-                                    </p>
-                                </div>
-                            </Upload>
-                        )
-                    }}
-                </Field>
-            </FormItem>
-        </AdaptableCard>
-    )
-}
-
-export default ProductImages
+export default FileUploadForm;

@@ -13,7 +13,7 @@ import { injectReducer } from '@/store'
 import isEmpty from 'lodash/isEmpty'
 import useQuery from '@/utils/hooks/useQuery'
 import MOM from './components/Mom'
-import { Tabs } from '@/components/ui'
+import { Card, Tabs } from '@/components/ui'
 import TabList from '@/components/ui/Tabs/TabList'
 import TabNav from '@/components/ui/Tabs/TabNav'
 import TabContent from '@/components/ui/Tabs/TabContent'
@@ -40,17 +40,12 @@ const CustomerDetail = () => {
         fetchData()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
     const fetchData = () => {
         const id = query.get('lead_id')
         if (id) {
             dispatch(getCustomer({ id }))
         }
     }
-
-    
-  
-    
     const urlParams = new URLSearchParams(window.location.search);
     const myParam = urlParams.get('id');
     console.log(typeof(myParam));
@@ -75,7 +70,9 @@ const CustomerDetail = () => {
 
     // Check if details is not null and if details.data is an array with at least one element
     const lead = details?.data?.[0];
-    console.log(lead);
+
+    
+    console.log();
     
     
     // Only proceed if lead is not null
@@ -89,7 +86,14 @@ const CustomerDetail = () => {
 
       return (
           <Container className="h-full">
-              <CustomerProfile data={lead} />
+              
+                       <CustomerProfile data={lead}/>
+                   
+                  <Card className='mt-5' >
+                       <MOM data={lead}/>
+                       </Card>
+                   
+            
               {/* Other components or logic related to the customer detail */}
           </Container>
       );

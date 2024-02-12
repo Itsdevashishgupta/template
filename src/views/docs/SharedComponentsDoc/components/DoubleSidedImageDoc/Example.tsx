@@ -4,8 +4,8 @@ const Example = () => {
     return (
         <DoubleSidedImage
         style={{width:"100px"}}
-        src="/img/logo/logo-light-full.png"
-        darkModeSrc="/img/logo/logo-dark-full.png"
+        src="/colonelz-logo.png"
+        darkModeSrc="/colonelz-logo.png"
             alt="elstar"
         />
     )

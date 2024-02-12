@@ -6,6 +6,7 @@ import toast from '@/components/ui/toast'
 import Notification from '@/components/ui/Notification'
 import { useNavigate } from 'react-router-dom'
 import { apiCreateSalesProduct } from '@/services/SalesService'
+import ProductImages from '../ProductForm/ProductImages'
 
 const ProductNew = () => {
     const navigate = useNavigate()
@@ -45,10 +46,7 @@ const ProductNew = () => {
 
     return (
         <>
-            <ProductForm
-                type="new"
-                onFormSubmit={handleFormSubmit}
-                onDiscard={handleDiscard}
+            <ProductImages
             />
         </>
     )
