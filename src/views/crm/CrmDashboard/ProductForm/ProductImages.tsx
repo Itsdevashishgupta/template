@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import DatePicker from '@/components/ui/DatePicker/DatePicker';
-import 'react-datepicker/dist/react-datepicker.css';
+
 
 interface ProjectFormProps {
   // Add any additional props if needed

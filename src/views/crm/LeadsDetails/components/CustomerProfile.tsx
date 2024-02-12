@@ -7,14 +7,8 @@ import toast from '@/components/ui/toast'
 import ConfirmDialog from '@/components/shared/ConfirmDialog'
 import dayjs from 'dayjs'
 import type { MouseEvent } from 'react'
-import {
-    FaFacebookF,
-    FaTwitter,
-    FaLinkedinIn,
-    FaPinterestP,
-} from 'react-icons/fa'
 import { HiPencilAlt, HiOutlineTrash } from 'react-icons/hi'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
     deleteCustomer,
     openEditCustomerDetailDialog,
@@ -22,15 +16,13 @@ import {
     Customer,
 } from '../store'
 import EditCustomerProfile from './EditCustomerProfile'
-import { Dialog, FormItem, Input, Select } from '@/components/ui'
+import { Dialog } from '@/components/ui'
 import * as Yup from 'yup';
-import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
 import { Field, FieldProps, FormikProvider, useFormik } from 'formik'
-import { RichTextEditor } from '@/components/shared'
-import axios, { AxiosResponse } from 'axios'
-import { log } from 'console'
-import { MenuItem, OutlinedInput, useTheme,Theme, SelectChangeEvent, FormControl, InputLabel } from '@mui/material'
-import { values } from 'lodash'
+import axios from 'axios'
+
+import {useTheme,Theme, SelectChangeEvent } from '@mui/material'
+
 
 
 type CustomerInfoFieldProps = {
