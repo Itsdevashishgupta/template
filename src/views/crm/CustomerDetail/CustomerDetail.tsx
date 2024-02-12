@@ -65,8 +65,6 @@ const CustomerDetail = () => {
       project_id: queryParams.get('project_id') || '',
 
     };
-    console.log(allQueryParams.id);
-    console.log(allQueryParams.project_id);
     
     const [details, setDetails] = useState<any | null>(null);
     const[momdata,setmomdata]= useState<any | null>(null);

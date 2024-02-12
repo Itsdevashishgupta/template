@@ -107,7 +107,7 @@ const CustomerProfileAction = ({ id }: { id?: string }) => {
 }
 
 const CustomerProfile = ({ data }: CustomerProfileProps) => {
-    console.log(data);
+    
 
     
     return (

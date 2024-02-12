@@ -6,6 +6,7 @@ import Select from 'react-select';
 import DatePicker from '@/components/ui/DatePicker/DatePicker';
 import { Button, FormItem, Input } from '@/components/ui';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 interface FormData {
   project_name: string;
@@ -82,7 +83,7 @@ const FileUploadForm: React.FC = () => {
         date: '',
       });
   };
-
+  const navigate=useNavigate()
   const projectTypeOptions = [
     { value: 'Commercial', label: 'Commercial' },
     { value: 'residential', label: 'Residential' },
@@ -152,7 +153,7 @@ const FileUploadForm: React.FC = () => {
       setErrors(validationErrors);
       return;
     }
-
+ 
     try {
       const formDataToSend = new FormData();
       // Append non-file fields
@@ -165,7 +166,8 @@ const FileUploadForm: React.FC = () => {
       formData.files.forEach((file) => {
         formDataToSend.append('files', file);
       });
-
+      alert("Successfully")
+      navigate('/app/crm/projectslist')
       const response = await axios.post(
         'https://col-u3yp.onrender.com/v1/api/admin/create/project/',
         formDataToSend

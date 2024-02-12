@@ -21,7 +21,7 @@ type LeadsProps = {
 const { Tr, Td, TBody, THead, Th } = Table
 
 const NameColumn = ({ row }: { row: Lead }) => {
-    console.log(row);
+    
     
     return (
         <div className="flex items-center gap-2">

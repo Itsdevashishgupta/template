@@ -97,17 +97,17 @@ const Customers = () => {
             {
                 header: 'Status',
                 accessorKey: 'project_status',
-                cell: (props) => {
-                    const row = props.row.original
-                    return (
-                        <div className="flex items-center">
-                            <Badge className={statusColor[row.project_status]} />
-                            <span className="ml-2 rtl:mr-2 capitalize">
-                                {row.project_status}
-                            </span>
-                        </div>
-                    )
-                },
+                // cell: (props) => {
+                //     const row = props.row.original
+                //     return (
+                //         <div className="flex items-center">
+                //             <Badge className={statusColor[row.project_status]} />
+                //             <span className="ml-2 rtl:mr-2 capitalize">
+                //                 {row.project_status}
+                //             </span>
+                //         </div>
+                //     )
+                // },
             },
             {
                 header: 'Timeline',

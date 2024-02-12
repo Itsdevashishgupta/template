@@ -161,7 +161,7 @@ interface Note {
 
 
 const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
-console.log(data);
+
 
     const [datas, setData] = useState<InitialData | null>(null);
 
@@ -212,7 +212,7 @@ console.log(data);
     
           // console.log("API Response:", response.data); // Log the response data to the console
     
-          console.log("hello");
+        
     
           // You can further handle the response data as needed
     

@@ -61,7 +61,7 @@ interface CustomerProfilePropss {
   }
 
 const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
-    console.log(data);
+   
     
   const initialFormData: FormData = {
     lead_id: myParam,

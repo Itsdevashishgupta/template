@@ -48,9 +48,7 @@ const CustomerDetail = () => {
     }
     const urlParams = new URLSearchParams(window.location.search);
     const myParam = urlParams.get('id');
-    console.log(typeof(myParam));
-     // Replace with your actual lead_id value
-    console.log(myParam);
+    
     const { id } = useParams<{ id: string }>();
     const [details, setDetails] = useState<any | null>(null);
 

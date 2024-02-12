@@ -131,7 +131,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
             formikHelpers.resetForm();
             formik.initialValues.email='';
             await axios.post('https://col-u3yp.onrender.com/v1/api/admin/create/lead/', values).then((response) => {
-console.log(response);
             });
             const response = await axios.post('https://col-u3yp.onrender.com/v1/api/admin/create/lead/', values);
              console.log('API response:', response.data) 

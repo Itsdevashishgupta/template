@@ -144,7 +144,7 @@ const MOM = ({datas}) => {
     const data = useAppSelector(
         (state) => state.crmCustomerDetails.data.paymentHistoryData
     )
-    console.log(datas);
+    
     
 
     const [sorting, setSorting] = useState<

@@ -11,7 +11,6 @@ function getDate(dayString: string) {
 }
 const response = await fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project?id=65c32e19e0f36d8e1f30955c');
 const jsonData = await response.json();
-console.log(jsonData.data.total_Project);
 
 
 

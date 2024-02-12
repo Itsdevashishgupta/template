@@ -150,7 +150,7 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                         let filearray = []
                         value.forEach((file: File, index: number) => {
                             formData.append(`files`, file)
-                            console.log('hello')
+                          
                         })
                     } else {
                         formData.append(key, value)
@@ -165,7 +165,7 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                     // navigate('/app/leads')
                 }, 2000)
 
-                console.log(values)
+                
                 const response = await axios.post(
                     'https://col-u3yp.onrender.com/v1/api/admin/create/project/',
                     formData,
