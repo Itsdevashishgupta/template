@@ -7,6 +7,7 @@ import DatePicker from '@/components/ui/DatePicker/DatePicker';
 import { Button, FormItem, Input } from '@/components/ui';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { StickyFooter } from '@/components/shared';
 
 interface FormData {
   project_name: string;
@@ -85,13 +86,13 @@ const FileUploadForm: React.FC = () => {
   };
   const navigate=useNavigate()
   const projectTypeOptions = [
-    { value: 'Commercial', label: 'Commercial' },
+    { value: 'commercial', label: 'Commercial' },
     { value: 'residential', label: 'Residential' },
   ];
   const projectStatusOptions = [
-    { value: 'Completed', label: 'Completed' },
-    { value: 'Executing', label: 'Executing' },
-    { value: 'Designing', label: 'Designing' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'execution', label: 'Executing' },
+    { value: 'design', label: 'Designing' },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -383,26 +384,39 @@ const FileUploadForm: React.FC = () => {
         />
         {errors.project_location && <span className='text-red-500'>{errors.project_location}</span>}
         </FormItem>
-        <FormItem label='Project Location'>
-        <Input
-          size='sm'
-          type="text"
-          id="project_location"
-          name="project_location"
-          value={formData.project_location}
-          onChange={handleInputChange}
-          required
-        />
-        {errors.project_location && <span className='text-red-500'>{errors.project_location}</span>}
-        </FormItem>
+        
        
       
       <div>
         <label htmlFor="files">Files:</label>
         <input type="file" id="files" name="files" multiple onChange={handleFileChange} />
       </div>
-      <Button type="submit" variant='solid'>Submit</Button>
       </div>
+      <StickyFooter
+                            className="-mx-8 px-8 flex items-center justify-between py-4"
+                            stickyClass="border-t bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                        >
+                            <div className="md:flex items-center">
+                                <Button
+                                    size="sm"
+                                    className="ltr:mr-3 rtl:ml-3"
+                                    type="button"
+                                    onClick={() => {
+                                        navigate(-1)
+                                        // window.location.reload()
+                                    }}
+                                >
+                                    Discard
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="solid"
+                                    type="submit"
+                                >
+                                    Submit
+                                </Button>
+                            </div>
+                        </StickyFooter>
     </form>
   );
 };

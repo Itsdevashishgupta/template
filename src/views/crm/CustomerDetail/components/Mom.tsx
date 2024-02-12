@@ -1,382 +1,235 @@
-import { useCallback, useEffect, useState } from 'react'
-import Table from '@/components/ui/Table'
-import Badge from '@/components/ui/Badge'
-import {
-    flexRender,
-    getCoreRowModel,
-    getSortedRowModel,
-    useReactTable,
-    createColumnHelper,
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Button, FormContainer, FormItem, Input, Select } from '@/components/ui';
+import  ValueType  from 'react-select';
 
-} from '@tanstack/react-table'
-import { NumericFormat } from 'react-number-format'
-import { useAppSelector, OrderHistory } from '../store'
-import dayjs from 'dayjs'
-import { Button, DatePicker, FormContainer, FormItem, Input, Select, Tooltip, Upload } from '@/components/ui'
-import Dialog from '@/components/ui/Dialog'
-import { HiOutlineEye, HiOutlineTrash, HiPlusCircle } from 'react-icons/hi'
-import { useNavigate } from 'react-router-dom'
-import { Field, Form, Formik } from 'formik'
-import * as Yup from 'yup'
-import type { MouseEvent } from 'react'
-import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
-
-const { Tr, Th, Td, THead, TBody, Sorter } = Table
-
-const statusColor: Record<string, string> = {
-    paid: 'bg-emerald-500',
-    pending: 'bg-amber-400',
+interface FormData {
+    client_name: string[];
+    organisor: string[];
+    architect: string[];
+    consultant_name: string[];
+  meetingDate: string;
+  source: string;
+  remark: string;
+  imaportant_note: string;
+  file: string;
 }
 
-const columnHelper = createColumnHelper<OrderHistory>()
-type Order = {
-    id: string
-    date: number
-    customer: string
-    status: number
-    paymentMehod: string
-    paymentIdendifier: string
-    totalAmount: number
-}
+const YourFormComponent: React.FC = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
 
-const ActionColumn = ({ row }: { row: Order }) => {
-    // const dispatch = useAppDispatch()
-    // const { textTheme } = useThemeClass()
-    const navigate = useNavigate()
+  // Create an object to store and map the query parameters
+  const allQueryParams = {
+    project_id: queryParams.get('project_id') || '',
+    mom_id: queryParams.get('mom_id') || '',
+    meetingDate: queryParams.get('meetingDate') || '',
+    source: queryParams.get('source') || '',
+    client_name: queryParams.get('client_name')?.split(',') || [],
+    organisor: queryParams.get('organisor')?.split(',') || [],
+    architect: queryParams.get('architect')?.split(',') || [],
+    consultant_name: queryParams.get('consultant_name')?.split(',') || [],
+    remark: queryParams.get('remark') || '',
+    imaportant_note: queryParams.get('imaportant_note') || '',
+    file: queryParams.get('file') || '',
+  };
 
-    // const onDelete = () => {
-    //     dispatch(setDeleteMode('single'))
-    //     dispatch(setSelectedRow([row.id]))
-    // }
+  const initialFormData: FormData = {
+    client_name: allQueryParams.client_name,
+    organisor: allQueryParams.organisor,
+    architect: allQueryParams.architect,
+    consultant_name: allQueryParams.consultant_name,
+    meetingDate: allQueryParams.meetingDate,
+    source: allQueryParams.source,
+    remark: allQueryParams.remark,
+    imaportant_note: allQueryParams.imaportant_note,
+    file: allQueryParams.file,
+  };
+  const clientOptions = [
+    { value: 'Abhishek Singh', label: 'Abhishek Singh' },
+    // ... (other options)
+  ];
 
-    const onView = useCallback(() => {
-        navigate(`/appy`)
-    }, [navigate, row])
+  const organisorOptions = [
+    // ... (organisor options)
+  ];
 
-    return (
-        <div className="flex justify-end text-lg">
-            <Tooltip title="View">
-                <span
-                    className={`cursor-pointer p-2 hover:`}
-                    onClick={onView}
-                >
-                    <HiOutlineEye />
-                </span>
-            </Tooltip>
-            {/* <Tooltip title="Delete">
-                <span
-                    className="cursor-pointer p-2 hover:text-red-500"
-                    onClick={onDelete}
-                >
-                    <HiOutlineTrash />
-                </span>
-            </Tooltip> */}
-        </div>
-    )
-}
+  const architectOptions = [
+    // ... (architect options)
+  ];
 
-const columns = [
-    columnHelper.accessor('mom_id', {
-        header: 'MOMId',
-        // cell: (props) => {
-        //     const row = props.row.original
-        //     return (
-        //         <div>
-        //             <span className="cursor-pointer">{row.id}</span>
-        //         </div>
-        //     )
-        // },
-    }),
-    columnHelper.accessor('source', {
-        header: 'Mode Of Meeting',
-    }),
-    // columnHelper.accessor('date', {
-    //     header: 'Date',
-    //     cell: (props) => {
-    //         const row = props.row.original
-    //         return (
-    //             <div className="flex items-center">
-    //                 <Badge className={statusColor[row.status]} />
-    //                 <span className="ml-2 rtl:mr-2 capitalize">
-    //                     {row.status}
-    //                 </span>
-    //             </div>
-    //         )
-    //     },
-    // }),
-    columnHelper.accessor('date', {
-        header: 'Date',
-        cell: (props) => {
-            const row = props.row.original
-            return (
-                <>
-                <div className="flex items-center">
-                    {dayjs.unix(row.date).format('MM/DD/YYYY')}
-             
-                </div>
-                <div>
-                </div>
-                </>
-            )
-        },
-    }),
-    
-    // columnHelper.accessor('amount', {
-    //     header: 'Amount',
-    //     cell: (props) => {
-    //         const row = props.row.original
-    //         return (
-    //             <div className="flex items-center">
-    //                 <NumericFormat
-    //                     displayType="text"
-    //                     value={(Math.round(row.amount * 100) / 100).toFixed(2)}
-    //                     prefix={'$'}
-    //                     thousandSeparator={true}
-    //                 />
-    //             </div>
-    //         )
-    //     },
-    // }),
-]
+  const consultantOptions = [
+    { value: 'Naveen', label: 'Naveen' },
+    // ... (other options)
+  ];
 
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const navigate = useNavigate();
 
-const MOM = ({datas}) => {
-    const data = useAppSelector(
-        (state) => state.crmCustomerDetails.data.paymentHistoryData
-    )
-    
-    
+  const [selectedClients, setSelectedClients] = useState<ValueType<{ value: string; label: string }>>(null);
+  const [selectedOrganisors, setSelectedOrganisors] = useState<ValueType<{ value: string; label: string }>>(null);
+  const [selectedArchitects, setSelectedArchitects] = useState<ValueType<{ value: string; label: string }>>(null);
+  const [selectedConsultants, setSelectedConsultants] = useState<ValueType<{ value: string; label: string }>>(null);
 
-    const [sorting, setSorting] = useState<
-        {
-            id: string
-            desc: boolean
-        }[]
-    >([])
+  const handleSelectChange = (
+    selectedOption: ValueType<{ value: string; label: string }>,
+    fieldName: string
+  ) => {
+    const selectedValues = Array.isArray(selectedOption)
+      ? selectedOption.map((option) => option.value)
+      : selectedOption
+      ? [selectedOption.value]
+      : [];
 
-    const table = useReactTable({
-        data,
-        columns,
-        state: {
-            sorting,
-        },
-        onSortingChange: setSorting,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-    })
+    setFormData({
+      ...formData,
+      [fieldName]: selectedValues,
+    });
 
-
-const navigate=useNavigate();
-
-
-const [dialogIsOpen, setIsOpen] = useState(false)
-
-const openDialog = () => {
-    setIsOpen(true)
-}
-
-const onDialogClose = (e: MouseEvent) => {
-    console.log('onDialogClose', e)
-    setIsOpen(false)
-}
-
-const onDialogOk = (e: MouseEvent) => {
-    console.log('onDialogOk', e)
-    setIsOpen(false)
-}
-
-const validationSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email').required('Email Required'),
-    userName: Yup.string()
-        .min(3, 'Too Short!')
-        .max(12, 'Too Long!')
-        .required('User Name Required'),
-    password: Yup.string()
-        .required('Password Required')
-        .min(8, 'Too Short!')
-        .matches(/^[A-Za-z0-9_-]*$/, 'Only Letters & Numbers Allowed'),
-    rememberMe: Yup.bool(),
-})
-
-
-const colourOptions = [
-    { value: 'online', label: 'Online' },
-    { value: 'atClientPLace', label: 'At Client PLace' },
-    { value: 'onSite', label: 'On Site' },
-    { value: 'inOffice', label: 'In Office' },
- 
-]
-
-
-const [inputCount, setInputCount] = useState(0);
-const [inputValues, setInputValues] = useState(Array.from({ length: inputCount }, () => ''));
-const addInput = () => {
-    setInputCount(inputCount + 1);
-    setInputValues([...inputValues, '']);
+    setErrors({
+      ...errors,
+      [fieldName]: '',
+    });
   };
 
 
-    return (
-        <div className="mb-4 relative">
-            <div  className='flex items-center justify-between mb-4'>
-                <div></div>
-                <div>
-            <Button variant="solid" onClick={() => openDialog()}>
-                Add MOM
-            </Button>
-            <Dialog
-                isOpen={dialogIsOpen}
-                onClose={onDialogClose}
-                onRequestClose={onDialogClose}
-                className={`h-[520px]`}
-            >
-                     <div>
-            <Formik
-                initialValues={{
-                    email: '',
-                    userName: '',
-                    password: '',
-                    rememberMe: false,
-                }}
-                validationSchema={validationSchema}
-                onSubmit={(values, { resetForm, setSubmitting }) => {
-                    setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2))
-                        setSubmitting(false)
-                        resetForm()
-                    }, 500)
-                }}
-            >
-                {({ touched, errors, resetForm }) => (
-                    <Form className=' absolute overflow-y-scroll max-h-[88%]'>
-                        <FormContainer className=''>
-                            <div className=''>
-                        <div className=' grid grid-cols-2 xl:grid xl:grid-cols-2 gap-3 mr-4'>
-                            <FormItem
-                                label="Meeting Date"
-                                invalid={errors.email && touched.email}
-                                errorMessage={errors.email}
-                            >
-                               <DateTimepicker placeholder="Pick date & time" />
-                            </FormItem>
-                            <FormItem
-                                label="Mode of Meeting"
-                                invalid={errors.userName && touched.userName}
-                                errorMessage={errors.userName}
-                            >
-                               <Select
-                placeholder="Please Select"
-                options={colourOptions}
-            ></Select>
-                            </FormItem>
-                            </div>
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({
+      ...errors,
+      [name]: '',
+    });
+  };
 
-                            <h5>Attendees</h5>
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
 
-                           
-                            {inputValues.map((value, index) => (
-             <div className=' grid grid-cols-2 xl:grid xl:grid-cols-2 gap-3 mr-4'>
-                            <FormItem
-                                label="Role"
-                                invalid={errors.userName && touched.userName}
-                                errorMessage={errors.userName}
-                            >
-                              <Input placeholder="Role" />
-                            </FormItem>
-                            <FormItem
-                                label="Name"
-                                invalid={errors.userName && touched.userName}
-                                errorMessage={errors.userName}
-                            >
-                              <Input placeholder="Name" />
-                            </FormItem>
-                          
-                            </div>
-        ))}
-<div className=' flex justify-between items-center mb-4 mr-4 gap-2'>
-    <div className=' flex justify-between gap-3'>   <FormItem
-                                label="Role"
-                                invalid={errors.userName && touched.userName}
-                                errorMessage={errors.userName}
-                            >
-                              <Input placeholder="Role" />
-                            </FormItem>
-                            <FormItem
-                                label="Name"
-                                invalid={errors.userName && touched.userName}
-                                errorMessage={errors.userName}
-                            >
-                              <Input placeholder="Name" />
-                            </FormItem></div>
-<Button variant="solid" type="submit" onClick={addInput}>
-                                    +
-                                </Button>
-                                </div>
+    // Validate the form data
+    const validationErrors: { [key: string]: string } = {};
 
-                                <FormItem
-                                label="Remarks"
-                                invalid={errors.userName && touched.userName}
-                                errorMessage={errors.userName}
-                                className='mr-4'
-                            >
-                              
-                                <Input placeholder="Remarks" textArea />
-                            </FormItem>
-                                <FormItem
-                                label="Document"
-                                invalid={errors.userName && touched.userName}
-                                errorMessage={errors.userName}
-                                className='mr-4'
-                            >
-                              
-                              <Upload />
-                            </FormItem>
+    // Add your validation rules here...
 
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
+    try {
+      // Assuming you have an API endpoint for updating projects with mom details
+      const response = await fetch('YOUR_API_ENDPOINT', {
+        method: 'PUT', // Assuming it's a PUT request for updating the project
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          project_id: allQueryParams.project_id,
+          mom_id: allQueryParams.mom_id,
+          mom: {
+            mom_id: allQueryParams.mom_id,
+            meetingdate: formData.meetingDate,
+            source: formData.source,
+            attendees: {
+              client_name: formData.client_name,
+              organisor: formData.organisor,
+              architect: formData.architect,
+              consultant_name: formData.consultant_name,
+            },
+            remark: formData.remark,
+            imaportant_note: formData.imaportant_note,
+            files: formData.file,
+          },
+        }),
+      });
 
-                            <FormItem>
-                                <Button
-                                    type="reset"
-                                    className="ltr:mr-2 rtl:ml-2"
-                                    onClick={() => resetForm()}
-                                >
-                                    Reset
-                                </Button>
-                                <Button variant="solid" type="submit">
-                                    Submit
-                                </Button>
-                            </FormItem>
-                            
-                            </div>
-                        </FormContainer>
-                    </Form>
-                )}
-            </Formik>
-        </div>
-            </Dialog>
-        </div>
-          
-                </div>
-                <Table >
-      <thead>
-        <tr>
-          <th>Organizer</th>
-          <th>Date</th>
-          <th>Source</th>
-        </tr>
-      </thead>
-      <tbody>
-      {datas.map((data) => (
-        <tr key={data.id}>
-          <td>{data.attendees.organisor || 'N/A'}</td>
-          <td>{data.meetingdate}</td>
-          <td>{data.source}</td>
-        </tr>
-         ))}
-      </tbody>
-    </Table>
-        </div>
-    )
-}
+      if (response.ok) {
+        // Project update successful, show success alert
+        alert('Project update successful');
+        navigate(-1);
+      } else {
+        // Project update failed, show error alert
+        alert('Project update failed');
+      }
+    } catch (error) {
+      // Handle any other errors
+      console.error('Error:', error);
+      alert('An error occurred');
+    }
+  };
 
-export default MOM
+  return (
+    <div>
+      <div className='flex justify-between items-center'>
+        <h5>MOM Details</h5>
+      </div>
+      <form onSubmit={handleSubmit}>
+        <FormContainer>
+          <div className='grid grid-cols-2 gap-5'>
+          <FormItem label="Client's Name">
+          <Select
+            options={clientOptions}
+            value={selectedClients}
+            isMulti
+            onChange={(selectedOption) => handleSelectChange(selectedOption, setSelectedClients, 'client_name')}
+          />
+          {errors.client_name && <span className='text-red-500'>{errors.client_name}</span>}
+        </FormItem>
+        <FormItem label='Organisor'>
+          <Select
+            options={organisorOptions}
+            value={selectedOrganisors}
+            isMulti
+            onChange={(selectedOption) => handleSelectChange(selectedOption, setSelectedOrganisors, 'organisor')}
+          />
+          {errors.organisor && <span className='text-red-500'>{errors.organisor}</span>}
+        </FormItem>
+        <FormItem label='Architect'>
+          <Select
+            options={architectOptions}
+            value={selectedArchitects}
+            isMulti
+            onChange={(selectedOption) => handleSelectChange(selectedOption, setSelectedArchitects, 'architect')}
+          />
+          {errors.architect && <span className='text-red-500'>{errors.architect}</span>}
+        </FormItem>
+        <FormItem label='Consultant Name'>
+          <Select
+            options={consultantOptions}
+            value={selectedConsultants}
+            isMulti
+            onChange={(selectedOption) => handleSelectChange(selectedOption, setSelectedConsultants, 'consultant_name')}
+          />
+          {errors.consultant_name && <span className='text-red-500'>{errors.consultant_name}</span>}
+        </FormItem>
+            <FormItem label='Meeting Date'>
+              <Input type='date' name='meetingDate' value={formData.meetingDate} onChange={handleInputChange} />
+              {errors.meetingDate && <span className='text-red-500'>{errors.meetingDate}</span>}
+            </FormItem>
+            <FormItem label='Source'>
+              <Input name='source' value={formData.source} onChange={handleInputChange} />
+              {errors.source && <span className='text-red-500'>{errors.source}</span>}
+            </FormItem>
+            <FormItem label='Remark'>
+              <Input name='remark' value={formData.remark} onChange={handleInputChange} />
+              {errors.remark && <span className='text-red-500'>{errors.remark}</span>}
+            </FormItem>
+            <FormItem label='Important Note'>
+              <Input name='imaportant_note' value={formData.imaportant_note} onChange={handleInputChange} />
+              {errors.imaportant_note && <span className='text-red-500'>{errors.imaportant_note}</span>}
+            </FormItem>
+            <FormItem label='File'>
+              <Input name='file' value={formData.file} onChange={handleInputChange} />
+              {errors.file && <span className='text-red-500'>{errors.file}</span>}
+            </FormItem>
+          </div>
+          <Button size='sm' variant='solid' type='submit'>
+            Submit
+          </Button>
+        </FormContainer>
+      </form>
+    </div>
+  );
+};
+
+export default YourFormComponent;
