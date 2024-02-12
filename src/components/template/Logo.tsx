@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import { APP_NAME } from '@/constants/app.constant'
 import type { CommonProps } from '@/@types/common'
+import img from './Group 48095675 (2).png'
 
 
 interface LogoProps extends CommonProps {
@@ -30,7 +31,7 @@ const Logo = (props: LogoProps) => {
                 ...{ width: logoWidth },
             }}
         >
-            <img src="/Group 48095675 (2).png" alt=""  className='w-[64%] my-4' />
+            <img src={img} alt=""  className='w-[64%] my-4' />
         </div>
     )
 }

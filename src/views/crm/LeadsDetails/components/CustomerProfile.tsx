@@ -18,10 +18,8 @@ import {
 import EditCustomerProfile from './EditCustomerProfile'
 import { Dialog } from '@/components/ui'
 import * as Yup from 'yup';
-import { Field, FieldProps, FormikProvider, useFormik } from 'formik'
+import { useFormik } from 'formik'
 import axios from 'axios'
-
-import {useTheme,Theme, SelectChangeEvent } from '@mui/material'
 
 
 
@@ -231,28 +229,10 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ data }) => {
      };
      
      
-     function getStyles(name: string, personName: string[], theme: Theme) {
-       return {
-         fontWeight:
-           personName.indexOf(name) === -1
-             ? theme.typography.fontWeightRegular
-             : theme.typography.fontWeightMedium,
-       };
-     }
+ 
 
 
-     const theme = useTheme();
-     const [personName, setPersonName] = React.useState<string[]>([]);
-   
-     const handleChange = (event: SelectChangeEvent<typeof personName>) => {
-       const {
-         target: { value },
-       } = event;
-       setPersonName(
-         // On autofill we get a stringified value.
-         typeof value === 'string' ? value.split(',') : value,
-       );
-     }
+
 
      
  
