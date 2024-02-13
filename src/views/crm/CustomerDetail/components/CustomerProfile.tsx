@@ -30,16 +30,25 @@ type CustomerProfileProps = {
     data?: Partial<Customer>
 }
 
-const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
+const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return '';
+  
+    const date = new Date(dateString);
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  
+    return new Intl.DateTimeFormat('en-GB', options).format(date);
+  }
+
+  const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
     return (
-        <div>
-            <span>{title}</span>
-            <p className="text-gray-700 dark:text-gray-200 font-semibold">
-                {value}
-            </p>
-        </div>
+      <div>
+        <span>{title}</span>
+        <p className="text-gray-700 dark:text-gray-200 font-semibold">
+          {title === 'Project Start Date' || title === 'Timeline' ? formatDate(value) : value}
+        </p>
+      </div>
     )
-}
+  }
 
 const CustomerProfileAction = ({ id }: { id?: string }) => {
     const dispatch = useAppDispatch()

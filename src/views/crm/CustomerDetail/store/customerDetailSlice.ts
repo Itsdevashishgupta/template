@@ -54,7 +54,9 @@ export type Subscription = {
     nextPaymentDate: number
     amount: number
 }
-
+type mom={
+   mom_id:string
+}
 export type Customer = {
     _id: string
     project_name: string
@@ -66,6 +68,7 @@ export type Customer = {
     project_budget:string
     description:string
     notes: Notes
+    mom:[]
     
 }
 

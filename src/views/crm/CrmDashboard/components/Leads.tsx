@@ -12,6 +12,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import type { Lead } from '../store'
+import { useEffect, useState } from 'react'
 
 type LeadsProps = {
     data?: Lead[]
@@ -97,56 +98,68 @@ const Leads = ({ data = [], className }: LeadsProps) => {
     })
 
     const onNavigate = () => {
-        navigate('/app/crm/customers')
+        navigate('/app/leadsus')
     }
+
+    interface client{
+        client_name:string
+    }
+    interface Data {
+       name:string
+       status:string
+       email:string
+       date:string
+       phone:string
+      }
+      interface ApiResponse {
+        data: Data[];
+      }
+     
+
+    const [apiData, setApiData] = useState<Data[]>([]);
+
+    useEffect(() => {
+      // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint
+      fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/lead/')
+        .then((response) => response.json())
+        .then((data: ApiResponse) => setApiData(data.data.slice(0,5)))
+        .catch((error) => console.error('Error fetching data:', error));
+    }, []);
+    console.log(apiData);
+    
 
     return (
         <Card className={className}>
             <div className="flex items-center justify-between mb-4">
-                <h4>Projects</h4>
+                <h4>Leads</h4>
                 <Button size="sm" onClick={onNavigate}>
-                    View All Projects
+                    View All Leads
                 </Button>
             </div>
             <Table>
-                <THead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <Tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <Th
-                                        key={header.id}
-                                        colSpan={header.colSpan}
-                                    >
-                                        {flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                    </Th>
-                                )
-                            })}
-                        </Tr>
-                    ))}
-                </THead>
-                <TBody>
-                    {table.getRowModel().rows.map((row) => {
-                        return (
-                            <Tr key={row.id}>
-                                {row.getVisibleCells().map((cell) => {
-                                    return (
-                                        <Td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </Td>
-                                    )
-                                })}
-                            </Tr>
-                        )
-                    })}
-                </TBody>
-            </Table>
+        <THead>
+          <Tr>
+            <Th>Project Name</Th>
+            <Th>Project Status</Th>
+            <Th>Client Name</Th>
+            <Th>Timeline Date</Th>
+            <Th>Project Type</Th>
+          </Tr>
+        </THead>
+        <TBody>
+          {apiData.map((item, index) => (
+            <Tr key={index}>
+              <Td className=' capitalize'>{item.name}</Td>
+              <Td className=' capitalize'>{item.status}</Td>
+              <Td className="capitalize">{item.email}</Td>
+              <Td>{dayjs(item.date).format('DD-MM-YYYY')}</Td>
+              <Td  >
+               {item.phone}
+              </Td>
+            </Tr>
+          ))}
+        </TBody>
+      </Table>
         </Card>
     )
 }

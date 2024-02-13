@@ -109,6 +109,13 @@ export const searchQueryPoolData = [
         category: 'CRM',
         categoryTitle: 'Apps',
     },
+    {
+        title: 'CRM Dashboard',
+        url: '/app/crm/project/momform',
+        icon: 'crm',
+        category: 'CRM',
+        categoryTitle: 'Apps',
+    },
     // {
     //     title: 'Projects',
     //     url: '/app/crm/projects',

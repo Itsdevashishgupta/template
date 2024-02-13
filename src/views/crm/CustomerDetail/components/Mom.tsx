@@ -1,338 +1,124 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react'
-import { Button, FormContainer, FormItem, Input, Select } from '@/components/ui'
-import CreatableSelect from 'react-select/creatable' // Import CreatableSelect
-import { useNavigate } from 'react-router-dom'
+import TBody from '@/components/ui/Table/TBody';
+import THead from '@/components/ui/Table/THead';
+import Table from '@/components/ui/Table/Table';
+import Td from '@/components/ui/Table/Td';
+import Th from '@/components/ui/Table/Th';
+import Tr from '@/components/ui/Table/Tr';
+import React, { useState } from 'react';
+import 'tailwindcss/tailwind.css';
+import { HiOutlineChevronRight, HiOutlineChevronDown } from 'react-icons/hi'
+import { Button, Input } from '@/components/ui';
+import { Customer } from '../store';
+import { useNavigate } from 'react-router-dom';
 
-type Option = {
-    value: string
-    label: string
+type Item = {
+  id: number;
+  name: string;
+  details: string;
+};
+
+const initialData: Item[] = [
+  { id: 1, name: 'Item 1', details: 'Details for Item 1' },
+  { id: 2, name: 'Item 2', details: 'Details for Item 2' },
+  // Add more data as needed
+];
+type CustomerProfileProps = {
+    data?: Partial<Customer>
 }
 
-interface FormData {
-    client_name: string[]
-    organisor: string[]
-    architect: string[]
-    consultant_name: string[]
-    meetingDate: string
-    source: string
-    remark: string
-    imaportant_note: string
-    files: File[]
-    project_id: 'COLP-623548'
-}
 
-const YourFormComponent: React.FC = () => {
-    const navigate = useNavigate()
+const DetailsTable: React.FC<CustomerProfileProps>= ({data}) => {
+    console.log(data);
+    
+  const [datas, setData] = useState<Item[]>(initialData);
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const [formData, setFormData] = useState<FormData>({
-        client_name: [],
-        organisor: [],
-        architect: [],
-        consultant_name: [],
-        meetingDate: '',
-        source: '',
-        remark: '',
-        imaportant_note: '',
-        files: [],
-        project_id: 'COLP-623548',
-    })
-    const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  const toggleRow = (id: number) => {
+    setExpandedRow((prev) => (prev === id ? null : id));
+  };
 
-    // Options for the client select input
-    const clientOptions: Option[] = [
-        { value: 'Abhishek Singh', label: 'Abhishek Singh' },
-        // Add more client options if needed
-    ]
-    const organisorOptions: Option[] = [
-        { value: 'Abhishek Singh', label: 'Abhishek Singh' },
-        // Add more client options if needed
-    ]
-    const architectOptions: Option[] = [
-        { value: 'Abhishek Singh', label: 'Abhishek Singh' },
-        // Add more client options if needed
-    ]
-    const consultant_nameOptions: Option[] = [
-        { value: 'Abhishek Singh', label: 'Abhishek Singh' },
-        // Add more client options if needed
-    ]
+  const handleSort = (column: string) => {
+    setSortColumn(column);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    const sortedData = [...datas].sort((a, b) => {
+      const aValue = a[column];
+      const bValue = b[column];
+      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+      return 0;
+    });
+    setData(sortedData);
+  };
 
-    const handleSelectChange = (
-        selectedOption: Option | Option[] | null,
-        fieldName: string,
-    ) => {
-        const selectedValues = Array.isArray(selectedOption)
-            ? selectedOption.map((option) => option.value)
-            : selectedOption
-              ? [selectedOption.value]
-              : []
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    const filteredData = initialData.filter((item) =>
+      Object.values(item)
+        .join(' ')
+        .toLowerCase()
+        .includes(event.target.value.toLowerCase())
+    );
+    setData(filteredData);
+  };
 
-        setFormData({
-            ...formData,
-            [fieldName]: selectedValues,
-        })
+  const renderSortButton = (column: string, label: string) => (
+    <button
+      className="flex items-center focus:outline-none"
+      onClick={() => handleSort(column)}
+    >
+      {label}
+      {sortColumn === column && (
+        <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+      )}
+    </button>
+  );
+  const navigate=useNavigate()
 
-        setErrors({
-            ...errors,
-            [fieldName]: '',
-        })
-    }
+  return (
+    <div>
+        <div className='flex justify-between items-center'>
+      <Input
+        type="text"
+        placeholder="Search..."
+        value={searchTerm}
+        onChange={handleSearch}
+        className="my-4 p-2 w-1/5 "
+      />
+      <Button variant='solid' onClick={() => navigate('/app/crm/project/momform')}>Add MOM</Button>
+      </div>
+      <Table className="min-w-full ">
+        <THead>
+          <Tr>
+            <Th className="px-4">Actions</Th>
+            <Th className="px-4">{renderSortButton('meetingdate', 'Meeting Date')}</Th>
+            <Th className="px-4">{renderSortButton('source', 'Source')}</Th>
+          </Tr>
+        </THead>
+        <TBody>
+          {data.map((item) => [
+            <Tr key={item.id}>
+              <Td className="px-4"onClick={() => toggleRow(item.id)}>
+                
+                  {expandedRow === item.mom_id? <HiOutlineChevronDown /> : <HiOutlineChevronRight />}
+              
+              </Td>
+              <Td className="px-4">{item.mom_id}</Td>
+              <Td className="px-4">{item.source}</Td>
+            </Tr>,
+            expandedRow === item.id && (
+              <div key={`details-${item.id}`}>
+                <h1>Meeting date: {item.meetingdate}</h1>
+                <p></p>
+              </div>
+            ),
+          ])}
+        </TBody>
+      </Table>
+    </div>
+  );
+};
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
-        setFormData({ ...formData, [name]: value })
-        setErrors({
-            ...errors,
-            [name]: '',
-        })
-    }
-
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || [])
-        setFormData({ ...formData, files })
-        setErrors({
-            ...errors,
-            files: '',
-        })
-    }
-
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault()
-
-        // Validate the form data
-        // Validate the form data
-        const validationErrors: { [key: string]: string } = {}
-
-        // Validate client_name
-        if (formData.client_name.length === 0) {
-            validationErrors.client_name = "Client's Name is required"
-        }
-
-        // Validate organisor
-        if (formData.organisor.length === 0) {
-            validationErrors.organisor = "Organisor's Name is required"
-        }
-
-        // Validate architect
-        if (formData.architect.length === 0) {
-            validationErrors.architect = "Architect's Name is required"
-        }
-
-        // Validate consultant_name
-        if (formData.consultant_name.length === 0) {
-            validationErrors.consultant_name = "Consultant's Name is required"
-        }
-
-        // Validate meetingDate
-        if (!formData.meetingDate) {
-            validationErrors.meetingDate = 'Meeting Date is required'
-        }
-
-        // Validate source
-        if (!formData.source) {
-            validationErrors.source = 'Source is required'
-        }
-
-        // Validate remark
-        if (!formData.remark) {
-            validationErrors.remark = 'Remark is required'
-        }
-
-        // Validate imaportant_note
-        if (!formData.imaportant_note) {
-            validationErrors.imaportant_note = 'Important Note is required'
-        }
-
-        // Validate files
-        if (formData.files.length === 0) {
-            validationErrors.files = 'File is required'
-        }
-
-        // Set errors if any
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors)
-            return
-        }
-
-        try {
-            const formDataToSend = new FormData()
-            formDataToSend.append('meetingdate', formData.meetingDate)
-            formDataToSend.append('project_id', formData.project_id)
-            formDataToSend.append('source', formData.source)
-            formDataToSend.append('remark', formData.remark)
-            formDataToSend.append('imaportant_note', formData.imaportant_note)
-            formData.client_name.forEach((client) =>
-                formDataToSend.append('client_name', client),
-            )
-            formData.organisor.forEach((organisor) =>
-                formDataToSend.append('organisor', organisor),
-            )
-            formData.architect.forEach((architect) =>
-                formDataToSend.append('architect', architect),
-            )
-            formData.consultant_name.forEach((consultant) =>
-                formDataToSend.append('consultant_name', consultant),
-            )
-            formData.files.forEach((file) =>
-                formDataToSend.append('files', file),
-            )
-
-            const response = await fetch(
-                'https://col-u3yp.onrender.com/v1/api/admin/create/mom/',
-                {
-                    method: 'POST',
-                    body: formDataToSend,
-                },
-            )
-
-            if (response.ok) {
-                alert('MOM created successfully')
-                navigate(-1) // Redirect to home page or any other page after successful creation
-            } else {
-                alert('Failed to create MOM')
-            }
-        } catch (error) {
-            console.error('Error:', error)
-            alert('An error occurred')
-        }
-    }
-
-    return (
-        <div>
-            <h5>MOM Details</h5>
-            <form onSubmit={handleSubmit}>
-                <FormContainer>
-                    <FormItem label="Client's Name">
-                        {/* Use CreatableSelect to allow selecting or creating a new client name */}
-                        <CreatableSelect
-                            isMulti
-                            options={clientOptions}
-                            onChange={(selectedOption) =>
-                                handleSelectChange(
-                                    selectedOption,
-                                    'client_name',
-                                )
-                            }
-                        />
-                        {errors.client_name && (
-                            <span className="text-red-500">
-                                {errors.client_name}
-                            </span>
-                        )}
-                    </FormItem>
-                    <FormItem label="Organisor's Name">
-                        {/* Use CreatableSelect to allow selecting or creating a new client name */}
-                        <CreatableSelect
-                            isMulti
-                            options={organisorOptions}
-                            onChange={(selectedOption) =>
-                                handleSelectChange(selectedOption, 'organisor')
-                            }
-                        />
-                        {errors.organisor && (
-                            <span className="text-red-500">
-                                {errors.organisor}
-                            </span>
-                        )}
-                    </FormItem>
-                    <FormItem label="Architect's Name">
-                        {/* Use CreatableSelect to allow selecting or creating a new client name */}
-                        <CreatableSelect
-                            isMulti
-                            options={architectOptions}
-                            onChange={(selectedOption) =>
-                                handleSelectChange(selectedOption, 'architect')
-                            }
-                        />
-                        {errors.architect && (
-                            <span className="text-red-500">
-                                {errors.architect}
-                            </span>
-                        )}
-                    </FormItem>
-                    <FormItem label="Consultant's  Name">
-                        {/* Use CreatableSelect to allow selecting or creating a new client name */}
-                        <CreatableSelect
-                            isMulti
-                            options={consultant_nameOptions}
-                            onChange={(selectedOption) =>
-                                handleSelectChange(
-                                    selectedOption,
-                                    'consultant_name',
-                                )
-                            }
-                        />
-                        {errors.consultant_name && (
-                            <span className="text-red-500">
-                                {errors.consultant_name}
-                            </span>
-                        )}
-                    </FormItem>
-                    {/* Add similar FormItem and Select components for other fields */}
-                    <FormItem label="Meeting Date">
-                        <Input
-                            type="date"
-                            name="meetingDate"
-                            value={formData.meetingDate}
-                            onChange={handleInputChange}
-                        />
-                        {errors.meetingDate && (
-                            <span className="text-red-500">
-                                {errors.meetingDate}
-                            </span>
-                        )}
-                    </FormItem>
-                    <FormItem label="Source">
-                        <Input
-                            name="source"
-                            value={formData.source}
-                            onChange={handleInputChange}
-                        />
-                        {errors.source && (
-                            <span className="text-red-500">
-                                {errors.source}
-                            </span>
-                        )}
-                    </FormItem>
-                    <FormItem label="Remark">
-                        <Input
-                            name="remark"
-                            value={formData.remark}
-                            onChange={handleInputChange}
-                        />
-                        {errors.remark && (
-                            <span className="text-red-500">
-                                {errors.remark}
-                            </span>
-                        )}
-                    </FormItem>
-                    <FormItem label="Important Note">
-                        <Input
-                            name="imaportant_note"
-                            value={formData.imaportant_note}
-                            onChange={handleInputChange}
-                        />
-                        {errors.imaportant_note && (
-                            <span className="text-red-500">
-                                {errors.imaportant_note}
-                            </span>
-                        )}
-                    </FormItem>
-                    <FormItem label="File">
-                        <Input
-                            type="file"
-                            name="files"
-                            onChange={handleFileChange}
-                            multiple
-                        />
-                        {errors.files && (
-                            <span className="text-red-500">{errors.files}</span>
-                        )}
-                    </FormItem>
-                    <Button type="submit">Submit</Button>
-                </FormContainer>
-            </form>
-        </div>
-    )
-}
-
-export default YourFormComponent
+export default DetailsTable;

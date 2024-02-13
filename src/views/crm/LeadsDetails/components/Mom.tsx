@@ -77,7 +77,10 @@ const YourFormComponent: React.FC<CustomerProfileProps> = ({data}) => {
   const navigate = useNavigate();
 
   const statusOptions = [
-    { value: 'cancel', label: 'Cancel' },
+    { value: 'noresponse', label: 'No Response' },
+    { value: 'notInterested', label: 'Not Interested' },
+    { value: 'interested', label: 'No Response' },
+    { value: 'interested', label: 'Interested' },
     // Add other status options as needed
   ];
 
@@ -185,7 +188,7 @@ const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
   return (
     <div>
           <div className='flex justify-between items-center'>
-              <h5>Basic Information</h5>
+              <h5>Actions</h5>
               <Button variant='solid' onClick={() => openDialog()} >View Last Update</Button>
               </div>
     <form onSubmit={handleFormSubmit}>

@@ -103,14 +103,7 @@ export const crmDashboardData = {
             clientName: "Ava Carter",
             estimatedCompletion: "2024-07-05"
         },
-        {
-            id: 6,
-            projectName: "Rustic Dining Room Refurbishment",
-            phase: "Design",
-            projectType: 1,
-            clientName: "Mason Turner",
-            estimatedCompletion: "2024-08-12"
-        },    
+        
     ],
     customerData: [
         {

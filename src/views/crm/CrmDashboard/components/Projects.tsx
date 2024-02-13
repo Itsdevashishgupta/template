@@ -13,6 +13,9 @@ import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import type { Customer } from '../store'
 import { log } from 'console'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+
 
 type LeadsProps = {
     data?: Customer[]
@@ -21,6 +24,10 @@ type LeadsProps = {
 }
 
 const { Tr, Td, TBody, THead, Th } = Table
+
+
+
+
 
 const NameColumn = ({ row }: { row: Customer }) => {
     
@@ -102,8 +109,20 @@ const columns = [
         },
     }),
 ]
-
 const Project = ({ data = [], className }: LeadsProps) => {
+    const [datas, setData] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('your-api-endpoint-here');
+                setData(response.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+    
+        fetchData();
+    }, []);
     const navigate = useNavigate()
 
     const table = useReactTable({
@@ -113,56 +132,73 @@ const Project = ({ data = [], className }: LeadsProps) => {
     })
 
     const onNavigate = () => {
-        navigate('/app/leads')
+        navigate('/app/crm/projectslist')
     }
+    interface client{
+        client_name:string
+    }
+    interface Data {
+       project_name:string
+       project_type:string
+       project_status:string
+       client:client[]
+       timeline_date:string
+      }
+      interface ApiResponse {
+        data: Data[];
+      }
+      interface ApiResponse1 {
+        data: ApiResponse[];
+      }
+
+    const [apiData, setApiData] = useState<Data[]>([]);
+
+    useEffect(() => {
+      // Replace 'YOUR_API_ENDPOINT' with the actual API endpoint
+      fetch('https://col-u3yp.onrender.com/v1/api/admin/getall/project/?id=65c32e19e0f36d8e1f30955c')
+        .then((response) => response.json())
+        .then((data: ApiResponse1) => setApiData(data.data.projects.slice(0,5)))
+        .catch((error) => console.error('Error fetching data:', error));
+    }, []);
+    console.log(apiData);
+    
 
     return (
         <Card className={className}>
             <div className="flex items-center justify-between mb-4">
-                <h4>Leads</h4>
+                <h4>Projects</h4>
                 <Button size="sm" onClick={onNavigate}>
-                    View All Leads
+                    View All Projects
                 </Button>
             </div>
             <Table>
-                <THead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <Tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <Th
-                                        key={header.id}
-                                        colSpan={header.colSpan}
-                                    >
-                                        {flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                    </Th>
-                                )
-                            })}
-                        </Tr>
-                    ))}
-                </THead>
-                <TBody>
-                    {table.getRowModel().rows.map((row) => {
-                        return (
-                            <Tr key={row.id}>
-                                {row.getVisibleCells().map((cell) => {
-                                    return (
-                                        <Td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </Td>
-                                    )
-                                })}
-                            </Tr>
-                        )
-                    })}
-                </TBody>
-            </Table>
+        <THead>
+          <Tr>
+            <Th>Project Name</Th>
+            <Th>Project Status</Th>
+            <Th>Client Name</Th>
+            <Th>Timeline Date</Th>
+            <Th>Project Type</Th>
+          </Tr>
+        </THead>
+        <TBody>
+          {apiData.map((item, index) => (
+            <Tr key={index}>
+              <Td className=' capitalize'>{item.project_name}</Td>
+              <Td className=' capitalize'>{item.project_status}</Td>
+              <Td className="capitalize">{item.client[0].client_name}</Td>
+              <Td>{dayjs(item.timeline_date).format('DD-MM-YYYY')}</Td>
+              <Td  >
+                <span className={
+                  item.project_type === 'commercial' || item.project_type==='Commercial'
+                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100 border-0 rounded px-2 py-1 capitalize font-semibold text-xs'
+                    : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100  border-0 rounded capitalize font-semibold text-xs px-2 py-1'
+                }>{item.project_type}</span>
+              </Td>
+            </Tr>
+          ))}
+        </TBody>
+      </Table>
         </Card>
     )
 }

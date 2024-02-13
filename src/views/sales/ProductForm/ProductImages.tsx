@@ -327,6 +327,7 @@ const FileUploadForm: React.FC = () => {
                     project_status: '',
                   });
                 }}
+                required
               />
               {errors.project_status && <span className='text-red-500'>{errors.project_status}</span>}
         </FormItem>

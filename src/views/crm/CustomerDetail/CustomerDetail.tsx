@@ -21,6 +21,7 @@ import PersonalInfoForm from '../CustomerForm/PersonalInfoForm'
 import { log } from 'console'
 import { useLocation, useParams } from 'react-router-dom'
 import { fetchDetails } from '../services/api'
+import Contract from './components/Contract'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -83,14 +84,7 @@ const CustomerDetail = () => {
 
         fetchData();
     }, [allQueryParams.id]);
-
-    // Check if details is not null and if details.data is an array with at least one element
-  
-    
-    
-    // Only proceed if lead is not null
-   
-
+    console.log(momdata);
       return (
         <div>
         <Tabs defaultValue="tab1">
@@ -98,6 +92,7 @@ const CustomerDetail = () => {
                 <TabNav value="tab1">Details</TabNav>
                 <TabNav value="tab2">Quotation</TabNav>
                 <TabNav value="tab3">MOM</TabNav>
+                <TabNav value="tab4">Contract</TabNav>
             </TabList>
             <div className="p-4">
                 <TabContent value="tab1">
@@ -109,7 +104,10 @@ const CustomerDetail = () => {
                    <PaymentHistory/>
                 </TabContent>
                 <TabContent value="tab3">
-                  <MOM datas={momdata}/>
+                  <MOM data={momdata}/>
+                </TabContent>
+                <TabContent value="tab4">
+                  <Contract/>
                 </TabContent>
             </div>
         </Tabs>

@@ -110,6 +110,7 @@ const navigate=useNavigate()
 
   return (
     <form onSubmit={handleSubmit}>
+      <div className='grid grid-cols-3 gap-5'>
       <div>
         <FormItem label='Name'>
         
@@ -122,8 +123,6 @@ const navigate=useNavigate()
         </FormItem>
         <span className=' text-red-600'>{errors.name}</span>
       </div>
-      
-
       <div>
         <FormItem label='Email'>
           
@@ -150,8 +149,6 @@ const navigate=useNavigate()
         </FormItem>
         <span className=' text-red-600'>{errors.phone}</span>
       </div>
-      
-
       <div>
         <FormItem label='Location'>
 
@@ -228,6 +225,7 @@ const navigate=useNavigate()
                               
                             </div>
                         </StickyFooter>
+                        </div>
     </form>
   );
 };
