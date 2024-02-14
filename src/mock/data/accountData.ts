@@ -273,7 +273,7 @@ export const logData = [
                 dateTime: 1646580000,
                 ticket: 'PD-979',
                 status: 0,
-                userName: 'Carolyn Perkins',
+                userName: '  ',
                 userImg: '',
             },
             {
@@ -478,14 +478,14 @@ export const logData = [
             {
                 type: 'ADD-FILES-TO-TICKET',
                 dateTime: 1646050199,
-                username: 'Carolyn Perkins',
+                username: '  ',
                 files: ['translation.xls'],
                 ticket: 'PD-1092',
             },
             {
                 type: 'COMMENT-MENTION',
                 dateTime: 1646050001,
-                username: 'Carolyn Perkins',
+                username: '  ',
                 userImg: '/img/avatars/thumb-1.jpg',
                 comment: `<strong>@Carolyn</strong> Don't worry if it doesn't work right. If everything did, you'd be out of a job.`,
             },

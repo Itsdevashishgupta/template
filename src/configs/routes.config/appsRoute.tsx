@@ -40,7 +40,7 @@ const appsRoute: Routes = [
     {
         key: 'appsCrm.form',
         path: `${APP_PREFIX_PATH}/crm/project/momform`,
-        component: lazy(() => import('@/views/crm/CustomerDetail/components/DeletePaymentMethod')),
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/MomForm')),
         authority: [ADMIN, USER],
     },
     {
