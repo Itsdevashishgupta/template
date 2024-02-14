@@ -10,8 +10,7 @@ import Loading from '@/components/shared/Loading'
 import Statistic from './components/Statistic'
 import Leads from './components/Leads'
 import Project from './components/Projects'
-import jsonData from './components/data - Copy.json';
-import axios from 'axios'
+
 
 
 injectReducer('crmDashboard', reducer)
@@ -30,7 +29,7 @@ const CrmDashboard = () => {
           }
   
           
-          setDatas(jsonData);
+         
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -57,7 +56,7 @@ const CrmDashboard = () => {
 
     useEffect(() => {
         // Fetch data from the JSON file or use any other method to load data
-        setData(jsonData);
+       
     }, []);
 
     

@@ -57,6 +57,7 @@
     "react-simple-maps": "^3.0.0",
     "react-svg": "^16.1.33",
     "react-syntax-highlighter": "^15.5.0",
+    "react-table": "^7.8.0",
     "react-tooltip": "^5.11.1",
     "redux-persist": "^6.0.0",
     "twin.macro": "^3.4.0",

@@ -34,8 +34,21 @@ type CustomerProfileProps = {
 const formatDate = (dateString: string | undefined) => {
     if (!dateString) return ''
 
+<<<<<<< Updated upstream
     const date = new Date(dateString)
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' }
+=======
+  const CustomerInfoField = ({ title, value }: CustomerInfoFieldProps) => {
+    return (
+      <div>
+        <span>{title}</span>
+        <p className="text-gray-700 dark:text-gray-200 font-semibold capitalize">
+          {title === 'Project Start Date' || title === 'Timeline' ? formatDate(value) : value}
+        </p>
+      </div>
+    )
+  }
+>>>>>>> Stashed changes
 
     return new Intl.DateTimeFormat('en-GB', options).format(date)
 }
@@ -222,12 +235,18 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                         <CustomerProfileAction id={data?.id} data={data} />
                     </div>
                 </div>
+<<<<<<< Updated upstream
                 <div className="grid grid-cols-3 sm:grid-cols-2 xl:grid-cols-3 gap-y-7 gap-x-4 mt-8">
                     <CustomerInfoField
                         title="Project Id"
                         value={data?.project_id}
                     />
                     <CustomerInfoField
+=======
+                <div className="grid grid-cols-3 sm:grid-cols-2 xl:grid-cols-3 gap-y-7 gap-x-4 mt-8 capitalize">
+                    <CustomerInfoField title="Project Id" value={data?.project_id} />
+                    <CustomerInfoField 
+>>>>>>> Stashed changes
                         title="Project Type"
                         value={data?.project_type}
                     />

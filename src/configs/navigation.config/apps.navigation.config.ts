@@ -161,8 +161,8 @@ const appsNavigationConfig: NavigationTree[] = [
                         
                     // },
                     {
-                        key: 'appsSales.orderList',
-                        path: `${APP_PREFIX_PATH}/sales/order-list`,
+                        key: 'appsSales.mom',
+                        path: `${APP_PREFIX_PATH}/crm/MOM`,
                         title: 'MOM',
                         translateKey: 'nav.appsSales.orderList',
                         icon: 'mom',

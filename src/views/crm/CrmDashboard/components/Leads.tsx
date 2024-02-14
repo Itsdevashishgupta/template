@@ -2,17 +2,18 @@ import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Table from '@/components/ui/Table'
 import Tag from '@/components/ui/Tag'
-import Avatar from '@/components/ui/Avatar'
 import {
     useReactTable,
     getCoreRowModel,
-    flexRender,
     createColumnHelper,
 } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import type { Lead } from '../store'
 import { useEffect, useState } from 'react'
+import { HiOutlineEye } from 'react-icons/hi'
+import useThemeClass from '@/utils/hooks/useThemeClass'
+
 
 type LeadsProps = {
     data?: Lead[]
@@ -90,7 +91,7 @@ const columns = [
 
 const Leads = ({ data = [], className }: LeadsProps) => {
     const navigate = useNavigate()
-
+    const { textTheme } = useThemeClass()
     const table = useReactTable({
         data,
         columns,
@@ -107,9 +108,10 @@ const Leads = ({ data = [], className }: LeadsProps) => {
     interface Data {
        name:string
        status:string
-       email:string
+       location:string
        date:string
        phone:string
+       lead_id:string
       }
       interface ApiResponse {
         data: Data[];
@@ -126,7 +128,8 @@ const Leads = ({ data = [], className }: LeadsProps) => {
         .catch((error) => console.error('Error fetching data:', error));
     }, []);
     console.log(apiData);
-    
+
+   
 
     return (
         <Card className={className}>
@@ -139,11 +142,12 @@ const Leads = ({ data = [], className }: LeadsProps) => {
             <Table>
         <THead>
           <Tr>
-            <Th>Project Name</Th>
-            <Th>Project Status</Th>
-            <Th>Client Name</Th>
+            <Th>Lead Name</Th>
+            <Th>Lead Status</Th>
+            <Th>Location</Th>
             <Th>Timeline Date</Th>
             <Th>Project Type</Th>
+            <Th></Th>
           </Tr>
         </THead>
         <TBody>
@@ -151,11 +155,12 @@ const Leads = ({ data = [], className }: LeadsProps) => {
             <Tr key={index}>
               <Td className=' capitalize'>{item.name}</Td>
               <Td className=' capitalize'>{item.status}</Td>
-              <Td className="capitalize">{item.email}</Td>
+              <Td className="capitalize">{item.location}</Td>
               <Td>{dayjs(item.date).format('DD-MM-YYYY')}</Td>
               <Td  >
                {item.phone}
               </Td>
+              <Td className={`cursor-pointer p-2 hover:${textTheme}`}><HiOutlineEye onClick={()=>navigate(`/app/crm/lead/?id=${item.lead_id}`)} /></Td>
             </Tr>
           ))}
         </TBody>

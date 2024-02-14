@@ -15,6 +15,8 @@ import type { Customer } from '../store'
 import { log } from 'console'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { HiOutlineEye } from 'react-icons/hi'
+import useThemeClass from '@/utils/hooks/useThemeClass'
 
 
 type LeadsProps = {
@@ -68,49 +70,10 @@ const LeadStatus = ({ status }: { status: number }) => {
 
 const columnHelper = createColumnHelper<Customer>()
 
-const columns = [
-    columnHelper.accessor('clientName', {
-        header: 'Client Name',
-        cell: (props) => {
-            const row = props.row.original
-            return <NameColumn row={row} />
-        },
-    }),
-    columnHelper.accessor('status', {
-        header: 'Status',
-        cell: (props) => {
-            const row = props.row.original
-            return <LeadStatus status={row.status} />
-        },
-    }),
-    columnHelper.accessor('email', {
-        header: 'Email',
-    }),
-    columnHelper.accessor('leadDate', {
-        header: 'Lead Date',
-        cell: (props) => {
-            const row = props.row.original
-            return (
-                <span>
-                    {dayjs.unix(row.leadDate).format('DD/MM/YYYY ')}
-                </span>
-            )
-        },
-    }),
-    columnHelper.accessor('phone', {
-        header: 'Phone',
-        cell: (props) => {
-            const row = props.row.original
-            return (
-                <Tag className="rounded-md font-bold cursor-pointer select-none text-gray-900 dark:text-gray-100">
-                    {row.phone}
-                </Tag>
-            )
-        },
-    }),
-]
+
 const Project = ({ data = [], className }: LeadsProps) => {
     const [datas, setData] = useState([]);
+    const { textTheme } = useThemeClass()
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -125,11 +88,7 @@ const Project = ({ data = [], className }: LeadsProps) => {
     }, []);
     const navigate = useNavigate()
 
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-    })
+ 
 
     const onNavigate = () => {
         navigate('/app/crm/projectslist')
@@ -141,11 +100,12 @@ const Project = ({ data = [], className }: LeadsProps) => {
        project_name:string
        project_type:string
        project_status:string
+       project_id:string
        client:client[]
        timeline_date:string
       }
       interface ApiResponse {
-        data: Data[];
+        projects: Data[];
       }
       interface ApiResponse1 {
         data: ApiResponse[];
@@ -179,6 +139,7 @@ const Project = ({ data = [], className }: LeadsProps) => {
             <Th>Client Name</Th>
             <Th>Timeline Date</Th>
             <Th>Project Type</Th>
+            <Th></Th>
           </Tr>
         </THead>
         <TBody>
@@ -195,6 +156,7 @@ const Project = ({ data = [], className }: LeadsProps) => {
                     : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100  border-0 rounded capitalize font-semibold text-xs px-2 py-1'
                 }>{item.project_type}</span>
               </Td>
+              <Td className={`cursor-pointer p-2 hover:${textTheme}`}><HiOutlineEye onClick={()=>navigate(`/app/crm/customer-details?project_id=${item.project_id}&id=65c32e19e0f36d8e1f30955c`)}/></Td>
             </Tr>
           ))}
         </TBody>

@@ -229,8 +229,8 @@ export const searchQueryPoolData = [
         categoryTitle: 'Apps',
     },
     {
-        title: 'Order List',
-        url: '/app/sales/order-list',
+        title: 'MOM',
+        url: '/app/crm/MOM',
         icon: 'sales',
         category: 'Sales',
         categoryTitle: 'Apps',

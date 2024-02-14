@@ -136,8 +136,8 @@ const appsRoute: Routes = [
         },
     },
     {
-        key: 'appsSales.orderList',
-        path: `${APP_PREFIX_PATH}/sales/order-list`,
+        key: 'appsSales.MOM',
+        path: `${APP_PREFIX_PATH}/crm/MOM`,
         component: lazy(() => import('@/views/crm/Inventory')),
         authority: [ADMIN, USER],
     },

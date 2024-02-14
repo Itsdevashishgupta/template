@@ -11,7 +11,7 @@ import {
 import type { TableQueries } from '@/@types/common'
 
 type Order = {
-    project_id: string
+    project_id?: string
     project_name?: string
     meetingSource?:string
     client_name: string
@@ -22,6 +22,12 @@ type Order = {
     project_start_date:string
     timeline_date:string
     project_end_date:string
+    mom:MOM[]
+}
+type MOM = {
+    mom_id:string
+    meetingdate:string
+    source:string
 }
 
 type Orders = Order[]

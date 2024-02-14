@@ -28,12 +28,23 @@ import type {
 
 type Order = {
     id: string
+    project_id: string
+    project_name:string
     date: number
     customer: string
     status: number
     paymentMehod: string
     paymentIdendifier: string
     totalAmount: number
+    mom:MOM[]
+}
+type MOM={
+    meetingdate:string
+    source:string
+    attendees:Attendees
+}
+type Attendees={
+    client_name:[]
 }
 
 const orderStatusColor: Record<
@@ -98,16 +109,15 @@ const OrderColumn = ({ row }: { row: Order }) => {
     const { textTheme } = useThemeClass()
     const navigate = useNavigate()
 
-    const onView = useCallback(() => {
-        navigate(`/app/sales/order-details/${row.id}`)
-    }, [navigate, row])
+    const onView =() => {
+        navigate(`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c`)
+    }
 
     return (
         <span
             className={`cursor-pointer select-none font-semibold hover:${textTheme}`}
-            onClick={onView}
+            
         >
-            #{row.id}
         </span>
     )
 }
@@ -123,27 +133,27 @@ const ActionColumn = ({ row }: { row: Order }) => {
     }
 
     const onView = useCallback(() => {
-        navigate(`/app/sales/order-details/${row.id}`)
+        navigate(``)
     }, [navigate, row])
 
     return (
         <div className="flex justify-end text-lg">
-            {/* <Tooltip title="View">
+            <Tooltip title="View">
                 <span
                     className={`cursor-pointer p-2 hover:${textTheme}`}
+                    onClick={()=> navigate(`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c`)}
+                >
+                    <HiOutlineEye />
+                </span>
+            </Tooltip>
+            {/* <Tooltip title="Delete">
+                <span
+                    className="cursor-pointer p-2 hover:text-red-500"
                     onClick={onView}
                 >
                     <HiOutlineEye />
                 </span>
             </Tooltip> */}
-            <Tooltip title="Delete">
-                <span
-                    className="cursor-pointer p-2 hover:text-red-500"
-                    onClick={onDelete}
-                >
-                    <HiOutlineTrash />
-                </span>
-            </Tooltip>
         </div>
     )
 }
@@ -188,9 +198,16 @@ const OrdersTable = () => {
 
     const columns: ColumnDef<Order>[] = useMemo(
         () => [
+          
             {
                 header: 'Project Name',
                 accessorKey: 'project_name',
+                cell: (props) => {
+                    const row = props.row.original
+                    return (
+                        <span>{row.project_name}</span>
+                    )
+                },
             },
             {
                 header: 'Date',
@@ -198,37 +215,30 @@ const OrdersTable = () => {
                 cell: (props) => {
                     const row = props.row.original
                     return (
-                        <span>{dayjs.unix(row.date).format('DD/MM/YYYY')}</span>
+                        <span>{row.mom[0].meetingdate}</span>
                     )
                 },
             },
             {
                 header: 'Client Name',
                 accessorKey: 'customer',
+                cell: (props) => {
+                    const row = props.row.original
+                    return (
+                        <span>{row.mom[0].attendees.client_name[0]}</span>
+                    )
+                },
             },
-            // {
-            //     header: 'Status',
-            //     accessorKey: 'status',
-            //     cell: (props) => {
-            //         const { status } = props.row.original
-            //         return (
-            //             <div className="flex items-center">
-            //                 <Badge
-            //                     className={orderStatusColor[status].dotClass}
-            //                 />
-            //                 <span
-            //                     className={`ml-2 rtl:mr-2 capitalize font-semibold ${orderStatusColor[status].textClass}`}
-            //                 >
-            //                     {orderStatusColor[status].label}
-            //                 </span>
-            //             </div>
-            //         )
-            //     },
-            // },
+       
             {
                 header: 'Meeting Mode',
                 accessorKey: 'meetingSource',
-       
+                cell: (props) => {
+                    const row = props.row.original
+                    return (
+                        <span>{row.mom[0].source}</span>
+                    )
+                },
             },
             // {
             //     header: 'Total',
@@ -302,7 +312,7 @@ const OrdersTable = () => {
     return (
         <DataTable
             ref={tableRef}
-            selectable
+           
             columns={columns}
             data={data}
             loading={loading}

@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useMemo } from 'react'
-import Avatar from '@/components/ui/Avatar'
-import Badge from '@/components/ui/Badge'
+import classNames from 'classnames';
+
 import DataTable from '@/components/shared/DataTable'
 import {
     getCustomers,
@@ -13,18 +13,10 @@ import {
 } from '../store'
 import useThemeClass from '@/utils/hooks/useThemeClass'
 import CustomerEditDialog from './CustomerEditDialog'
-import { Link, useNavigate } from 'react-router-dom'
-import dayjs from 'dayjs'
+import {  useNavigate } from 'react-router-dom'
 import cloneDeep from 'lodash/cloneDeep'
 import type { OnSortParam, ColumnDef } from '@/components/shared/DataTable'
 import { HiOutlineEye } from 'react-icons/hi'
-
-const statusColor: Record<string, string> = {
-    FollowUp: 'bg-emerald-500',
-    blocked: 'bg-red-500',
-}
-
-
     const ActionColumn = ({ row }: { row: Customer }) => {
         const dispatch = useAppDispatch()
         const { textTheme } = useThemeClass()
@@ -46,12 +38,7 @@ const statusColor: Record<string, string> = {
                 >
                     <HiOutlineEye />
                 </span>
-                {/* <span
-                    className="cursor-pointer p-2 hover:text-red-500"
-                    onClick={onDelete}
-                >
-                    <HiOutlineTrash />
-                </span> */}
+               
             </div>
         )
 }
@@ -93,21 +80,27 @@ const Customers = () => {
             {
                 header: 'Ptoject Type',
                 accessorKey: 'project_type',
+                cell: (props) => {
+                    const row = props.row.original;
+                    const projectType = row.project_type;
+                    
+                    const cellClassName = classNames({
+                      'bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-100 border-0 rounded px-2 py-1 capitalize font-semibold text-xs': projectType === 'commercial',
+                      '': projectType === 'commercial',
+                      'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-100 border-0 rounded capitalize font-semibold text-xs px-2 py-1': projectType === 'residential',
+                      'bg-light-green-600': projectType === 'residential',
+                    });
+                
+                    return (
+                      <span className={cellClassName}>{row.project_type}</span>
+                    );
+                  }
             },
             {
                 header: 'Status',
                 accessorKey: 'project_status',
-                // cell: (props) => {
-                //     const row = props.row.original
-                //     return (
-                //         <div className="flex items-center">
-                //             <Badge className={statusColor[row.project_status]} />
-                //             <span className="ml-2 rtl:mr-2 capitalize">
-                //                 {row.project_status}
-                //             </span>
-                //         </div>
-                //     )
-                // },
+                
+              
             },
             {
                 header: 'Timeline',
