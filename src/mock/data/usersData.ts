@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export const usersData = [
     {
         id: '1',
-        name: 'Carolyn Perkins',
+        name: '  ',
         email: 'eileen_h@hotmail.com',
         img: '/img/avatars/thumb-1.jpg',
     },
@@ -356,7 +356,7 @@ export const userDetailData=jsonData.data.projects
 // export const userDetailData = [
 //     {
 //         id: '1',
-//         name: 'Carolyn Perkins',
+//         name: '  ',
 //         email: 'carolyn_h@hotmail.com',
 //         img: '/img/avatars/thumb-1.jpg',
 //         role: 'Admin',
@@ -404,7 +404,7 @@ export const userDetailData=jsonData.data.projects
 //         ],
 //         paymentMethod: [
 //             {
-//                 cardHolderName: 'Carolyn Perkins',
+//                 cardHolderName: '  ',
 //                 cardType: 'VISA',
 //                 expMonth: '12',
 //                 expYear: '25',
@@ -412,7 +412,7 @@ export const userDetailData=jsonData.data.projects
 //                 primary: true,
 //             },
 //             {
-//                 cardHolderName: 'Carolyn Perkins',
+//                 cardHolderName: '  ',
 //                 cardType: 'MASTER',
 //                 expMonth: '06',
 //                 expYear: '25',
