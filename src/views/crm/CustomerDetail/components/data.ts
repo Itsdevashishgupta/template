@@ -11,7 +11,7 @@ export type Attendees = {
     source: string;
     attendees: Attendees;
     remark: string;
-    important_note: string;
+    imaportant_note: string;
     files: any[]; // Add a proper type for files if needed
   };
   

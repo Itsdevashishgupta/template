@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Card from '@/components/ui/Card'
 import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
@@ -20,6 +20,8 @@ import {
     Customer,
 } from '../store'
 import EditCustomerProfile from './EditCustomerProfile'
+import { DatePicker, FormItem, Input } from '@/components/ui'
+import axios from 'axios'
 
 type CustomerInfoFieldProps = {
     title?: string
@@ -151,6 +153,39 @@ const CustomerProfileAction = ({
         })
     }
 
+    const API_URL = 'https://your-api-url.com';
+    
+    interface ProjectData {
+        project_id:string | undefined;
+        project_status: string | undefined;
+        description: string | undefined;
+        timeline_date: Date ;
+        project_budget: string | undefined;
+      }
+      
+
+
+
+const [projectData, setProjectData] = useState<ProjectData>({
+    project_id: data?.project_id,
+    project_status: data?.project_status,
+    description: data?.description,
+    timeline_date: new Date(`${data?.timeline_date}`),
+    project_budget: data?.project_budget,
+  });
+
+  const handleUpdate = async () => {
+    try {
+      // Make a PUT request to update the project data
+     
+      const response = await axios.put(`https://col-u3yp.onrender.com/v1/api/admin/update/project/`, projectData);
+      console.log('Update successful', response.data);
+    } catch (error) {
+      console.error('Update failed', error);
+    }
+  };
+
+
     return (
         <>
             <Button
@@ -170,53 +205,42 @@ const CustomerProfileAction = ({
                 onCancel={onDialogClose}
                 onConfirm={onEdit}
             >
-                <div className="grid grid-cols-2 gap-2">
-                    <CustomerInfoField
-                        title="Project Id"
-                        value={editedData?.project_id || ''}
-                        onChange={(value) => handleChange('project_id', value)}
-                    />
-                    <CustomerInfoField
-                        title="Project Type"
-                        value={editedData?.project_type || ''}
-                        onChange={(value) =>
-                            handleChange('project_type', value)
-                        }
-                    />
-                    <CustomerInfoField
-                        title="Project status"
-                        value={editedData?.project_status || ''}
-                        onChange={(value) =>
-                            handleChange('project_status', value)
-                        }
-                    />
-                    <CustomerInfoField
-                        title="Project Start Date"
-                        value={formatDate(editedData?.project_start_date) || ''}
-                        onChange={(value) =>
-                            handleChange('project_start_date', value)
-                        }
-                    />
-                    <CustomerInfoField
-                        title="Timeline"
-                        value={formatDate(editedData?.timeline_date) || ''}
-                        onChange={(value) =>
-                            handleChange('timeline_date', value)
-                        }
-                    />
-                    <CustomerInfoField
-                        title="Project Budget"
-                        value={editedData?.project_budget || ''}
-                        onChange={(value) =>
-                            handleChange('project_budget', value)
-                        }
-                    />
-                    <CustomerInfoField
-                        title="Description"
-                        value={editedData?.description || ''}
-                        onChange={(value) => handleChange('description', value)}
-                    />
-                </div>
+               <div>
+    
+      <form>
+        <div className=' grid grid-cols-2 gap-4'>
+        <FormItem label='Project Status'>
+        <Input
+          type="text"
+          value={projectData.project_status}
+          onChange={(e) => setProjectData({ ...projectData, project_status: e.target.value })}
+        />
+        </FormItem>
+        <FormItem label='Budget'>
+        <Input
+          type="text"
+          value={projectData.project_budget}
+          onChange={(e) => setProjectData({ ...projectData, project_budget: e.target.value })}
+        />
+        </FormItem>
+        <FormItem label='DescripTion'>
+        <Input
+          type="text"
+          value={projectData.description}
+          onChange={(e) => setProjectData({ ...projectData, description: e.target.value })}
+        />
+        </FormItem>
+        <FormItem label='Timeline Date'>
+        <DatePicker
+          selected={projectData.timeline_date}
+          onChange={(date: Date) => setProjectData({ ...projectData, timeline_date: date })}
+        />
+        </FormItem>
+        </div>
+        {/* Add other input fields for project_status, timeline_date, project_budget, etc. */}
+        
+      </form>
+    </div>
             </ConfirmDialog>
             <EditCustomerProfile />
         </>
@@ -229,26 +253,22 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
             <div className="flex flex-col xl:justify-between h-full 2xl:min-w-[360px] mx-auto">
                 <div className="flex xl:flex-row gap-4 justify-between">
                     <div className="flex xl:flex-row items-center gap-4">
-                        <h4 className="font-bold">{data?.project_name}</h4>
+                        <h4 className="font-bold capitalize">{data?.project_name}</h4>
                     </div>
                     <div className="mt-4 flex flex-col xl:flex-row gap-2">
                         <CustomerProfileAction id={data?.id} data={data} />
                     </div>
                 </div>
-                <div className="grid grid-cols-3 sm:grid-cols-2 xl:grid-cols-3 gap-y-7 gap-x-4 mt-8">
-                    <CustomerInfoField
-                        title="Project Id"
-                        value={data?.project_id}
-                    />
+                
+                   
                    
 
-                <div className="grid grid-cols-3 sm:grid-cols-2 xl:grid-cols-3 gap-y-7 gap-x-4 mt-8 capitalize">
+                <div className="grid grid-cols-3 sm:grid-cols-3 max-sm:grid-cols-1 max-sm:grid xl:grid-cols-4 gap-y-7 gap-x-5 mt-8 capitalize">
                     <CustomerInfoField title="Project Id" value={data?.project_id} />
                     <CustomerInfoField 
-
                         title="Project Type"
-                        value={data?.project_type}
                     />
+
                     <CustomerInfoField
                         title="Project status"
                         value={data?.project_status}
@@ -271,7 +291,7 @@ const CustomerProfile = ({ data }: CustomerProfileProps) => {
                     />
                 </div>
             </div>
-            </div>
+          
         </Card>
     )
 }

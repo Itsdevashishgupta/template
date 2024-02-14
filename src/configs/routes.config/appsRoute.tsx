@@ -69,6 +69,18 @@ const appsRoute: Routes = [
         },
     },
     {
+        key: 'appsSales.MOM',
+        path: `${APP_PREFIX_PATH}/crm/MOM`,
+        component: lazy(() => import('@/views/crm/Inventory')),
+        authority: [ADMIN, USER],
+    },
+    {
+        key: 'appsSales.allmom',
+        path: `${APP_PREFIX_PATH}/crm/allmom`,
+        component: lazy(() => import('@/views/crm/CustomerDetail/components/AllMom')),
+        authority: [ADMIN, USER],
+    },
+    {
         key: 'appsCrm.customerDetails',
         path: `${APP_PREFIX_PATH}/crm/lead`,
         component: lazy(() => import('@/views/crm/LeadsDetails')),
@@ -135,12 +147,7 @@ const appsRoute: Routes = [
             header: 'Edit Product',
         },
     },
-    {
-        key: 'appsSales.MOM',
-        path: `${APP_PREFIX_PATH}/crm/MOM`,
-        component: lazy(() => import('@/views/crm/Inventory')),
-        authority: [ADMIN, USER],
-    },
+
     {
         key: 'appsSales.dashboard',
         path: `${APP_PREFIX_PATH}/sales/dashboard`,

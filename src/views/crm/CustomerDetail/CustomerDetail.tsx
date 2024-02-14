@@ -22,6 +22,7 @@ import { log } from 'console'
 import { useLocation, useParams } from 'react-router-dom'
 import { fetchDetails } from '../services/api'
 import Contract from './components/Contract'
+import AllMom from './components/AllMom'
 
 injectReducer('crmCustomerDetails', reducer)
 
@@ -55,6 +56,7 @@ const CustomerDetail = () => {
     interface QueryParams {
         id: string;
         project_id: string;
+        mom:string
       
       }
     const location = useLocation();
@@ -64,8 +66,11 @@ const CustomerDetail = () => {
     const allQueryParams: QueryParams = {
       id: queryParams.get('id') || '',
       project_id: queryParams.get('project_id') || '',
+      mom: queryParams.get('type') || '',
+      
 
     };
+    console.log(allQueryParams.mom);
     
     const [details, setDetails] = useState<any | null>(null);
     const[momdata,setmomdata]= useState<any | null>(null);
@@ -87,12 +92,13 @@ const CustomerDetail = () => {
     console.log(momdata);
       return (
         <div>
-        <Tabs defaultValue="tab1">
+        <Tabs defaultValue={allQueryParams.mom}>
             <TabList>
                 <TabNav value="tab1">Details</TabNav>
                 <TabNav value="tab2">Quotation</TabNav>
-                <TabNav value="tab3">MOM</TabNav>
+                <TabNav value="mom">MOM</TabNav>
                 <TabNav value="tab4">Contract</TabNav>
+                <TabNav value="tab5">All MOM</TabNav>
             </TabList>
             <div className="p-4">
                 <TabContent value="tab1">
@@ -103,11 +109,14 @@ const CustomerDetail = () => {
                 <TabContent value="tab2">
                    <PaymentHistory/>
                 </TabContent>
-                <TabContent value="tab3">
-                  <MOM data={momdata}/>
+                <TabContent value="mom">
+                  <MOM data={momdata} />
                 </TabContent>
                 <TabContent value="tab4">
                   <Contract/>
+                </TabContent>
+                <TabContent value="tab5">
+                  <AllMom data={momdata}/>
                 </TabContent>
             </div>
         </Tabs>

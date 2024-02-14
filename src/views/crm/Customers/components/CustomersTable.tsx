@@ -23,7 +23,7 @@ import { HiOutlineEye } from 'react-icons/hi'
         const navigate = useNavigate()
     
         const onEdit = () => {
-    navigate(`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c`)
+    navigate(`/app/crm/customer-details?project_id=${row.project_id}&id=65c32e19e0f36d8e1f30955c&type=tab1`)
 
     
    
