@@ -1,124 +1,179 @@
-import TBody from '@/components/ui/Table/TBody';
-import THead from '@/components/ui/Table/THead';
-import Table from '@/components/ui/Table/Table';
-import Td from '@/components/ui/Table/Td';
-import Th from '@/components/ui/Table/Th';
-import Tr from '@/components/ui/Table/Tr';
-import React, { useState } from 'react';
-import 'tailwindcss/tailwind.css';
+
+import { useMemo, Fragment } from 'react'
+import Table from '@/components/ui/Table'
+import {
+    useReactTable,
+    getCoreRowModel,
+    getExpandedRowModel,
+    flexRender,
+} from '@tanstack/react-table'
+import { momApiResponse } from './data'
 import { HiOutlineChevronRight, HiOutlineChevronDown } from 'react-icons/hi'
-import { Button, Input } from '@/components/ui';
-import { Customer } from '../store';
-import { useNavigate } from 'react-router-dom';
+import type { ApiResponse } from './data'
+import type { ColumnDef, Row } from '@tanstack/react-table'
+import type { ReactElement } from 'react'
+import { log } from 'console'
 
-type Item = {
-  id: number;
-  name: string;
-  details: string;
-};
+type ReactTableProps<T> = {
+    renderRowSubComponent: (props: { row: Row<T> }) => ReactElement
+    getRowCanExpand: (row: Row<T>) => boolean
+    data:Data[]
+}
+type Data={
 
-const initialData: Item[] = [
-  { id: 1, name: 'Item 1', details: 'Details for Item 1' },
-  { id: 2, name: 'Item 2', details: 'Details for Item 2' },
-  // Add more data as needed
-];
-type CustomerProfileProps = {
-    data?: Partial<Customer>
 }
 
+const { Tr, Th, Td, THead, TBody } = Table
 
-const DetailsTable: React.FC<CustomerProfileProps>= ({data}) => {
-    console.log(data);
-    
-  const [datas, setData] = useState<Item[]>(initialData);
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [expandedRow, setExpandedRow] = useState<number | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+function ReactTable({ renderRowSubComponent, getRowCanExpand,data }: ReactTableProps<ApiResponse>) {
+  
+    const columns = useMemo<ColumnDef<ApiResponse>[]>(
+        () => [
+            {
+                // Make an expander cell
+                header: () => null, // No header
+                id: 'expander', // It needs an ID
+                cell: ({ row }) => (
+                    <>
+                        {row.getCanExpand() ? (
+                            <button
+                                className="text-lg"
+                                {...{ onClick: row.getToggleExpandedHandler() }}
+                            >
+                                {row.getIsExpanded() ? (
+                                    <HiOutlineChevronDown />
+                                ) : (
+                                    <HiOutlineChevronRight />
+                                )}
+                            </button>
+                        ) : null}
+                    </>
+                ),
+                // We can override the cell renderer with a SubCell to be used with an expanded row
+                subCell: () => null, // No expander on an expanded row
+            },
+            {
+                header: 'MOM Id',
+                accessorKey: 'mom_id',
+            },
+         // Update the 'Client Name' column definition
+{
+  header: 'Client Name',
+  accessorKey: 'attendees',
+  cell: (props) => {
+    const row = props.row.original;
+    const clientNames = Array.isArray(row.attendees?.client_name)
+      ? row.attendees.client_name
+      : [row.attendees.client_name];
 
-  const toggleRow = (id: number) => {
-    setExpandedRow((prev) => (prev === id ? null : id));
-  };
+    return <span>{clientNames.join(', ')}</span>;
+  },
+},
 
-  const handleSort = (column: string) => {
-    setSortColumn(column);
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    const sortedData = [...datas].sort((a, b) => {
-      const aValue = a[column];
-      const bValue = b[column];
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-      return 0;
-    });
-    setData(sortedData);
-  };
+            {
+                header: 'Meeting Date',
+                accessorKey: 'meetingdate',
+            },
+            {
+                header: 'Source',
+                accessorKey: 'source',
+            },
+          
+        ],
+        []
+    )
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-    const filteredData = initialData.filter((item) =>
-      Object.values(item)
-        .join(' ')
-        .toLowerCase()
-        .includes(event.target.value.toLowerCase())
-    );
-    setData(filteredData);
-  };
+    const table = useReactTable({
+        data: momApiResponse,
+        columns,
+        getRowCanExpand,
+        getCoreRowModel: getCoreRowModel(),
+        getExpandedRowModel: getExpandedRowModel(),
+    })
+ 
 
-  const renderSortButton = (column: string, label: string) => (
-    <button
-      className="flex items-center focus:outline-none"
-      onClick={() => handleSort(column)}
-    >
-      {label}
-      {sortColumn === column && (
-        <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
-      )}
-    </button>
-  );
-  const navigate=useNavigate()
+    return (
+        <>
+            <Table>
+                <THead>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <Tr key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => {
+                                return (
+                                    <Th
+                                        key={header.id}
+                                        colSpan={header.colSpan}
+                                    >
+                                        {flexRender(
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
+                                    </Th>
+                                )
+                            })}
+                        </Tr>
+                    ))}
+                </THead>
+                <TBody>
+                    {table.getRowModel().rows.map((row) => {
+                        return (
+                            <Fragment key={row.id}>
+                                <Tr>
+                                    {/* first row is a normal row */}
+                                    {row.getVisibleCells().map((cell) => {
+                                        return (
+                                            <td key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </td>
+                                        )
+                                    })}
+                                </Tr>
+                                {row.getIsExpanded() && (
+                                    <Tr>
+                                        {/* 2nd row is a custom 1 cell row */}
+                                        <Td
+                                            colSpan={
+                                                row.getVisibleCells().length
+                                            }
+                                        >
+                                            {renderRowSubComponent({ row })}
+                                        </Td>
+                                    </Tr>
+                                )}
+                            </Fragment>
+                        )
+                    })}
+                </TBody>
+            </Table>
+        </>
+    )
+}
 
-  return (
-    <div>
-        <div className='flex justify-between items-center'>
-      <Input
-        type="text"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={handleSearch}
-        className="my-4 p-2 w-1/5 "
-      />
-      <Button variant='solid' onClick={() => navigate('/app/crm/project/momform')}>Add MOM</Button>
-      </div>
-      <Table className="min-w-full ">
-        <THead>
-          <Tr>
-            <Th className="px-4">Actions</Th>
-            <Th className="px-4">{renderSortButton('meetingdate', 'Meeting Date')}</Th>
-            <Th className="px-4">{renderSortButton('source', 'Source')}</Th>
-          </Tr>
-        </THead>
-        <TBody>
-          {data.map((item) => [
-            <Tr key={item.id}>
-              <Td className="px-4"onClick={() => toggleRow(item.id)}>
-                
-                  {expandedRow === item.mom_id? <HiOutlineChevronDown /> : <HiOutlineChevronRight />}
-              
-              </Td>
-              <Td className="px-4">{item.mom_id}</Td>
-              <Td className="px-4">{item.source}</Td>
-            </Tr>,
-            expandedRow === item.id && (
-              <div key={`details-${item.id}`}>
-                <h1>Meeting date: {item.meetingdate}</h1>
-                <p></p>
-              </div>
-            ),
-          ])}
-        </TBody>
-      </Table>
-    </div>
-  );
-};
+const renderSubComponent = ({ row }: { row: Row<ApiResponse> }) => {
+  const rowData = row.original;
+  const clientNames = Array.isArray(rowData?.attendees?.client_name)
+    ? rowData.attendees.client_name
+    : [rowData.attendees.client_name];
+    return (
+        <pre style={{ fontSize: '10px' }}>
+              <code>Client Name: {clientNames.join(', ')}</code>
+        </pre>
+    )
+}
 
-export default DetailsTable;
+const SubComponent = ({data}:ApiResponse) => {
+    return (
+        <ReactTable
+            renderRowSubComponent={renderSubComponent}
+            getRowCanExpand={() => true}
+            data={data}
+
+        />
+    )
+}
+
+export default SubComponent
+

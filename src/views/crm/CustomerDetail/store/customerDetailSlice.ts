@@ -58,7 +58,7 @@ type mom={
    mom_id:string
 }
 export type Customer = {
-    _id: string
+    id: string
     project_name: string
     project_id:string
     project_type:string
