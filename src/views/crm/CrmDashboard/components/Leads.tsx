@@ -127,7 +127,7 @@ const Leads = ({ data = [], className }: LeadsProps) => {
         .then((data: ApiResponse) => setApiData(data.data.slice(0,5)))
         .catch((error) => console.error('Error fetching data:', error));
     }, []);
-    console.log(apiData);
+ 
 
    
 

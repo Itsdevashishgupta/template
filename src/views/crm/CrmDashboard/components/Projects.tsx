@@ -120,7 +120,7 @@ const Project = ({ data = [], className }: LeadsProps) => {
         .then((data: ApiResponse1) => setApiData(data.data.projects.slice(0,5)))
         .catch((error) => console.error('Error fetching data:', error));
     }, []);
-    console.log(apiData);
+   
     
 
     return (

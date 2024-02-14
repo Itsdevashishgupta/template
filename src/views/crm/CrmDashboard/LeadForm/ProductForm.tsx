@@ -110,7 +110,6 @@ const LeadForm: React.FC = () => {
                        body: formDataToSend,
                    },
                )
-               console.log(response)
 
                if (response.ok) {
                    alert('Success! Form submitted successfully.')

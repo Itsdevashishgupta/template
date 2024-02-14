@@ -175,7 +175,6 @@ const ProductForm = forwardRef<FormikRef, ProductForm>((props, ref) => {
                         },
                     },
                 )
-                console.log(response)
             } catch (error) {
                 console.error('Error submitting form:', error)
             }

@@ -65,6 +65,8 @@ export const getCrmDashboardData = createAsyncThunk(
         return response.data
     }
 )
+console.log(getCrmDashboardData());
+
 
 const initialState: CrmDashboardState = {
     loading: true,
